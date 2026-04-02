@@ -1,2 +1,0 @@
-aircraft/Aircraft.java
-Avaj.java
