@@ -1,6 +1,6 @@
 package src.flyables.aircrafts;
 
-import src.coordinates.Coordinates;
+import src.utils.Coordinates;
 import src.flyables.Flyable;
 
 public class Aircraft extends Flyable {
@@ -17,5 +17,20 @@ public class Aircraft extends Flyable {
     @Override
     public void updateConditions() {
         
+    }
+    
+    @Override
+    public long getId() {
+        return this.id;
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public Coordinates getcoordinate() {
+        return this.coordinate;
     }
 }

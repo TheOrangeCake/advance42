@@ -1,4 +1,4 @@
-package src.coordinates;
+package src.utils;
 
 public class Coordinates {
     private int longitude;
@@ -19,5 +19,11 @@ public class Coordinates {
     }
     public int getHeight() {
         return this.height;
+    }
+
+    public String toString() {
+        return ("Longitude: " + this.longitude +
+                ",\tLatitude: " + this.latitude +
+                ",\tHeight: " + this.height);
     }
 }

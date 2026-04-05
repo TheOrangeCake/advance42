@@ -1,6 +1,6 @@
 package src.weathers.towers;
 
-import src.coordinates.Coordinates;
+import src.utils.Coordinates;
 
 public class WeatherTower extends Tower {
 

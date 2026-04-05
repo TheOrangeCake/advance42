@@ -1,6 +1,6 @@
 package src.flyables.aircrafts;
 
-import src.coordinates.Coordinates;
+import src.utils.Coordinates;
 
 public class JetPlane extends Aircraft {
     public JetPlane(long p_id, String p_name, Coordinates p_coordinate) {

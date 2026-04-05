@@ -1,6 +1,6 @@
 package src.weathers;
 
-import src.coordinates.Coordinates;
+import src.utils.Coordinates;
 
 public class WeatherProvider {
     private static WeatherProvider instance;
