@@ -2,6 +2,7 @@ package src.flyables.aircrafts;
 
 import src.utils.Coordinates;
 import src.flyables.Flyable;
+import src.exceptions.BadWeatherException;
 
 public class Aircraft extends Flyable {
     protected long id;
@@ -15,13 +16,29 @@ public class Aircraft extends Flyable {
     }
 
     @Override
-    public void updateConditions() {
-        
+    public void updateConditions() throws BadWeatherException {
+        System.out.println("Do not use this");
     }
     
+
+    @Override
+    public String getFlyableModel() {
+        return (this.getType() +
+                "#" +
+                this.getName() +
+                "(" +
+                this.getId() +
+                ")");
+    }
+
     @Override
     public long getId() {
         return this.id;
+    }
+
+    @Override
+    public String getType() {
+        return this.getClass().getSimpleName();
     }
 
     @Override
@@ -30,7 +47,7 @@ public class Aircraft extends Flyable {
     }
 
     @Override
-    public Coordinates getcoordinate() {
+    public Coordinates getCoordinate() {
         return this.coordinate;
     }
 }

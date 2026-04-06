@@ -6,19 +6,19 @@ import java.util.ArrayList;
 
 public class Scenario {
     private List<Flyable> flyables;
-    private int numberOfTurn;
+    private int numberOfTurns;
 
     public Scenario() {
         this.flyables = new ArrayList<>();
-        this.numberOfTurn = 0;
+        this.numberOfTurns = 0;
     }
 
-    public void setNumberOfTurn(int number) {
-        this.numberOfTurn = number;
+    public void setNumberOfTurns(int number) {
+        this.numberOfTurns = number;
     }
 
-    public int getNumberOfTurn() {
-        return this.numberOfTurn;
+    public int getNumberOfTurns() {
+        return this.numberOfTurns;
     }
 
     public void addFlyable(Flyable flyable) {
@@ -29,12 +29,16 @@ public class Scenario {
         this.flyables.remove(flyable);
     }
 
+    public List<Flyable> getFlyables() {
+        return this.flyables;
+    }
+
     public void printFlyable() {
         for (Flyable flyable : this.flyables) {
             System.out.println(
                 "ID: " + flyable.getId() +
                 ",\tName: " + flyable.getName() +
-                ",\t" + flyable.getcoordinate().toString()
+                ",\t" + flyable.getCoordinate().toString()
             );
         }
     }

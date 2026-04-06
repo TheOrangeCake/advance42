@@ -29,13 +29,16 @@ public class FileReader {
             return null;
         }
         int currentLine = 1;
-        parseNumberOfTurn(currentLine++);
+        parseNumberOfTurns(currentLine++);
         parseFlyables(currentLine);
         this.scanner.close();
+        if (this.scenario.getFlyables().isEmpty()) {
+            throw new BadFileException("No flyables");
+        }
         return this.scenario;
     }
 
-    private void parseNumberOfTurn(int currentLine) throws BadFileException {
+    private void parseNumberOfTurns(int currentLine) throws BadFileException {
         try {
             if (this.scanner.hasNextLine()) {
                 String firstLine = this.scanner.nextLine().trim();
@@ -43,7 +46,7 @@ public class FileReader {
                 if (turn <= 0) {
                     throw new NumberFormatException();
                 }
-                this.scenario.setNumberOfTurn(turn);
+                this.scenario.setNumberOfTurns(turn);
             } else {
                 this.scanner.close();
                 throw new BadFileException("Empty");
@@ -72,7 +75,11 @@ public class FileReader {
                 int longitude = Integer.parseInt(flyableParameters[2]);
                 int latitude = Integer.parseInt(flyableParameters[3]);
                 int height = Integer.parseInt(flyableParameters[4]);
-
+                if (height < 0) {
+                    height = 0;
+                } else if (height > 100) {
+                    height = 100;
+                }
                 Coordinates coordinate = new Coordinates(longitude, latitude, height);
                 Flyable flyable = AircraftFactory.newAircraft(type, name, coordinate);
                 this.scenario.addFlyable(flyable);
