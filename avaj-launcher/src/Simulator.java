@@ -4,9 +4,9 @@ import src.weathers.WeatherProvider;
 import src.weathers.towers.WeatherTower;
 import src.utils.FileReader;
 import src.utils.Scenario;
+import src.utils.FileWriter;
 import src.exceptions.BadFileException;
-
-import src.utils.Coordinates;
+import src.exceptions.BadProgrammerException;
 
 public class Simulator {
     public static void main(String args[]) {
@@ -16,27 +16,27 @@ public class Simulator {
         }
 
         AircraftFactory.getInstance();
-        Scenario scenario = null;
+        Scenario.getInstance();
         try {
             FileReader reader = new FileReader(args[0]);
-            scenario = reader.createScenario();
-            if (scenario == null) {
-                System.exit(1);
-            }
-        } catch (BadFileException e) {
+            reader.createScenario();
+        } catch (BadFileException | BadProgrammerException e) {
             System.out.println(e.getMessage());
             System.exit(1);
         }
 
         WeatherProvider.getInstance();
         WeatherTower weatherTower = new WeatherTower();
-        for (Flyable flyable : scenario.getFlyables()) {
+        for (Flyable flyable : Scenario.getFlyables()) {
             weatherTower.register(flyable);
             flyable.registerTower(weatherTower);
         }
-        
-        for (int i = 0; i < scenario.getNumberOfTurns(); i++) {
+        FileWriter.writeLine("-------------------------------------");
+        for (int i = 0; i < Scenario.getNumberOfTurns(); i++) {
             weatherTower.changeWeather();
+            if (weatherTower.getObservers().isEmpty()) {
+                break;
+            }
         }
     }
 }

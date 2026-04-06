@@ -5,36 +5,44 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class Scenario {
-    private List<Flyable> flyables;
-    private int numberOfTurns;
+    private static Scenario instance;
+    private static List<Flyable> flyables;
+    private static int numberOfTurns;
 
-    public Scenario() {
-        this.flyables = new ArrayList<>();
-        this.numberOfTurns = 0;
+    private Scenario() {
+        flyables = new ArrayList<>();
+        numberOfTurns = 0;
     }
 
-    public void setNumberOfTurns(int number) {
-        this.numberOfTurns = number;
+    public static Scenario getInstance() {
+        if (instance == null) {
+            instance = new Scenario();
+        }
+        return instance;
     }
 
-    public int getNumberOfTurns() {
-        return this.numberOfTurns;
+    public static void setNumberOfTurns(int number) {
+        numberOfTurns = number;
     }
 
-    public void addFlyable(Flyable flyable) {
-        this.flyables.add(flyable);
+    public static int getNumberOfTurns() {
+        return numberOfTurns;
     }
 
-    public void removeFlyable(Flyable flyable) {
-        this.flyables.remove(flyable);
+    public static void addFlyable(Flyable flyable) {
+        flyables.add(flyable);
     }
 
-    public List<Flyable> getFlyables() {
-        return this.flyables;
+    public static void removeFlyable(Flyable flyable) {
+        flyables.remove(flyable);
     }
 
-    public void printFlyable() {
-        for (Flyable flyable : this.flyables) {
+    public static List<Flyable> getFlyables() {
+        return flyables;
+    }
+
+    public static void printFlyable() {
+        for (Flyable flyable : flyables) {
             System.out.println(
                 "ID: " + flyable.getId() +
                 ",\tName: " + flyable.getName() +

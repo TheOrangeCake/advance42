@@ -23,27 +23,49 @@ public class Coordinates {
         return this.height;
     }
 
-    public void increaseLongitude(int amount) {
+    public void changeLongitude(int amount) {
+        if (amount > 0 && this.longitude > Integer.MAX_VALUE - amount) {
+            this.longitude = Integer.MAX_VALUE;
+            return;
+        }
+        if (amount < 0 && this.longitude < -amount) {
+            this.longitude = 0;
+            return;
+        }
         this.longitude += amount;
+        if (this.longitude < 0) {
+            this.longitude = 0;
+        }
     }
-    public void decreaseLongitude(int amount) {
-        this.longitude -= amount;
-    }
-    public void increaseLatitude(int amount) {
+
+    public void changeLatitude(int amount) {
+        if (amount > 0 && this.latitude > Integer.MAX_VALUE - amount) {
+            this.latitude = Integer.MAX_VALUE;
+            return;
+        }
+        if (amount < 0 && this.latitude < -amount) {
+            this.latitude = 0;
+            return;
+        }
         this.latitude += amount;
+        if (this.latitude < 0) {
+            this.latitude = 0;
+        }
     }
-    public void decreaseLatitude(int amount) {
-        this.latitude -= amount;
-    }
-    public void increaseHeight(int amount) {
+
+    public void changeHeight(int amount) {
+        if (amount > 0 && this.height > 100 - amount) {
+            this.height = 100;
+            return;
+        }
+        if (amount < 0 && this.height < -amount) {
+            this.height = 0;
+            return;
+        }
         this.height += amount;
         if (this.height > 100) {
             this.height = 100;
-        }
-    }
-    public void decreaseHeight(int amount) {
-        this.height -= amount;
-        if (this.height < 0) {
+        } else if (this.height < 0) {
             this.height = 0;
         }
     }

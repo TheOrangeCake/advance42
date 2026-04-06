@@ -8,6 +8,7 @@ SOURCE = sources.txt
 NAME = Simulator
 CLASS_FOLDER = classes
 SCENARIO=scenario.txt
+OUTPUT=simulation.txt
 
 build:
 	@echo "$(BLUE)Getting java files...$(RESET)"
@@ -19,10 +20,13 @@ build:
 run:
 	@echo "$(BLUE)Running $(NAME) with $(SCENARIO)$(RESET)"
 	@java -cp $(CLASS_FOLDER) $(NAME) $(SCENARIO)
+	@echo "$(BLUE)Showing $(OUTPUT)$(RESET)"
+	@cat $(OUTPUT)
 
 clean:
 	@rm -rf $(CLASS_FOLDER)
 	@rm $(SOURCE)
+	@rm $(OUTPUT)
 	@echo "$(GREEN)Cleaning done!$(RESET)"
 
 .PHONY: run build clean

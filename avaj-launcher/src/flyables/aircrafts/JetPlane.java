@@ -1,7 +1,9 @@
 package src.flyables.aircrafts;
 
 import src.utils.Coordinates;
+import src.utils.FileWriter;
 import src.exceptions.BadWeatherException;
+import src.exceptions.BadProgrammerException;
 
 public class JetPlane extends Aircraft {
     public JetPlane(long p_id, String p_name, Coordinates p_coordinate) {
@@ -9,19 +11,27 @@ public class JetPlane extends Aircraft {
     }
 
     @Override
-    public void updateConditions() throws BadWeatherException {
+    public void updateConditions() throws BadWeatherException, BadProgrammerException {
         String weather = this.weatherTower.getWeather(this.coordinate);
         if (weather.equals("SUN")) {
-            this.coordinate.increaseLongitude(2);
-            this.coordinate.increaseHeight(4);
+            this.coordinate.changeLatitude(10);
+            this.coordinate.changeHeight(2);
+            FileWriter.writeLine(this.getFlyableModel() + ":\t\t" + "SUNNY" + ".\t\t" + this.coordinate.toString());
         } else if (weather.equals("RAIN")) {
-            this.coordinate.decreaseHeight(5);
+            this.coordinate.changeLatitude(5);
+            FileWriter.writeLine(this.getFlyableModel() + ":\t\t" + "RAINY" + ".\t\t" + this.coordinate.toString());
         } else if (weather.equals("FOG")) {
-            this.coordinate.decreaseHeight(3);
+            this.coordinate.changeLatitude(1);
+            FileWriter.writeLine(this.getFlyableModel() + ":\t\t" + "FOGGY" + ".\t\t" + this.coordinate.toString());
         } else if (weather.equals("SNOW")) {
-            this.coordinate.decreaseHeight(15);
+            this.coordinate.changeHeight(-7);
+            FileWriter.writeLine(this.getFlyableModel() + ":\t\t" + "SNOWY" + ".\t\t" + this.coordinate.toString());
         } else {
             throw new BadWeatherException();
+        }
+        if (this.coordinate.getHeight() <= 0) {
+            FileWriter.writeLine(this.getFlyableModel() + " landing.");
+            this.weatherTower.unregister(this);
         }
     }
 }

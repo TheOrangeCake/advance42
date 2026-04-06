@@ -3,6 +3,7 @@ package src.flyables.aircrafts;
 import src.utils.Coordinates;
 import src.flyables.Flyable;
 import src.exceptions.BadWeatherException;
+import src.exceptions.BadProgrammerException;
 
 public class Aircraft extends Flyable {
     protected long id;
@@ -16,8 +17,9 @@ public class Aircraft extends Flyable {
     }
 
     @Override
-    public void updateConditions() throws BadWeatherException {
+    public void updateConditions() throws BadWeatherException, BadProgrammerException {
         System.out.println("Do not use this");
+        throw new BadProgrammerException();
     }
     
 

@@ -6,36 +6,33 @@ import java.io.IOException;
 import java.util.Scanner;
 import src.exceptions.BadFileException;
 import src.exceptions.BadFlyableException;
+import src.exceptions.BadProgrammerException;
 import src.flyables.aircrafts.AircraftFactory;
 import src.flyables.Flyable;
 
 public class FileReader {
     private Scanner scanner;
-    private Scenario scenario;
 
     public FileReader(String fileName) throws BadFileException {
         Path path = Paths.get(fileName);
         try {
             this.scanner = new Scanner(path);
-            this.scenario = new Scenario();
         } catch(IOException e) {
             throw new BadFileException(e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
 
-    public Scenario createScenario() throws BadFileException {
+    public void createScenario() throws BadFileException, BadProgrammerException {
         if (this.scanner == null) {
-            System.err.println("What are you doing?! You closed the scanner already!");
-            return null;
+            throw new BadProgrammerException();
         }
         int currentLine = 1;
         parseNumberOfTurns(currentLine++);
         parseFlyables(currentLine);
         this.scanner.close();
-        if (this.scenario.getFlyables().isEmpty()) {
+        if (Scenario.getFlyables().isEmpty()) {
             throw new BadFileException("No flyables");
         }
-        return this.scenario;
     }
 
     private void parseNumberOfTurns(int currentLine) throws BadFileException {
@@ -46,7 +43,7 @@ public class FileReader {
                 if (turn <= 0) {
                     throw new NumberFormatException();
                 }
-                this.scenario.setNumberOfTurns(turn);
+                Scenario.setNumberOfTurns(turn);
             } else {
                 this.scanner.close();
                 throw new BadFileException("Empty");
@@ -73,16 +70,22 @@ public class FileReader {
                 String type = flyableParameters[0];
                 String name = flyableParameters[1];
                 int longitude = Integer.parseInt(flyableParameters[2]);
+                if (longitude < 0) {
+                    throw new BadFileException("Line " + currentLine + ": Bad Flyable");
+                }
                 int latitude = Integer.parseInt(flyableParameters[3]);
+                if (latitude < 0) {
+                    throw new BadFileException("Line " + currentLine + ": Bad Flyable");
+                }
                 int height = Integer.parseInt(flyableParameters[4]);
                 if (height < 0) {
-                    height = 0;
+                    throw new BadFileException("Line " + currentLine + ": Bad Flyable");
                 } else if (height > 100) {
                     height = 100;
                 }
                 Coordinates coordinate = new Coordinates(longitude, latitude, height);
                 Flyable flyable = AircraftFactory.newAircraft(type, name, coordinate);
-                this.scenario.addFlyable(flyable);
+                Scenario.addFlyable(flyable);
                 currentLine++;
             }
         } catch (NumberFormatException e) {
@@ -94,7 +97,4 @@ public class FileReader {
         }
     }
 
-    public Scenario getScenario() {
-        return this.scenario;
-    }
 }
