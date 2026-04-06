@@ -2,7 +2,7 @@ My path to RNCP 7
 
 RNCP 6:
 * Développement applicatif:
-    - avaj-launcher (UML diagram)
+    - **DONE** avaj-launcher (UML diagram)
     - swingy (RPG in Swing)
     - fix-me (stock exchange)
     - darkly (web security)
