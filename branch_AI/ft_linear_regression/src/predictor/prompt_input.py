@@ -1,4 +1,4 @@
-from colorama import Fore, Style
+from colorama import Fore
 
 def prompt_input():
     y = True
@@ -8,17 +8,17 @@ def prompt_input():
         try:
             mileage = int(input_mileage)
             if mileage < 0:
-                print(Fore.RED + "Error: " + Style.RESET_ALL + "Mileage must not be negative")
+                print(Fore.RED + "Error: " + Fore.RESET + "Mileage must not be negative")
                 print("------------------------------------------------------")
                 print()
                 continue
             y = False
         except:
-            print(Fore.RED + "Error: " + Style.RESET_ALL + "Mileage must be a whole number")
+            print(Fore.RED + "Error: " + Fore.RESET + "Mileage must be a whole number")
             print("------------------------------------------------------")
             print()
     return mileage
 
 if __name__ == "__main__":
     mileage = prompt_input()
-    print(Fore.GREEN + "Success:" + Style.RESET_ALL, "User entered", f"{Fore.GREEN}{mileage}{Style.RESET_ALL}")
+    print(Fore.GREEN + "Success:" + Fore.RESET, "User entered", f"{Fore.GREEN}{mileage}{Fore.RESET}")
