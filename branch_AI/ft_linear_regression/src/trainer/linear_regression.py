@@ -1,10 +1,9 @@
+from colorama import Fore
 
-
-def linear_regression(learning_rate, max_iterations, theta0, theta1, data_list):
+def linear_regression(learning_rate, iterations, theta0, theta1, data_list):
     data_list = normalize(data_list)
     m = len(data_list)
-    for iteration in range(max_iterations):
-        # print(f"theta0: {theta0}, theta1: {theta1}")
+    for iteration in range(iterations):
         error_sum_theta0 = 0
         error_sum_theta1 = 0
         for row in data_list:
@@ -14,9 +13,9 @@ def linear_regression(learning_rate, max_iterations, theta0, theta1, data_list):
             error_sum_theta1 += error * row["km"]
         theta0 -= learning_rate * error_sum_theta0 / m
         theta1 -= learning_rate * error_sum_theta1 / m
-        if iteration % 10 == 0:
+        if iteration % 50 == 0:
             cost = mean_squared_error(theta0, theta1, data_list)
-            print(f"Iteration {iteration}: Cost = {cost:.2f}, θ₀ = {theta0:.4f}, θ₁ = {theta1:.4f}")
+            print(f"Iteration {iteration}: {Fore.YELLOW}Cost = {cost:.2f}{Fore.RESET}, {Fore.CYAN}θ₀ = {theta0:.4f}{Fore.RESET}, {Fore.BLUE}θ₁ = {theta1:.4f}{Fore.RESET}")
     return theta0, theta1
 
 def estimate(theta0, theta1, mileage):
@@ -46,7 +45,7 @@ def mean_squared_error(theta0, theta1, data_list):
         estimate_price = estimate(theta0, theta1, row["km"])
         error = estimate_price - row["price"]
         total_error += error ** 2
-    return total_error / (2 * m)
+    return total_error / m
 
 def mock_dataset():
     km_list = [
@@ -65,17 +64,17 @@ def mock_dataset():
     return data_list
 
 if __name__ == "__main__":
-    learning_rate = 0.0001
-    max_iterations = 100
+    learning_rate = 0.1
+    iterations = 2201
     theta0 = 0.0
     theta1 = 0.0
     data_list = mock_dataset()
     trained_theta0, trained_theta1 = linear_regression(
         learning_rate,
-        max_iterations,
+        iterations,
         theta0,
         theta1,
         data_list)
-    print(f"Trained θ₀: {trained_theta0:.4f}. Trained θ₁: {trained_theta1:.4f}")
+    print(f"{Fore.GREEN}Trained:{Fore.RESET} {Fore.CYAN}θ₀: {trained_theta0:.4f}{Fore.RESET}, {Fore.BLUE}θ₁: {trained_theta1:.4f}{Fore.RESET}")
     
 

@@ -3,16 +3,15 @@ import csv
 import sys
 import re
 
-def import_data(file_path, chunk_size = 5):
+def import_data(file_path):
+    data_list = []
     try:
         with open(file_path, mode = "r") as file:
             if not is_headers_good(file):
                 raise csv.Error("Bad headers: must be \"km,price\" exactly")
             file.seek(0)
 
-            data_list = []
             reader = csv.DictReader(file)
-            # Problem: If header is weirdly formatted with 
             for row in reader:
                 try:
                     for key, value in row.items():
@@ -21,11 +20,7 @@ def import_data(file_path, chunk_size = 5):
                     print(f"Bad data: line {reader.line_num}, ignored")
                     continue
                 data_list.append(row)
-                if len(data_list) == chunk_size:
-                    yield data_list
-                    data_list = []
-            if data_list:
-                yield data_list
+            return data_list
     except csv.Error as e:
         sys.exit(f"{Fore.RED}Bad csv file:{Fore.RESET} {e}")
     except Exception as e:
@@ -44,6 +39,5 @@ def is_values_good(value):
 if __name__ == "__main__":
     print("Enter dataset csv file:")
     file_path = input()
-    for data_list in import_data(file_path):
-        for row in data_list:
-            print(row)
+    for row in import_data(file_path):
+        print(row)

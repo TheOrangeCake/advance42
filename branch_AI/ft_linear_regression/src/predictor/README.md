@@ -23,10 +23,6 @@ Variables $\theta_0$ and $\theta_1$ will be calculated by the [trainer program](
 ### Program flow
 1. Prompt user for a mileage
 2. Validate user input
-3. Get the **theta0** and **theta1** from trainer program
+3. Get the $\theta_0$ and $\theta_1$ from trainer program
 4. Run the linear function which formular is in previous section
 5. Display the result (which is the car price) to user
-
-### Bonus
-
-TBD
