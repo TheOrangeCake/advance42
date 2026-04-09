@@ -1,6 +1,7 @@
 from colorama import Fore
 
 def linear_regression(learning_rate, iterations, theta0, theta1, data_list):
+    print(f"{Fore.CYAN}Training model...{Fore.RESET}")
     data_list = normalize(data_list)
     m = len(data_list)
     for iteration in range(iterations):
@@ -13,9 +14,11 @@ def linear_regression(learning_rate, iterations, theta0, theta1, data_list):
             error_sum_theta1 += error * row["km"]
         theta0 -= learning_rate * error_sum_theta0 / m
         theta1 -= learning_rate * error_sum_theta1 / m
-        if iteration % 50 == 0:
+        if iteration % 100 == 0:
             cost = mean_squared_error(theta0, theta1, data_list)
             print(f"Iteration {iteration}: {Fore.YELLOW}Cost = {cost:.2f}{Fore.RESET}, {Fore.CYAN}θ₀ = {theta0:.4f}{Fore.RESET}, {Fore.BLUE}θ₁ = {theta1:.4f}{Fore.RESET}")
+    print(f"{Fore.GREEN}Trained:{Fore.RESET} {Fore.CYAN}θ₀: {theta0:.4f}{Fore.RESET}, {Fore.BLUE}θ₁: {theta1:.4f}{Fore.RESET}")
+    print()
     return theta0, theta1
 
 def estimate(theta0, theta1, mileage):
@@ -74,7 +77,5 @@ if __name__ == "__main__":
         iterations,
         theta0,
         theta1,
-        data_list)
-    print(f"{Fore.GREEN}Trained:{Fore.RESET} {Fore.CYAN}θ₀: {trained_theta0:.4f}{Fore.RESET}, {Fore.BLUE}θ₁: {trained_theta1:.4f}{Fore.RESET}")
-    
+        data_list)    
 

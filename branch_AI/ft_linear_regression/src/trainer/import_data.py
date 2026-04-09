@@ -4,6 +4,7 @@ import sys
 import re
 
 def import_data(file_path):
+    print(f"{Fore.CYAN}Importing data...{Fore.RESET}")
     data_list = []
     try:
         with open(file_path, mode = "r") as file:
@@ -20,11 +21,13 @@ def import_data(file_path):
                     print(f"Bad data: line {reader.line_num}, ignored")
                     continue
                 data_list.append(row)
+            print(f"{Fore.GREEN}Data imported!{Fore.RESET}")
+            print()
             return data_list
     except csv.Error as e:
         sys.exit(f"{Fore.RED}Bad csv file:{Fore.RESET} {e}")
     except Exception as e:
-        sys.exit(f"{Fore.RED}Fail to open file:{Fore.RESET} {e}")
+        sys.exit(f"{Fore.RED}Fail to open data file:{Fore.RESET} {e}")
 
 def is_headers_good(file):
     first_line = next(file).rstrip('\n')
