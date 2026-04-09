@@ -7,11 +7,12 @@ def import_data(file_path, chunk_size = 5):
     try:
         with open(file_path, mode = "r") as file:
             if not is_headers_good(file):
-                raise csv.Error("Bad headers")
+                raise csv.Error("Bad headers: must be \"km,price\" exactly")
             file.seek(0)
 
             data_list = []
             reader = csv.DictReader(file)
+            # Problem: If header is weirdly formatted with 
             for row in reader:
                 try:
                     for key, value in row.items():
@@ -31,9 +32,8 @@ def import_data(file_path, chunk_size = 5):
         sys.exit(f"{Fore.RED}Fail to open file:{Fore.RESET} {e}")
 
 def is_headers_good(file):
-    first_line = next(file).strip()
-    headers = re.split("\\s*,\\s*", first_line)
-    return len(headers) == 2 and headers[0] == "km" and headers[1] == "price"
+    first_line = next(file).rstrip('\n')
+    return first_line == "km,price"
 
 def is_values_good(value):
     num = int(value)
