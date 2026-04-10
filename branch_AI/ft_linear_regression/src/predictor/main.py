@@ -18,10 +18,11 @@ def prediction_program(export_file):
     theta0, theta1, km_min, km_max, price_min, price_max = get_thetas(export_file)
     price = calculate_price(mileage, theta0, theta1, km_min, km_max, price_min, price_max)
 
-    print("A car with", f"{Fore.YELLOW}{mileage}{Fore.RESET}", "kilometer(s) is estimated at", f"{Fore.CYAN}{price:.2f}{Fore.RESET}", "dollar(s)")
+    print("A car with", f"{Fore.YELLOW}{mileage}{Fore.RESET}", "kilometer(s) is estimated at", f"{Fore.CYAN}{price}{Fore.RESET}", "dollar(s)")
     print()
     print("---------------------------------------------------------")
     print()
+
 if __name__ == "__main__":
     export_file = "../trainer/thetas.csv"
     prediction_program(export_file)
