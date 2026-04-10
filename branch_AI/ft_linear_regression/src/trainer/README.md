@@ -31,5 +31,6 @@
 ### Program flow
 1. Import the data from specified csv file. The header need to be "km,price" exactly
 2. Validate data format
+3. Normalize values because of big disparency between km and price
 3. Run linear regression on the dataset using predefined parameters which results in $\theta_0$ and $\theta_1$
-4. Export $\theta_0$ and $\theta_1$ to a file
+4. Export $\theta_0$, $\theta_1$ and values to denormalize to a file

@@ -7,7 +7,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from trainer.import_data import import_data
 from predictor.get_thetas import get_thetas
 
-def draw_graph(data_list, theta0, theta1, km_min, km_max, price_min, price_max, save_path):
+def regression_graph(data_list, theta0, theta1, km_min, km_max, price_min, price_max, save_path):
     print(f"{Fore.BLUE}Generating graph...{Fore.RESET}")
     km_list = []
     price_list = []
@@ -35,7 +35,7 @@ def draw_graph(data_list, theta0, theta1, km_min, km_max, price_min, price_max, 
 if __name__ == "__main__":
     data_file = "../trainer/data.csv"
     export_file = "../trainer/thetas.csv"
-    save_fig = "graph.jpg"
+    save_fig = "graph_1.jpg"
     data_list = import_data(data_file)
     theta0, theta1, km_min, km_max, price_min, price_max = get_thetas(export_file)
-    draw_graph(data_list, theta0, theta1, km_min, km_max, price_min, price_max, save_fig)
+    regression_graph(data_list, theta0, theta1, km_min, km_max, price_min, price_max, save_fig_1)

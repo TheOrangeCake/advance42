@@ -14,8 +14,8 @@ def prediction_program(export_file):
     print(f"{Fore.CYAN}Predictor program started{Fore.RESET}")
     print()
 
-    mileage = prompt_input()
     theta0, theta1, km_min, km_max, price_min, price_max = get_thetas(export_file)
+    mileage = prompt_input()
     price = calculate_price(mileage, theta0, theta1, km_min, km_max, price_min, price_max)
 
     print("A car with", f"{Fore.YELLOW}{mileage}{Fore.RESET}", "kilometer(s) is estimated at", f"{Fore.CYAN}{price}{Fore.RESET}", "dollar(s)")
