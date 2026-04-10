@@ -1,15 +1,14 @@
 from colorama import Fore
 import csv
 import sys
-import re
 
 def import_data(file_path):
-    print(f"{Fore.CYAN}Importing data...{Fore.RESET}")
+    print(f"{Fore.CYAN}Importing data from {file_path}...{Fore.RESET}")
     data_list = []
     try:
         with open(file_path, mode = "r") as file:
             if not is_headers_good(file):
-                raise csv.Error("Bad headers: must be \"km,price\" exactly")
+                raise csv.Error(f"Bad {file_path} headers: must be \"km,price\" exactly")
             file.seek(0)
 
             reader = csv.DictReader(file)
@@ -24,10 +23,11 @@ def import_data(file_path):
             print(f"{Fore.GREEN}Data imported!{Fore.RESET}")
             print()
             return data_list
+
     except csv.Error as e:
-        sys.exit(f"{Fore.RED}Bad csv file:{Fore.RESET} {e}")
+        sys.exit(f"{Fore.RED}Bad {file_path} file:{Fore.RESET} {e}")
     except Exception as e:
-        sys.exit(f"{Fore.RED}Fail to open data file:{Fore.RESET} {e}")
+        sys.exit(f"{Fore.RED}Fail to open {file_path} file:{Fore.RESET} {e}")
 
 def is_headers_good(file):
     first_line = next(file).rstrip('\n')

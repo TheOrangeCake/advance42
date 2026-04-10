@@ -1,9 +1,14 @@
 from colorama import Fore
-from .import_data import import_data
-from .linear_regression import linear_regression
-from .export_thetas import export_thetas
+try:
+    from .import_data import import_data
+    from .linear_regression import linear_regression
+    from .export_thetas import export_thetas
+except ImportError:
+    from import_data import import_data
+    from linear_regression import linear_regression
+    from export_thetas import export_thetas
 
-def training_program(file):
+def training_program(data_file, export_file):
     learning_rate = 0.1
     iterations = 2201
     theta0 = 0.0
@@ -14,14 +19,14 @@ def training_program(file):
     print(f"{Fore.CYAN}Training program started{Fore.RESET}")
     print()
 
-    data_list = import_data(file)
-    trained_theta0, trained_theta1 = linear_regression(
+    data_list = import_data(data_file)
+    trained_theta0, trained_theta1, km_min, km_max, price_min, price_max = linear_regression(
         learning_rate,
         iterations,
         theta0,
         theta1,
         data_list)
-    export_thetas(trained_theta0, trained_theta1)
+    export_thetas(trained_theta0, trained_theta1, km_min, km_max, price_min, price_max, export_file)
 
     print(f"{Fore.GREEN}All done! Training program terminated{Fore.RESET}")
     print()
@@ -29,5 +34,6 @@ def training_program(file):
     print()
 
 if __name__ == "__main__":
-    file = "data.csv"
-    training_program(file)
+    data_file = "data.csv"
+    export_file = "thetas.csv"
+    training_program(data_file, export_file)

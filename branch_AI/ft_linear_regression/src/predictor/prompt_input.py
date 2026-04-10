@@ -17,6 +17,7 @@ def prompt_input():
             print(Fore.RED + "Error: " + Fore.RESET + "Mileage must be a whole number")
             print("------------------------------------------------------")
             print()
+    print()
     return mileage
 
 if __name__ == "__main__":
