@@ -15,8 +15,10 @@ def linear_regression(learning_rate, iterations, theta0, theta1, data_list):
             error_sum_theta0 += error
             error_sum_theta1 += error * row["km"]
         thetas_list.append({"theta0": theta0, "theta1": theta1})
-        theta0 -= learning_rate * error_sum_theta0 / m
-        theta1 -= learning_rate * error_sum_theta1 / m
+        tmp_theta0 = theta0 - learning_rate * error_sum_theta0 / m
+        tmp_theta1 = theta1 - learning_rate * error_sum_theta1 / m
+        theta0 = tmp_theta0
+        theta1 = tmp_theta1
         cost = mean_squared_error(theta0, theta1, data_list)
         cost_list.append({"iteration": iteration, "cost": cost})
     thetas_list.append({"theta0": theta0, "theta1": theta1})

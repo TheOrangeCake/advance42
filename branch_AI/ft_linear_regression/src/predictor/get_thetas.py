@@ -25,7 +25,8 @@ def get_thetas(export_file):
     except csv.Error or ValueError as e:
         sys.exit(f"{Fore.RED}Bad {export_file} file:{Fore.RESET} {e}")
     except Exception as e:
-        sys.exit(f"{Fore.RED}Fail to open {export_file} file:{Fore.RESET} {e}")
+        print(f"{Fore.RED}Fail to open {export_file} file:{Fore.RESET} {e}. Is trainer done?")
+        return 0.0, 0.0, 0, 0, 0, 0
 
 def is_headers_good(file):
     first_line = next(file).rstrip('\n')
