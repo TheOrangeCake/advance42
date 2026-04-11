@@ -8,7 +8,7 @@ from trainer.import_data import import_data
 from predictor.get_thetas import get_thetas
 
 def regression_graph(data_list, theta0, theta1, km_min, km_max, price_min, price_max, save_path):
-    print(f"{Fore.BLUE}Generating graph...{Fore.RESET}")
+    print(f"{Fore.BLUE}Generating graph 1...{Fore.RESET}")
     km_list = []
     price_list = []
     for row in data_list:
@@ -29,7 +29,7 @@ def regression_graph(data_list, theta0, theta1, km_min, km_max, price_min, price
     graph.ylabel("Price (CHF)")
     graph.savefig(save_path)
     # graph.show()
-    print(f"{Fore.GREEN}Graph exported!{Fore.RESET}")
+    print(f"{Fore.GREEN}Graph 1 exported!{Fore.RESET}")
     print()
 
 if __name__ == "__main__":

@@ -2,6 +2,7 @@ from colorama import Fore
 
 def linear_regression(learning_rate, iterations, theta0, theta1, data_list):
     print(f"{Fore.CYAN}Training model...{Fore.RESET}")
+    thetas_list = []
     data_list, km_min, km_max, price_min, price_max = normalize(data_list)
     m = len(data_list)
     for iteration in range(iterations):
@@ -12,14 +13,16 @@ def linear_regression(learning_rate, iterations, theta0, theta1, data_list):
             error = estimate_price - row["price"]
             error_sum_theta0 += error
             error_sum_theta1 += error * row["km"]
+        thetas_list.append({"theta0": theta0, "theta1": theta1})
         theta0 -= learning_rate * error_sum_theta0 / m
         theta1 -= learning_rate * error_sum_theta1 / m
         if iteration % 100 == 0:
             cost = mean_squared_error(theta0, theta1, data_list)
             print(f"Iteration {iteration}: {Fore.YELLOW}Cost = {cost:.2f}{Fore.RESET}, {Fore.CYAN}θ₀ = {theta0:.4f}{Fore.RESET}, {Fore.BLUE}θ₁ = {theta1:.4f}{Fore.RESET}")
+    thetas_list.append({"theta0": theta0, "theta1": theta1})
     print(f"{Fore.GREEN}Trained:{Fore.RESET} {Fore.CYAN}θ₀: {theta0:.4f}{Fore.RESET}, {Fore.BLUE}θ₁: {theta1:.4f}{Fore.RESET}")
     print()
-    return theta0, theta1, km_min, km_max, price_min, price_max
+    return theta0, theta1, km_min, km_max, price_min, price_max, thetas_list
 
 def estimate(theta0, theta1, mileage):
     return theta0 + (theta1 * mileage)
