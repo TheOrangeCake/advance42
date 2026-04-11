@@ -17,9 +17,8 @@ def linear_regression(learning_rate, iterations, theta0, theta1, data_list):
         thetas_list.append({"theta0": theta0, "theta1": theta1})
         theta0 -= learning_rate * error_sum_theta0 / m
         theta1 -= learning_rate * error_sum_theta1 / m
-        if iteration % 10 == 0:
-            cost = mean_squared_error(theta0, theta1, data_list)
-            cost_list.append({"iteration": iteration, "cost": cost})
+        cost = mean_squared_error(theta0, theta1, data_list)
+        cost_list.append({"iteration": iteration, "cost": cost})
     thetas_list.append({"theta0": theta0, "theta1": theta1})
     print(f"{Fore.GREEN}Trained:{Fore.RESET} {Fore.CYAN}θ₀: {theta0:.4f}{Fore.RESET}, {Fore.BLUE}θ₁: {theta1:.4f}{Fore.RESET}")
     print()

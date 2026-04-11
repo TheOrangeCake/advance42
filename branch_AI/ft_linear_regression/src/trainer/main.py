@@ -13,8 +13,8 @@ except ImportError:
     from export_cost import export_cost
 
 def training_program(data_file, export_thetas_file, export_thetas_list_file, export_cost_list_file):
-    learning_rate = 0.1
-    iterations = 1500
+    learning_rate = 1.7
+    iterations = 100
     theta0 = 0.0
     theta1 = 0.0
 

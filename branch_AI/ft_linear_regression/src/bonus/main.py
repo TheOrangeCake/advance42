@@ -9,12 +9,14 @@ try:
     from .cost_graph import cost_graph
     from .get_thetas_history import get_thetas_history
     from .get_cost_evolution import get_cost_evolution
+    from .calculate_r_squared import r_squared
 except ImportError:
     from regression_graph import regression_graph
     from training_graph import training_graph
     from cost_graph import cost_graph
     from get_thetas_history import get_thetas_history
     from get_cost_evolution import get_cost_evolution
+    from calculate_r_squared import r_squared
 from trainer.import_data import import_data
 from predictor.get_thetas import get_thetas
 
@@ -33,6 +35,8 @@ def bonus_program(data_file, export_thetas_file, export_thetas_list_file, export
 
     iterations, cost_list = get_cost_evolution(export_cost_file)
     cost_graph(iterations, cost_list, save_fig_3)
+
+    r_squared(data_list, theta0, theta1, km_min, km_max, price_min, price_max)
 
     print(f"{Fore.GREEN}Bonus done!{Fore.RESET}")
     print("---------------------------------------------------------")
