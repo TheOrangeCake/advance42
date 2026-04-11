@@ -19,7 +19,6 @@ def get_thetas_history(export_file):
                 theta1_list.append(float(row["theta1"]))
             print(f"{Fore.GREEN}Thetas training history read!{Fore.RESET}")
             print()
-            print(theta0_list)
             return theta0_list, theta1_list
 
     except csv.Error or ValueError as e:

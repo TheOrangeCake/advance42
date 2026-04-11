@@ -15,8 +15,3 @@ def export_thetas(theta0, theta1, km_min, km_max, price_min, price_max, export_f
 
     print(f"{Fore.GREEN}Variables θ₀ and θ₁ exported!{Fore.RESET}")
     print()
-
-if __name__ == "__main__":
-    theta0 = 1.0
-    theta1 = 2.0
-    export_thetas(theta0, theta1, "thetas.csv")

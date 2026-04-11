@@ -3,10 +3,6 @@ import sys
 import os
 import matplotlib.pyplot as graph
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from trainer.import_data import import_data
-from predictor.get_thetas import get_thetas
-
 def regression_graph(data_list, theta0, theta1, km_min, km_max, price_min, price_max, save_path):
     print(f"{Fore.BLUE}Generating graph 1...{Fore.RESET}")
     km_list = []
@@ -20,22 +16,16 @@ def regression_graph(data_list, theta0, theta1, km_min, km_max, price_min, price
     y1 = (theta0 + theta1 * ((x1 - km_min) / (km_max - km_min))) * (price_max - price_min) + price_min
     y2 = (theta0 + theta1 * ((x2 - km_min) / (km_max - km_min))) * (price_max - price_min) + price_min
 
-    graph.plot([x1, x2], [y1, y2], color="red")
-
-    graph.scatter(km_list, price_list, color="blue")
-
+    graph.figure()
+    graph.plot([x1, x2], [y1, y2], color="red", label="price prediction")
+    graph.scatter(km_list, price_list, color="blue", label="real data")
     graph.title("Car price prediction based on mileage")
     graph.xlabel("Mileage (km)")
     graph.ylabel("Price (CHF)")
+    graph.grid(True)
+    graph.legend()
     graph.savefig(save_path)
-    # graph.show()
+    # graph.show(block=False)
+    # graph.close()
     print(f"{Fore.GREEN}Graph 1 exported!{Fore.RESET}")
     print()
-
-if __name__ == "__main__":
-    data_file = "../trainer/data.csv"
-    export_file = "../trainer/thetas.csv"
-    save_fig = "graph_1.jpg"
-    data_list = import_data(data_file)
-    theta0, theta1, km_min, km_max, price_min, price_max = get_thetas(export_file)
-    regression_graph(data_list, theta0, theta1, km_min, km_max, price_min, price_max, save_fig_1)
