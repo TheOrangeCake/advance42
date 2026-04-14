@@ -28,13 +28,24 @@ def bonus_program(data_file, export_thetas_file, export_thetas_list_file, export
 
     data_list = import_data(data_file)
     theta0, theta1, km_min, km_max, price_min, price_max = get_thetas(export_thetas_file)
+    if (theta0 == 0.0 and theta1 == 0.0):
+        return
+
     regression_graph(data_list, theta0, theta1, km_min, km_max, price_min, price_max, save_fig_1)
     
     theta0_list, theta1_list = get_thetas_history(export_thetas_list_file)
-    training_graph(theta0_list, theta1_list, save_fig_2)
+    if (not theta0_list or not theta1_list):
+        print(f"{Fore.RED}Empty thetas training history{Fore.RESET}")
+        print()
+    else:
+        training_graph(theta0_list, theta1_list, save_fig_2)
 
     iterations, cost_list = get_cost_evolution(export_cost_file)
-    cost_graph(iterations, cost_list, save_fig_3)
+    if (not iterations or not cost_list):
+        print(f"{Fore.RED}Empty MSE data{Fore.RESET}")
+        print()
+    else:
+        cost_graph(iterations, cost_list, save_fig_3)
 
     r_squared(data_list, theta0, theta1, km_min, km_max, price_min, price_max)
 

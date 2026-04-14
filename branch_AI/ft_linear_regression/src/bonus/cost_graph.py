@@ -12,7 +12,7 @@ def cost_graph(iterations, cost_list, save_path):
     graph.legend()
     graph.grid(True)
     graph.savefig(save_path)
-    # graph.show(block=False)
+    graph.show(block=False)
     # graph.close()
     print(f"{Fore.GREEN}Graph 3 exported!{Fore.RESET}")
     print()
