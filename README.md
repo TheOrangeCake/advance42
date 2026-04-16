@@ -2,14 +2,14 @@ My path to RNCP 7
 
 RNCP 6:
 * Développement applicatif:
-    - **WORKING ON:** swingy (RPG in Swing)
-    - fix-me (stock exchange)
-    - darkly (web security)
+    - **WORKING ON:** swingy (RPG in 9'450)
+    - fix-me (stock exchange 15'750)
+    - darkly (web security 6'300)
 * Suite (choice):
-    - pestilence (virus)
-    - override (cyber security)
+    - pestilence (virus 15'750) + all prerequise project
+    - override (cyber security 35'700) + all prerequise project
 * Done:
-    - avaj-launcher (UML diagram)
+    - avaj-launcher (UML diagram 4'200)
     
  
 RNCP 7:
@@ -23,7 +23,7 @@ RNCP 7:
     - matcha (dating site clone 9'450)
     - hypertube (MVC 15'750)
 * Suite (choice):
-    - pestilence (virus)
-    - override (cyber security)
+    - pestilence (virus 15'750) + all prerequise project
+    - override (cyber security 35'700) + all prerequise project
 * Done:
     - ft_linear_regression (price prediction 4'200)
