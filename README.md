@@ -6,8 +6,8 @@ RNCP 6:
     - fix-me (stock exchange 15'750)
     - darkly (web security 6'300)
 * Suite (choice):
-    - pestilence (virus 15'750) + all prerequise project
-    - override (cyber security 35'700) + all prerequise project
+    - pestilence (virus 15'750) + all prerequise project: woody-woodpacker (9'450), famine (9'450)
+    - override (cyber security 35'700) + all prerequise project: cybersecurity piscine (9'450), snow-crash (9'450), rainfall (25'200)
 * Done:
     - avaj-launcher (UML diagram 4'200)
     
@@ -23,7 +23,7 @@ RNCP 7:
     - matcha (dating site clone 9'450)
     - hypertube (MVC 15'750)
 * Suite (choice):
-    - pestilence (virus 15'750) + all prerequise project
-    - override (cyber security 35'700) + all prerequise project
+    - pestilence (virus 15'750) + all prerequise project: woody-woodpacker (9'450), famine (9'450)
+    - override (cyber security 35'700) + all prerequise project: cybersecurity piscine (9'450), snow-crash (9'450), rainfall (25'200)
 * Done:
     - ft_linear_regression (price prediction 4'200)
