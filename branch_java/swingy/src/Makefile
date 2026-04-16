@@ -6,12 +6,14 @@ RESET := \033[0m
 
 NAME = Simulator
 CLASS_FOLDER = classes
+SOURCE = sources.txt
 
 build:
 
 run:
 
 clean:
+	@rm $(SOURCE)
 	@rm -rf $(CLASS_FOLDER)
 	@echo "$(GREEN)Cleaning done!$(RESET)"
 
