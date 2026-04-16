@@ -2,21 +2,21 @@ My path to RNCP 7
 
 RNCP 6:
 * Développement applicatif:
-        - **DONE** avaj-launcher (UML diagram) **DONE**
-    - swingy (RPG in Swing)
+    - **WORKING ON:** swingy (RPG in Swing)
     - fix-me (stock exchange)
     - darkly (web security)
 * Suite (choice):
     - pestilence (virus)
     - override (cyber security)
+* Done:
+    - avaj-launcher (UML diagram)
     
  
 RNCP 7:
 * Architecture des bases de données et data: (70'000)
-    - dslr (data science 6'000)
+    - **WORKING ON:** dslr (data science 6'000)
     - leaffliction (diease recognisation 15'750)
     - learn2slither (autonomouse decision making 9'450)
-        - **DONE** ft_linear_regression (price prediction 4'200) **DONE**
     - total-perspective-vortex (brain wave 9'450)
     - multilayer-perceptron (neurons network 9'450)
     - expert-system (proposition calculation 9'450)
@@ -25,3 +25,5 @@ RNCP 7:
 * Suite (choice):
     - pestilence (virus)
     - override (cyber security)
+* Done:
+    - ft_linear_regression (price prediction 4'200)
