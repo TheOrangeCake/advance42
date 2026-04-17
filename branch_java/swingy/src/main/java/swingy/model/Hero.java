@@ -1,4 +1,4 @@
-package src.model;
+package swingy.model;
 
 public abstract class Hero {
     protected String name;
