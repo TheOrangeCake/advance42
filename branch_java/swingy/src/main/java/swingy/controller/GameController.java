@@ -1,8 +1,9 @@
 package swingy.controller;
 
 import swingy.view.View;
-import swingy.utils.game_menu.MainMenu;
-import swingy.utils.game_menu.SettingMenu;
+import swingy.view.game_menu.MainMenu;
+import swingy.view.game_menu.SettingMenu;
+import swingy.utils.Colors;
 
 public class GameController {
     private View view;
@@ -11,15 +12,27 @@ public class GameController {
         this.view = view;
     }
 
-    public MainMenu createGame() {
-        return view.start();
+    public MainMenu start() {
+        return view.startPage(this::onMainMenuChoice);
     }
 
-    public SettingMenu setting() {
-        return view.setting();
+    private void onMainMenuChoice(MainMenu choice) {
+        switch (choice) {
+            case NEW_GAME:
+                System.out.println("New Game");
+                break;
+            case CONTINUE_SAVE:
+                System.out.println("Load Save");
+                break;
+            case SETTING:
+                System.out.println("Check Setting");
+                break;
+            case EXIT:
+                view.stop();
+            default:
+                System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
+                view.stop();
+        }
     }
 
-    public void closeGame() {
-        view.stop();
-    }
 }

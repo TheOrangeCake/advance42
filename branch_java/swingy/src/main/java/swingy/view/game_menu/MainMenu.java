@@ -1,4 +1,4 @@
-package swingy.utils.game_menu;
+package swingy.view.game_menu;
 
 public enum MainMenu implements Menu {
     NEW_GAME("Start a new adventure"),

@@ -1,4 +1,4 @@
-package swingy.utils.game_menu;
+package swingy.view.game_menu;
 
 public enum SettingMenu implements Menu {
     SWITCH_VIEW("Switch view"),

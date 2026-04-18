@@ -4,29 +4,11 @@ import swingy.controller.GameController;
 import swingy.view.ViewFactory;
 import swingy.view.View;
 import swingy.utils.ViewType;
-import swingy.utils.game_menu.MainMenu;
-import swingy.utils.Colors;
 
 public class Swingy {
     public static void main(String[] args) {
-        View gameView = ViewFactory.createView(ViewType.CONSOLE);
+        View gameView = ViewFactory.createView(ViewType.GUI);
         GameController gameController = new GameController(gameView);
-
-        MainMenu MainMenu = gameController.createGame();
-        switch (MainMenu) {
-            case NEW_GAME:
-                System.out.println("Create new game");
-                return;
-            case CONTINUE_SAVE:
-                System.out.println("Load saves");
-                return;
-            case SETTING:
-                System.out.println(gameController.setting());
-                return;
-            case EXIT:
-                gameController.closeGame();
-                System.out.println(Colors.YELLOW + "Fantasy over! Get back to work!" + Colors.RESET);
-                return;
-        }
+        gameController.start();
     }
 }
