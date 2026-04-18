@@ -2,3 +2,4 @@ classes
 sources.txt
 *.class
 .mvn
+target

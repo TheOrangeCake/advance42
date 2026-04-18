@@ -1,4 +1,4 @@
-package swingy.model;
+package swingy.model.character;
 
 public class Warrior extends Hero {
     public Warrior(String name) {
