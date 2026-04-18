@@ -4,7 +4,9 @@ import java.util.Scanner;
 import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import swingy.utils.Colors;
-import swingy.utils.game_menu.MainMenuChoice;
+import swingy.utils.game_menu.Menu;
+import swingy.utils.game_menu.MainMenu;
+import swingy.utils.game_menu.SettingMenu;
 import swingy.model.character.Hero;
 import swingy.model.character.Warrior;
 
@@ -16,7 +18,7 @@ public class ConsoleView implements View {
     }
 
     @Override
-    public MainMenuChoice start() {
+    public MainMenu start() {
         System.out.println(Colors.CYAN +
             "\n" +
             "\n" +
@@ -38,7 +40,26 @@ public class ConsoleView implements View {
             Colors.RESET);
         System.out.println(Colors.YELLOW + "WELCOME BRAVE ADVENTURER!\n" +
             "What do you want to do?" + Colors.RESET);
-        for (MainMenuChoice choice : MainMenuChoice.values()) {
+        showMenu(MainMenu.class);
+        return readInput(MainMenu.class);
+    }
+
+    @Override
+    public SettingMenu setting() {
+        System.out.println(Colors.YELLOW + "Setting\n" +
+            "What do you want to do?" + Colors.RESET);
+        showMenu(SettingMenu.class);
+        return readInput(SettingMenu.class);
+    }
+
+    @Override
+    public void stop() {
+        scanner.close();
+    }
+
+    private <T extends Enum<T> & Menu> void showMenu(Class<T> enumClass) {
+        T[] choices = enumClass.getEnumConstants();
+        for (T choice : choices) {
             System.out.println(Colors.CYAN +
                 "( " +
                 (choice.ordinal() + 1) +
@@ -46,13 +67,18 @@ public class ConsoleView implements View {
                 Colors.RESET +
                 choice.getDescription());
         }
+    }
+
+    private <T extends Enum<T> & Menu> T readInput(Class<T> enumClass) {
+        T[] choices = enumClass.getEnumConstants();
         while (true) {
             try {
                 System.out.print("\nChoice: ");
                 int input = scanner.nextInt();
-                if (input > 0 && input <= MainMenuChoice.values().length) {
+                if (input > 0 && input <= choices.length) {
                     scanner.nextLine();
-                    return MainMenuChoice.values()[input - 1];
+                    System.out.println();
+                    return choices[input - 1];
                 } else {
                     throw new InputMismatchException();
                 }
@@ -60,16 +86,13 @@ public class ConsoleView implements View {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Does adventurer not know how to read? Please enter valid choice value.");
                 scanner.nextLine();
             } catch (NoSuchElementException e) {
-                return MainMenuChoice.EXIT;
+                this.stop();
+                System.out.println(Colors.YELLOW + "Fantasy over! Get back to work!" + Colors.RESET);
+                System.exit(0);
             } catch (IllegalStateException e) {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Bad programmer! I am shutting down");
                 System.exit(-1);
             }
         }
-    }
-
-    @Override
-    public void stop() {
-        scanner.close();
     }
 }

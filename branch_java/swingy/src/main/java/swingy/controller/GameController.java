@@ -1,7 +1,8 @@
 package swingy.controller;
 
 import swingy.view.View;
-import swingy.utils.game_menu.MainMenuChoice;
+import swingy.utils.game_menu.MainMenu;
+import swingy.utils.game_menu.SettingMenu;
 
 public class GameController {
     private View view;
@@ -10,8 +11,12 @@ public class GameController {
         this.view = view;
     }
 
-    public MainMenuChoice createGame() {
+    public MainMenu createGame() {
         return view.start();
+    }
+
+    public SettingMenu setting() {
+        return view.setting();
     }
 
     public void closeGame() {

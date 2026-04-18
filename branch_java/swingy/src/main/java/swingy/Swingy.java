@@ -4,7 +4,7 @@ import swingy.controller.GameController;
 import swingy.view.ViewFactory;
 import swingy.view.View;
 import swingy.utils.ViewType;
-import swingy.utils.game_menu.MainMenuChoice;
+import swingy.utils.game_menu.MainMenu;
 import swingy.utils.Colors;
 
 public class Swingy {
@@ -12,8 +12,8 @@ public class Swingy {
         View gameView = ViewFactory.createView(ViewType.CONSOLE);
         GameController gameController = new GameController(gameView);
 
-        MainMenuChoice mainMenuChoice = gameController.createGame();
-        switch (mainMenuChoice) {
+        MainMenu MainMenu = gameController.createGame();
+        switch (MainMenu) {
             case NEW_GAME:
                 System.out.println("Create new game");
                 return;
@@ -21,7 +21,7 @@ public class Swingy {
                 System.out.println("Load saves");
                 return;
             case SETTING:
-                System.out.println("Load setting");
+                System.out.println(gameController.setting());
                 return;
             case EXIT:
                 gameController.closeGame();
