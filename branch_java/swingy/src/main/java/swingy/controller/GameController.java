@@ -1,22 +1,22 @@
 package swingy.controller;
 
 import swingy.view.View;
-import swingy.view.game_menu.MainMenu;
-import swingy.view.game_menu.SettingMenu;
+import swingy.view.game_menu.MainMenuChoice;
+import swingy.view.game_menu.SettingMenuChoice;
 import swingy.utils.Colors;
 
 public class GameController {
-    private View view;
+    private final View view;
 
     public GameController(View view) {
         this.view = view;
     }
 
-    public MainMenu start() {
-        return view.startPage(this::onMainMenuChoice);
+    public void start() {
+        view.startPage(this::onMainMenuChoice);
     }
 
-    private void onMainMenuChoice(MainMenu choice) {
+    private void onMainMenuChoice(MainMenuChoice choice) {
         switch (choice) {
             case NEW_GAME:
                 System.out.println("New Game");
@@ -29,6 +29,7 @@ public class GameController {
                 break;
             case EXIT:
                 view.stop();
+                return;
             default:
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
                 view.stop();

@@ -10,7 +10,7 @@ public enum ViewFactory {
             case CONSOLE:
                 return new ConsoleView();
             case GUI:
-                return new GuiView(1440, 780);
+                return new GuiView(780, 1440);
             default:
                 System.err.println("Error: Invalid view type");
                 System.exit(-1);

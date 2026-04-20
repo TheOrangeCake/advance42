@@ -1,11 +1,12 @@
 package swingy.view;
 
-import swingy.model.character.Hero;
-import swingy.view.game_menu.MainMenu;
-import swingy.view.game_menu.SettingMenu;
+import swingy.view.game_menu.MainMenuChoice;
+import swingy.view.game_menu.SettingMenuChoice;
+
+import java.util.function.Consumer;
 
 public interface View {
-    public void startPage();
-    // public void settingPage();
+    public void startPage(Consumer<MainMenuChoice> onChoice);
+     public void settingPage(Consumer<SettingMenuChoice> onChoice);
     public void stop();
 }

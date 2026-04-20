@@ -6,8 +6,8 @@ import swingy.view.View;
 import swingy.utils.ViewType;
 
 public class Swingy {
-    public static void main(String[] args) {
-        View gameView = ViewFactory.createView(ViewType.GUI);
+    static void main(String[] args) {
+        View gameView = ViewFactory.createView(ViewType.CONSOLE);
         GameController gameController = new GameController(gameView);
         gameController.start();
     }

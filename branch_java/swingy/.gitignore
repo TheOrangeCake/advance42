@@ -3,3 +3,4 @@ sources.txt
 *.class
 .mvn
 target
+.idea

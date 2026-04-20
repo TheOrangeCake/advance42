@@ -1,12 +1,12 @@
 package swingy.view.game_menu;
 
-public enum SettingMenu implements Menu {
+public enum SettingMenuChoice implements Menu {
     SWITCH_VIEW("Switch view"),
     BACK("Back");
 
     private final String description;
 
-    SettingMenu(String description) {
+    SettingMenuChoice(String description) {
         this.description = description;
     }
 
