@@ -18,21 +18,25 @@ public class GameController {
 
     private void onMainMenuChoice(MainMenuChoice choice) {
         switch (choice) {
-            case NEW_GAME:
-                System.out.println("New Game");
-                break;
-            case CONTINUE_SAVE:
-                System.out.println("Load Save");
-                break;
-            case SETTING:
-                System.out.println("Check Setting");
-                break;
-            case EXIT:
-                view.stop();
-                return;
-            default:
+            case NEW_GAME -> System.out.println("New Game");
+            case CONTINUE_SAVE -> System.out.println("Load Save");
+            case SETTING -> view.settingPage(this::onSettingChoice);
+            case EXIT -> view.stop();
+            default -> {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
                 view.stop();
+            }
+        }
+    }
+
+    private void onSettingChoice(SettingMenuChoice choice) {
+        switch (choice) {
+            case SWITCH_VIEW -> System.out.println("Switch view");
+            case BACK -> start();
+            default -> {
+                System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
+                view.stop();
+            }
         }
     }
 

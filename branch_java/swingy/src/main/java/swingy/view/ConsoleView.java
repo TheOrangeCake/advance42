@@ -14,10 +14,6 @@
 
      public ConsoleView() {
          this.scanner = new Scanner(System.in);
-     }
-
-     @Override
-     public void startPage(Consumer<MainMenuChoice> onChoice) {
          System.out.println(Colors.CYAN +
              "\n" +
              "\n" +
@@ -37,6 +33,10 @@
              "\n" +
              "\n" +
              Colors.RESET);
+     }
+
+     @Override
+     public void startPage(Consumer<MainMenuChoice> onChoice) {
          System.out.println(Colors.YELLOW + "WELCOME BRAVE ADVENTURER!\n" +
              "What do you want to do?" + Colors.RESET);
          showMenu(MainMenuChoice.class);
