@@ -1,12 +1,16 @@
 package swingy.view;
 
-import javax.swing.JFrame;
-import javax.swing.JButton;
-import java.awt.FlowLayout;
-import java.awt.Container;
-import java.util.function.Consumer;
+
+import swingy.view.game_menu.HeroClassChoice;
 import swingy.view.game_menu.MainMenuChoice;
 import swingy.view.game_menu.SettingMenuChoice;
+import swingy.view.ui.Button;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class GuiView implements View {
     private final JFrame frame;
@@ -17,21 +21,20 @@ public class GuiView implements View {
         this.frame = new JFrame();
         this.height = height;
         this.width = width;
-        System.out.println("GUI View");
     }
 
     @Override
     public void startPage(Consumer<MainMenuChoice> onChoice) {
-        Container container = frame.getContentPane();
-        container.removeAll();
-        FlowLayout flowLayout = new FlowLayout();
-        container.setLayout(flowLayout);
-        
+        JPanel container = new JPanel();
+        container.setBackground(new Color(0, 0, 0));
+
         frame.setSize(this.width, this.height);
         frame.setTitle("42 Swingy");
+        frame.setContentPane(container);
 
         for (MainMenuChoice choice : MainMenuChoice.values()) {
-            JButton button = new JButton(choice.getDescription());
+            Button button = new Button(choice.getDescription());
+
             button.addActionListener(ae -> onChoice.accept(choice));
             container.add(button);
         }
@@ -42,6 +45,11 @@ public class GuiView implements View {
     @Override
     public void settingPage(Consumer<SettingMenuChoice> onChoice) {
 
+    }
+
+    @Override
+    public void newGamePage(BiConsumer<HeroClassChoice, String> onChoice) {
+        onChoice.accept(HeroClassChoice.DEFENDER, "");
     }
 
     @Override

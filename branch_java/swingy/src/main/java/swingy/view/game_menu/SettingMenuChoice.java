@@ -10,6 +10,7 @@ public enum SettingMenuChoice implements Menu {
         this.description = description;
     }
 
+    @Override
     public String getDescription() {
         return this.description;
     }

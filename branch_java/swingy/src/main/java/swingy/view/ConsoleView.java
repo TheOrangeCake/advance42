@@ -1,13 +1,16 @@
  package swingy.view;
 
+ import swingy.utils.Colors;
+ import swingy.view.game_menu.HeroClassChoice;
+ import swingy.view.game_menu.Menu;
+ import swingy.view.game_menu.MainMenuChoice;
+ import swingy.view.game_menu.SettingMenuChoice;
+
  import java.util.Scanner;
  import java.util.InputMismatchException;
  import java.util.NoSuchElementException;
  import java.util.function.Consumer;
- import swingy.utils.Colors;
- import swingy.view.game_menu.Menu;
- import swingy.view.game_menu.MainMenuChoice;
- import swingy.view.game_menu.SettingMenuChoice;
+ import java.util.function.BiConsumer;
 
  public class ConsoleView implements View {
      private final Scanner scanner;
@@ -45,10 +48,18 @@
 
      @Override
      public void settingPage(Consumer<SettingMenuChoice> onChoice) {
-         System.out.println(Colors.YELLOW + "Setting\n" +
+         System.out.println(Colors.YELLOW + "SETTING\n" +
              "What do you want to do?" + Colors.RESET);
          showMenu(SettingMenuChoice.class);
          onChoice.accept(readInput(SettingMenuChoice.class));
+     }
+
+     @Override
+     public void newGamePage(BiConsumer<HeroClassChoice, String> onChoice) {
+         System.out.println(Colors.YELLOW + "SETTING\n" +
+                 "Who are you?" + Colors.RESET);
+         showMenu(HeroClassChoice.class);
+         onChoice.accept(readInput(HeroClassChoice.class), getPlayerName());
      }
 
      @Override
@@ -94,6 +105,10 @@
                  System.exit(-1);
              }
          }
+     }
+
+     private String getPlayerName() {
+         return "";
      }
  }
 
