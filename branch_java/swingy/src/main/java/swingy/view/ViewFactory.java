@@ -1,7 +1,5 @@
 package swingy.view;
 
-import swingy.utils.ViewType;
-
 public enum ViewFactory {
     INSTANCE;
 

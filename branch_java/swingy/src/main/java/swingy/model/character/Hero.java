@@ -1,7 +1,9 @@
 package swingy.model.character;
 
+import swingy.model.PlayerName;
+
 public abstract class Hero {
-    protected String name;
+    protected PlayerName name;
     protected String className;
     protected int level;
     protected int experience;
@@ -10,10 +12,10 @@ public abstract class Hero {
     protected int hitPoints;
     protected String image;
 
-    public String getName() {
+    public PlayerName getName() {
         return this.name;
     }
-    public void setName(String name) {
+    public void setName(PlayerName name) {
         this.name = name;
     }
 

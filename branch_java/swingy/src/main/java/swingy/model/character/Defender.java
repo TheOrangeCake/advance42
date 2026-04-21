@@ -1,7 +1,9 @@
 package swingy.model.character;
 
+import swingy.model.PlayerName;
+
 public class Defender extends Hero {
-    public Defender(String name) {
+    public Defender(PlayerName name) {
         this.name = name;
         this.className = "Defender";
         this.level = 0;

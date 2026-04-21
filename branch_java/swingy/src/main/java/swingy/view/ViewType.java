@@ -1,4 +1,4 @@
-package swingy.utils;
+package swingy.view;
 
 public enum ViewType {
     CONSOLE,

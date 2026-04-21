@@ -3,11 +3,11 @@ package swingy;
 import swingy.controller.GameController;
 import swingy.view.ViewFactory;
 import swingy.view.View;
-import swingy.utils.ViewType;
+import swingy.view.ViewType;
 
 public class Swingy {
     static void main(String[] args) {
-        View gameView = ViewFactory.createView(ViewType.GUI);
+        View gameView = ViewFactory.createView(ViewType.CONSOLE);
         GameController gameController = new GameController(gameView);
         gameController.start();
     }

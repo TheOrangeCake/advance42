@@ -1,6 +1,5 @@
 package swingy.view;
 
-
 import swingy.view.game_menu.HeroClassChoice;
 import swingy.view.game_menu.MainMenuChoice;
 import swingy.view.game_menu.SettingMenuChoice;

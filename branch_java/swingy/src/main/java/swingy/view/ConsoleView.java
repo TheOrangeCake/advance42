@@ -1,14 +1,19 @@
  package swingy.view;
 
+ import swingy.model.PlayerName;
+ import swingy.model.ConsoleChoice;
  import swingy.utils.Colors;
+ import swingy.utils.ValidatorClient;
  import swingy.view.game_menu.HeroClassChoice;
  import swingy.view.game_menu.Menu;
  import swingy.view.game_menu.MainMenuChoice;
  import swingy.view.game_menu.SettingMenuChoice;
+ import jakarta.validation.ConstraintViolation;
+ import jakarta.validation.Validator;
 
  import java.util.Scanner;
- import java.util.InputMismatchException;
  import java.util.NoSuchElementException;
+ import java.util.Set;
  import java.util.function.Consumer;
  import java.util.function.BiConsumer;
 
@@ -82,23 +87,27 @@
 
      private <T extends Enum<T> & Menu> T readInput(Class<T> enumClass) {
          T[] choices = enumClass.getEnumConstants();
+         Validator validator = ValidatorClient.getValidator();
          while (true) {
              try {
                  System.out.print("\nChoice: ");
-                 int input = scanner.nextInt();
-                 if (input > 0 && input <= choices.length) {
-                     scanner.nextLine();
-                     System.out.println();
-                     return choices[input - 1];
-                 } else {
-                     throw new InputMismatchException();
+                 int input = Integer.parseInt(scanner.nextLine().trim());
+                 ConsoleChoice choice = new ConsoleChoice(input);
+                 Set<ConstraintViolation<ConsoleChoice>> violations = validator.validate(choice);
+                 if (!violations.isEmpty()) {
+                     System.err.println(Colors.RED + "Error: " + Colors.RESET + violations.iterator().next().getMessage());
+                     continue;
                  }
-             } catch (InputMismatchException e) {
+                 if (input > choices.length) {
+                     System.err.println(Colors.RED + "Error: " + Colors.RESET + "Choice must be between 1 and " + choices.length);
+                     continue;
+                 }
+                 System.out.println();
+                 return choices[input - 1];
+             } catch (NumberFormatException e) {
                  System.err.println(Colors.RED + "Error: " + Colors.RESET + "Does adventurer not know how to read? Please enter valid choice value.");
-                 scanner.nextLine();
              } catch (NoSuchElementException e) {
                  this.stop();
-                 System.out.println(Colors.YELLOW + "Fantasy over! Get back to work!" + Colors.RESET);
                  System.exit(0);
              } catch (IllegalStateException e) {
                  System.err.println(Colors.RED + "Error: " + Colors.RESET + "Bad programmer! I am shutting down");
@@ -108,7 +117,18 @@
      }
 
      private String getPlayerName() {
-         return "";
+         Validator validator = ValidatorClient.getValidator();
+         while (true) {
+             System.out.println("What is your name?");
+             String input = scanner.nextLine();
+             PlayerName playerName = new PlayerName(input);
+             Set<ConstraintViolation<PlayerName>> constraintViolations = validator.validate(playerName);
+             if (!constraintViolations.isEmpty()) {
+                 System.err.println(Colors.RED + "Invalid name" + Colors.RESET + ": " + constraintViolations.iterator().next().getMessage());
+                 System.out.println();
+                 continue;
+             }
+             return input;
+         }
      }
  }
-
