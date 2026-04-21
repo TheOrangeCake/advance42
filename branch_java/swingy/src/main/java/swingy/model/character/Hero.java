@@ -10,6 +10,7 @@ public abstract class Hero {
     protected int attack;
     protected int defense;
     protected int hitPoints;
+    protected int crit;
     protected String image;
 
     public PlayerName getName() {
@@ -59,6 +60,13 @@ public abstract class Hero {
     }
     public void setHitPoints(int hitPoints) {
         this.hitPoints = hitPoints;
+    }
+
+    public int getCrit() {
+        return this.crit;
+    }
+    public void setCrit(int crit) {
+        this.crit = crit;
     }
 
     public String getImage() {
