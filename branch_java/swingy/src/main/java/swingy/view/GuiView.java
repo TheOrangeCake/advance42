@@ -48,11 +48,11 @@ public class GuiView implements View {
         gbc.insets = new Insets(12, 0, 12, 0);
         for (MainMenuChoice choice : MainMenuChoice.values()) {
             Button button = new Button(choice.getDescription());
-            button.addActionListener(ae -> onChoice.accept(choice));
+            button.addActionListener(_ -> onChoice.accept(choice));
             gbc.gridy++;
             panel.add(button, gbc);
         }
-        redoPage(panel);
+        repaintPage(panel);
     }
 
     @Override
@@ -69,14 +69,6 @@ public class GuiView implements View {
         gbc.insets = new Insets(0, 0, 20, 0);
         gbc.anchor = GridBagConstraints.CENTER;
         panel.add(gameTitle, gbc);
-
-        JLabel divider1 = new JLabel("*-*-*-*-*-*-*-*-*");
-        divider1.setForeground(Color.WHITE);
-        divider1.setFont(Typography.PARAGRAPH.getTypography());
-        divider1.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridy++;
-        gbc.insets = new Insets(8, 0, 8, 0);
-        panel.add(divider1, gbc);
 
         JLabel about = new JLabel("42 Swingy made by Nguyen NGUYEN (hoannguy) from 42 Lausanne");
         about.setForeground(Color.WHITE);
@@ -97,16 +89,19 @@ public class GuiView implements View {
         gbc.insets = new Insets(12, 0, 12, 0);
         for (SettingMenuChoice choice : SettingMenuChoice.values()) {
             Button button = new Button(choice.getDescription());
-            button.addActionListener(ae -> onChoice.accept(choice));
+            button.addActionListener(_ -> onChoice.accept(choice));
             gbc.gridy++;
             panel.add(button, gbc);
         }
-        redoPage(panel);
+        repaintPage(panel);
     }
 
     @Override
     public void newGamePage(BiConsumer<HeroClassChoice, String> onChoice) {
-        onChoice.accept(HeroClassChoice.DEFENDER, "");
+        JPanel panel = setLayout();
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        repaintPage(panel);
     }
 
     @Override
@@ -121,7 +116,7 @@ public class GuiView implements View {
         return panel;
     }
 
-    private void redoPage(JPanel panel) {
+    private void repaintPage(JPanel panel) {
         frame.setContentPane(panel);
         frame.revalidate();
         frame.repaint();

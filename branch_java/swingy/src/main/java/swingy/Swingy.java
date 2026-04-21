@@ -7,7 +7,7 @@ import swingy.view.ViewType;
 
 public class Swingy {
     static void main(String[] args) {
-        View gameView = ViewFactory.createView(ViewType.CONSOLE);
+        View gameView = ViewFactory.createView(ViewType.GUI);
         GameController gameController = new GameController(gameView);
         gameController.start();
     }

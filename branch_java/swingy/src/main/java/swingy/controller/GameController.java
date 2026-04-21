@@ -1,6 +1,5 @@
 package swingy.controller;
 
-import swingy.model.PlayerName;
 import swingy.view.View;
 import swingy.view.game_menu.HeroClassChoice;
 import swingy.view.game_menu.MainMenuChoice;
