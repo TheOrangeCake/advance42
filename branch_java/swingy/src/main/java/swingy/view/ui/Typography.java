@@ -8,7 +8,8 @@ public enum Typography {
     H3(new Font("Monospaced", Font.PLAIN, 24)),
     H4(new Font("Monospaced", Font.BOLD, 20)),
     H5(new Font("Monospaced", Font.PLAIN, 16)),
-    PARAGRAPH(new Font("Monospaced", Font.PLAIN, 12));
+    PARAGRAPH(new Font("Monospaced", Font.PLAIN, 12)),
+    GAME_TITLE(new Font("Monospaced", Font.BOLD, 96));
 
     private final Font typography;
     Typography(Font typography) {
