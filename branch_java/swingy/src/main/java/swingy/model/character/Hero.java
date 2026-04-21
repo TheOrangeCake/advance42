@@ -8,6 +8,7 @@ public abstract class Hero {
     protected int attack;
     protected int defense;
     protected int hitPoints;
+    protected String image;
 
     public String getName() {
         return this.name;
@@ -56,5 +57,12 @@ public abstract class Hero {
     }
     public void setHitPoints(int hitPoints) {
         this.hitPoints = hitPoints;
+    }
+
+    public String getImage() {
+        return this.image;
+    }
+    public void setImage(String image) {
+        this.image = image;
     }
 }

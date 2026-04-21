@@ -9,5 +9,6 @@ public class Defender extends Hero {
         this.attack = 10;
         this.defense = 20;
         this.hitPoints = 200;
+        this.image = "/assets/defender.png";
     }
 }
