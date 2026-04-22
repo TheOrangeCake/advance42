@@ -101,7 +101,7 @@ public class NewGamePage {
             card.add(Box.createVerticalStrut(8));
 
             JSeparator divider = new JSeparator();
-            divider.setForeground(new Color(80, 80, 110));
+            divider.setForeground(new Color(160, 160, 200));
             divider.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
             card.add(divider);
             card.add(Box.createVerticalStrut(12));
@@ -198,7 +198,7 @@ public class NewGamePage {
         keyLabel.setFont(Typography.H5.getTypography());
 
         JLabel dots = new JLabel();
-        dots.setForeground(new Color(70, 70, 100));
+        dots.setForeground(new Color(160, 160, 200));
         dots.setFont(Typography.H5.getTypography());
         dots.setText("......................");
         dots.setHorizontalAlignment(SwingConstants.CENTER);
