@@ -1,7 +1,6 @@
 classes
 sources.txt
 *.class
-.mvn
 target
 .idea
 dependency-reduced-pom.xml
