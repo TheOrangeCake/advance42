@@ -1,130 +1,24 @@
-package swingy.view;
+package swingy.view.gui_view;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import swingy.model.PlayerName;
+import swingy.utils.FileLoader;
 import swingy.utils.ValidatorClient;
 import swingy.view.game_menu.HeroClassChoice;
-import swingy.view.game_menu.MainMenuChoice;
-import swingy.view.game_menu.SettingMenuChoice;
 import swingy.view.ui.Button;
 import swingy.view.ui.Typography;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
-public class GuiView implements View {
-    private final JFrame frame;
-
-    public GuiView(int height, int width) {
-        this.frame = new JFrame();
-        frame.setSize(width, height);
-        frame.setTitle("42 Swingy");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-    }
-
-    @Override
-    public void startPage(Consumer<MainMenuChoice> onChoice) {
-        JPanel panel = setLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        JLabel gameTitle = new JLabel("42 Swingy");
-        gameTitle.setForeground(Color.WHITE);
-        gameTitle.setFont(Typography.GAME_TITLE.getTypography());
-        gameTitle.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.insets = new Insets(0, 0, 8, 0);
-        gbc.anchor = GridBagConstraints.CENTER;
-        panel.add(gameTitle, gbc);
-
-        JLabel divider = new JLabel("*-*-*-*-*-*-*-*-*");
-        divider.setForeground(Color.WHITE);
-        divider.setFont(Typography.PARAGRAPH.getTypography());
-        divider.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridy++;
-        gbc.insets = new Insets(0, 0, 40, 0);
-        panel.add(divider, gbc);
-
-        gbc.insets = new Insets(12, 0, 12, 0);
-        for (MainMenuChoice choice : MainMenuChoice.values()) {
-            Button button = new Button(choice.getDescription());
-            button.addActionListener(_ -> onChoice.accept(choice));
-            gbc.gridy++;
-            panel.add(button, gbc);
-        }
-        repaintPage(panel);
-    }
-
-    @Override
-    public void settingPage(Consumer<SettingMenuChoice> onChoice) {
-        JPanel panel = setLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        JLabel pageTitle = new JLabel("Setting");
-        pageTitle.setForeground(Color.WHITE);
-        pageTitle.setFont(Typography.H1.getTypography());
-        pageTitle.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.insets = new Insets(0, 0, 20, 0);
-        gbc.anchor = GridBagConstraints.CENTER;
-        panel.add(pageTitle, gbc);
-
-        JLabel about = new JLabel("42 Swingy made by Nguyen NGUYEN (hoannguy) from 42 Lausanne");
-        about.setForeground(Color.WHITE);
-        about.setFont(Typography.H5.getTypography());
-        about.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridy++;
-        gbc.insets = new Insets(8, 0, 8, 0);
-        panel.add(about, gbc);
-
-        JLabel divider2 = new JLabel("*-*-*-*-*-*-*-*-*");
-        divider2.setForeground(Color.WHITE);
-        divider2.setFont(Typography.PARAGRAPH.getTypography());
-        divider2.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridy++;
-        gbc.insets = new Insets(8, 0, 40, 0);
-        panel.add(divider2, gbc);
-
-        gbc.insets = new Insets(12, 0, 12, 0);
-        for (SettingMenuChoice choice : SettingMenuChoice.values()) {
-            Button button = new Button(choice.getDescription());
-            button.addActionListener(_ -> onChoice.accept(choice));
-            gbc.gridy++;
-            panel.add(button, gbc);
-        }
-        repaintPage(panel);
-    }
-
-    @Override
-    public void stop() {
-        frame.dispose();
-    }
-
-    private JPanel setLayout() {
-        JPanel panel = new JPanel();
-        panel.setBackground(Color.BLACK);
-        panel.setLayout(new GridBagLayout());
-        return panel;
-    }
-
-    private void repaintPage(JPanel panel) {
-        frame.setContentPane(panel);
-        frame.revalidate();
-        frame.repaint();
-    }
-
+public class NewGamePage {
     private static final String[] STAT_LABELS = {"LVL", "EXP", "ATK", "DEF", "HP", "CRIT"};
     private static final Color[] STAT_COLORS = {
             new Color(180, 180, 255),
@@ -135,11 +29,12 @@ public class GuiView implements View {
             new Color(255, 160,  60),
     };
 
-    @Override
-    public void newGamePage(BiConsumer<HeroClassChoice, String> onChoice) {
+    public void displayPage(BiConsumer<HeroClassChoice, String> onChoice, JFrame frame) {
         Validator validator = ValidatorClient.getValidator();
 
-        JPanel root = setLayout();
+        JPanel root = new JPanel();
+        root.setBackground(Color.BLACK);
+        root.setLayout(new GridBagLayout());
         root.setLayout(new BoxLayout(root, BoxLayout.Y_AXIS));
         root.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -191,7 +86,7 @@ public class GuiView implements View {
             card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
             // Hero image
-            ImageIcon icon = loadScaledIcon(choice.getImage(), 148, 148);
+            ImageIcon icon = FileLoader.loadScaledImage(choice.getImage(), 148, 148);
             JLabel imageLabel = new JLabel(icon != null ? icon : new ImageIcon());
             imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             card.add(imageLabel);
@@ -252,13 +147,11 @@ public class GuiView implements View {
             cards.add(card);
             cardsPanel.add(card);
         }
-
-
         root.add(cardsPanel);
         root.add(Box.createVerticalStrut(24));
 
         // Submit button
-        Button submitButton = new Button("Create Hero");
+        swingy.view.ui.Button submitButton = new Button("Create Hero");
         submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Error
@@ -290,18 +183,9 @@ public class GuiView implements View {
         root.add(submitButton);
         root.add(Box.createVerticalStrut(6));
         root.add(errorLabel);
-        repaintPage(root);
-    }
-
-    private ImageIcon loadScaledIcon(String resourcePath, int maxW, int maxH) {
-        try {
-            URL url = getClass().getResource(resourcePath);
-            if (url == null) return null;
-            Image img = ImageIO.read(url).getScaledInstance(maxW, maxH, Image.SCALE_SMOOTH);
-            return new ImageIcon(img);
-        } catch (Exception e) {
-            return null;
-        }
+        frame.setContentPane(root);
+        frame.revalidate();
+        frame.repaint();
     }
 
     private JPanel buildStatRow(String label, int value, Color color) {
