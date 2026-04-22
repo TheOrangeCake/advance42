@@ -1,17 +1,69 @@
 package swingy.model.character;
 
 import swingy.model.PlayerName;
+import swingy.model.artifact.Artifact;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Hero {
     protected PlayerName name;
     protected String className;
-    protected int level;
-    protected int experience;
+    protected int level = 1;
+    protected int experience = 0;
     protected int attack;
     protected int defense;
     protected int hitPoints;
     protected int crit;
     protected String image;
+    protected List<Artifact> artifacts = new ArrayList<>();
+
+    public Hero() {}
+
+    public Hero(Hero hero) {
+        this.name = hero.name;
+        this.className = hero.className;
+        this.level = hero.level;
+        this.experience = hero.experience;
+        this.attack = hero.attack;
+        this.defense = hero.defense;
+        this.hitPoints = hero.hitPoints;
+        this.crit = hero.crit;
+        this.image = hero.image;
+        this.artifacts.addAll(hero.artifacts);
+    }
+
+    public void addExperience(int experience) {
+        this.experience += experience;
+        int expToLevelUp = (int) (this.level * 1000 + Math.pow((this.level - 1), 2) * 450);
+        if (this.experience >= expToLevelUp) {
+            levelUp();
+        }
+    }
+
+    private void levelUp() {
+        this.level += 1;
+        this.experience = 0;
+        this.attack += 10;
+        this.defense += 10;
+        this.hitPoints += 50;
+    }
+
+    public void setArtifacts(List<Artifact> artifacts) {
+        this.artifacts.addAll(artifacts);
+        for (Artifact artifact : artifacts) {
+            this.attack += artifact.getAttack();
+            this.defense += artifact.getDefense();
+            this.hitPoints += artifact.getHitPoints();
+        }
+    }
+
+    public void setArtifacts(Artifact artifact) {
+        this.artifacts.add(artifact);
+        this.attack += artifact.getAttack();
+        this.defense += artifact.getDefense();
+        this.hitPoints += artifact.getHitPoints();
+    }
 
     public PlayerName getName() {
         return this.name;
@@ -19,60 +71,34 @@ public abstract class Hero {
     public void setName(PlayerName name) {
         this.name = name;
     }
-
     public String getClassName() {
         return this.className;
     }
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
     public int getLevel() {
         return this.level;
     }
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
     public int getExperience() {
         return this.experience;
     }
-    public void setExperience(int experience) {
-        this.experience = experience;
-    }
-
     public int getAttack() {
         return this.attack;
     }
-    public void setAttack(int attack) {
-        this.attack = attack;
-    }
-
     public int getDefense() {
         return this.defense;
     }
-    public void setDefense(int defense) {
-        this.defense = defense;
-    }
-
     public int getHitPoints() {
         return this.hitPoints;
     }
-    public void setHitPoints(int hitPoints) {
-        this.hitPoints = hitPoints;
-    }
-
     public int getCrit() {
         return this.crit;
     }
-    public void setCrit(int crit) {
-        this.crit = crit;
-    }
-
     public String getImage() {
         return this.image;
     }
     public void setImage(String image) {
         this.image = image;
+    }
+    public List<Artifact> getArtifacts() {
+        return this.artifacts;
     }
 }
