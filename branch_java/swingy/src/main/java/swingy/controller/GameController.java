@@ -68,13 +68,14 @@ public class GameController {
     private void onInGameChoice(InGameChoice choice) {
         switch (choice) {
             case UP:
-                gameMap.moveHero(0, 1);
+                gameMap.moveHero(0, -1);
                 break;
             case DOWN:
-                gameMap.moveHero(0, -1);
+                gameMap.moveHero(0, 1);
                 break;
             case LEFT:
                 gameMap.moveHero(-1, 0);
+                break;
             case RIGHT:
                 gameMap.moveHero(1, 0);
                 break;
@@ -102,7 +103,6 @@ public class GameController {
             case SAVE_GAME -> System.out.println("Save game");
             case MAIN_MENU -> this.start();
             case BACK -> view.inGamePage(this::onInGameChoice, this.hero, this.gameMap);
-            case EXIT -> view.stop();
             default -> {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
                 view.stop();

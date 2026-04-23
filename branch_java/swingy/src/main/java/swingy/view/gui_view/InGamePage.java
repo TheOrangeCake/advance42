@@ -15,6 +15,10 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class InGamePage {
+    private double mapScale   = 1.0;
+    private double mapOffsetX = 0;
+    private double mapOffsetY = 0;
+
     public void displayPage(Consumer<InGameChoice> onChoice, JFrame frame, Hero hero, GameMap gameMap) {
         JPanel panel = new JPanel();
         panel.setBackground(Color.BLACK);
@@ -30,22 +34,28 @@ public class InGamePage {
 
         JPanel body = new JPanel(new GridBagLayout());
         body.setBackground(Color.BLACK);
+        body.setBorder(new EmptyBorder(12, 12, 12, 12));
         GridBagConstraints g = new GridBagConstraints();
         g.fill    = GridBagConstraints.BOTH;
         g.insets  = new Insets(0, 6, 0, 6);
         g.weighty = 1.0;
 
         g.gridx  = 0;
-        g.weightx = 0.2;
+        g.weightx = 2.0;
         body.add(buildStatsPanel(hero, onChoice), g);
 
         g.gridx  = 1;
-        g.weightx = 0.6;
-        MapPanel mapPanel = new MapPanel(gameMap);
+        g.weightx = 6.0;
+        MapPanel mapPanel = new MapPanel(gameMap, mapScale, mapOffsetX, mapOffsetY);
+        mapPanel.setOnStateChanged((scale, ox, oy) -> {
+            this.mapScale = scale;
+            this.mapOffsetX = ox;
+            this.mapOffsetY = oy;
+        });
         body.add(mapPanel, g);
 
         g.gridx  = 2;
-        g.weightx = 0.2;
+        g.weightx = 1.0;
         body.add(buildRightPanel(onChoice, mapPanel), g);
 
         panel.add(body, BorderLayout.CENTER);
@@ -126,17 +136,15 @@ public class InGamePage {
     }
 
     private JPanel buildRightPanel(Consumer<InGameChoice> onChoice, MapPanel mapPanel) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.BLACK);
 
-        // villain info
         JPanel villainCard = new JPanel();
         villainCard.setLayout(new BoxLayout(villainCard, BoxLayout.Y_AXIS));
         villainCard.setBackground(Color.BLACK);
-        villainCard.setAlignmentX(Component.LEFT_ALIGNMENT);
+        villainCard.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel noSelection = new JLabel("Click a villain");
+        JLabel noSelection = new JLabel("Select a villain");
         noSelection.setFont(Typography.PARAGRAPH.getTypography());
         noSelection.setForeground(Color.WHITE);
         noSelection.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -186,11 +194,16 @@ public class InGamePage {
             villainCard.repaint();
         });
 
-        panel.add(villainCard);
-        panel.add(Box.createVerticalGlue());
-        panel.add(separator());
-        panel.add(Box.createVerticalStrut(12));
-        panel.add(buildControlPad(onChoice));
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+        bottomPanel.setBackground(Color.BLACK);
+        bottomPanel.add(separator());
+        bottomPanel.add(Box.createVerticalStrut(12));
+        bottomPanel.add(buildControlPad(onChoice));
+
+        panel.add(villainCard, BorderLayout.CENTER);
+        panel.add(bottomPanel, BorderLayout.SOUTH);
+
         return panel;
     }
 
@@ -199,7 +212,6 @@ public class InGamePage {
         controlPad.setBackground(Color.BLACK);
         controlPad.setAlignmentX(Component.CENTER_ALIGNMENT);
         GridBagConstraints g = new GridBagConstraints();
-        g.insets = new Insets(2, 2, 2, 2);
 
         JButton up = arrowButton(InGameChoice.UP.getDescription());
         up.addActionListener(_ -> onChoice.accept(InGameChoice.UP));
@@ -209,10 +221,15 @@ public class InGamePage {
         left.addActionListener(_ -> onChoice.accept(InGameChoice.LEFT));
         JButton right = arrowButton(InGameChoice.RIGHT.getDescription());
         right.addActionListener(_ -> onChoice.accept(InGameChoice.RIGHT));
+        Dimension btnSize = new Dimension(100, 32);
+        up.setPreferredSize(btnSize);
+        down.setPreferredSize(btnSize);
+        left.setPreferredSize(btnSize);
+        right.setPreferredSize(btnSize);
 
         g.gridx = 1; g.gridy = 0; controlPad.add(up, g);
         g.gridx = 0; g.gridy = 1; controlPad.add(left, g);
-        g.gridx = 1; g.gridy = 1; controlPad.add(new JLabel(""), g);
+        g.gridx = 1; g.gridy = 1; controlPad.add(new JLabel("x"), g);
         g.gridx = 2; g.gridy = 1; controlPad.add(right, g);
         g.gridx = 1; g.gridy = 2; controlPad.add(down, g);
 
@@ -236,7 +253,7 @@ public class InGamePage {
 
     private JSeparator separator() {
         JSeparator sep = new JSeparator();
-        sep.setForeground(Color.DARK_GRAY);
+        sep.setForeground(Color.GRAY);
         sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
         return sep;
     }
@@ -280,7 +297,7 @@ public class InGamePage {
     private JButton arrowButton(String symbol) {
         JButton btn = new JButton(symbol) {
             @Override protected void paintComponent(Graphics g2) {
-                g2.setColor(getModel().isRollover() ? Color.CYAN : Color.BLACK);
+                g2.setColor(getModel().isRollover() ? Color.DARK_GRAY : Color.BLACK);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 6, 6);
                 super.paintComponent(g2);
             }
@@ -296,21 +313,28 @@ public class InGamePage {
         return btn;
     }
 
+    @FunctionalInterface
+    interface TriConsumer {
+        void accept(double scale, double ox, double oy);
+    }
+
     static class MapPanel extends JPanel {
         private final GameMap gameMap;
-
         private static final int baseTileSize = 48;
-        private double scale       = 1.0;
-        private double offsetX     = 0;
-        private double offsetY     = 0;
-        private Point  dragStart   = null;
+        private double scale;
+        private double offsetX;
+        private double offsetY;
+        private Point  dragStart = null;
         private double dragOffsetX = 0;
         private double dragOffsetY = 0;
+        private Consumer<Villain> onVillainSelected;
+        private TriConsumer onStateChanged;
 
-        private java.util.function.Consumer<Villain> onVillainSelected;
-
-        MapPanel(GameMap gameMap) {
-            this.gameMap  = gameMap;
+        MapPanel(GameMap gameMap, double initScale, double initOffsetX, double initOffsetY) {
+            this.gameMap = gameMap;
+            this.scale = initScale;
+            this.offsetX = initOffsetX;
+            this.offsetY = initOffsetY;
             setBackground(Color.BLACK);
             setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
 
@@ -318,6 +342,7 @@ public class InGamePage {
             addMouseWheelListener(e -> {
                 double factor = e.getWheelRotation() < 0 ? 1.1 : 0.9;
                 scale = Math.clamp(scale * factor, 0.3, 4.0);
+                notifyStateChanged();
                 repaint();
             });
 
@@ -335,7 +360,7 @@ public class InGamePage {
                         double dx = e.getX() - dragStart.x;
                         double dy = e.getY() - dragStart.y;
                         if (Math.abs(dx) < 4 && Math.abs(dy) < 4) {
-                            handleClick(e.getPoint()); // treat as click if barely moved
+                            handleClick(e.getPoint());
                         }
                         dragStart = null;
                     }
@@ -346,10 +371,20 @@ public class InGamePage {
                     if (dragStart != null) {
                         offsetX = dragOffsetX + (e.getX() - dragStart.x);
                         offsetY = dragOffsetY + (e.getY() - dragStart.y);
+                        notifyStateChanged();
                         repaint();
                     }
                 }
             });
+        }
+
+        private void notifyStateChanged() {
+            if (this.onStateChanged != null)
+                this.onStateChanged.accept(scale, offsetX, offsetY);
+        }
+
+        void setOnStateChanged(TriConsumer onStateChanged) {
+            this.onStateChanged = onStateChanged;
         }
 
         void setOnVillainSelected(Consumer<Villain> onSelected) {
@@ -400,7 +435,7 @@ public class InGamePage {
                     g2.fillRect(px, py, tileSize, tileSize);
 
                     // tile border
-                    g2.setColor(Color.GRAY);
+                    g2.setColor(Color.BLACK);
                     g2.drawRect(px, py, tileSize, tileSize);
 
                     boolean isHero    = heroPos[0] == col && heroPos[1] == row;
