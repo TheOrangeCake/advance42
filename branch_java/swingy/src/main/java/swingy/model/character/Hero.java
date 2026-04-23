@@ -1,13 +1,12 @@
 package swingy.model.character;
 
-import swingy.model.PlayerName;
 import swingy.model.artifact.Artifact;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Hero {
-    protected PlayerName name;
+    protected String name;
     protected String className;
     protected int level = 1;
     protected int experience = 0;
@@ -15,7 +14,8 @@ public abstract class Hero {
     protected int defense;
     protected int hitPoints;
     protected int crit;
-    protected String image;
+    protected String imageUrl;
+    protected String deadImageUrl = "/assets/hero_dead.png";
     protected List<Artifact> artifacts = new ArrayList<>();
 
     public Hero() {}
@@ -29,7 +29,7 @@ public abstract class Hero {
         this.defense = hero.defense;
         this.hitPoints = hero.hitPoints;
         this.crit = hero.crit;
-        this.image = hero.image;
+        this.imageUrl = hero.imageUrl;
         this.artifacts.addAll(hero.artifacts);
     }
 
@@ -65,10 +65,10 @@ public abstract class Hero {
         this.hitPoints += artifact.getHitPoints();
     }
 
-    public PlayerName getName() {
+    public String getName() {
         return this.name;
     }
-    public void setName(PlayerName name) {
+    public void setName(String name) {
         this.name = name;
     }
     public String getClassName() {
@@ -92,11 +92,14 @@ public abstract class Hero {
     public int getCrit() {
         return this.crit;
     }
-    public String getImage() {
-        return this.image;
+    public String getImageUrl() {
+        return this.imageUrl;
     }
-    public void setImage(String image) {
-        this.image = image;
+    public String getDeadImageUrl() {
+        return this.deadImageUrl;
+    }
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
     public List<Artifact> getArtifacts() {
         return this.artifacts;

@@ -1,9 +1,9 @@
 package swingy.view.gui_view;
 
+import swingy.model.character.Hero;
+import swingy.model.map.Map;
 import swingy.view.View;
-import swingy.view.game_menu.HeroClassChoice;
-import swingy.view.game_menu.MainMenuChoice;
-import swingy.view.game_menu.SettingMenuChoice;
+import swingy.view.game_menu.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,12 +15,16 @@ public class GuiView implements View {
     private final StartPage startPage;
     private final NewGamePage newGamePage;
     private final SettingPage settingPage;
+    private final InGamePage inGamePage;
+    private final InGameSettingPage inGameSettingPage;
 
     public GuiView(int height, int width) {
         this.frame = new JFrame();
         this.startPage = new StartPage();
         this.newGamePage = new NewGamePage();
         this.settingPage = new SettingPage();
+        this.inGamePage = new InGamePage();
+        this.inGameSettingPage = new InGameSettingPage();
         frame.setSize(width, height);
         frame.setTitle("42 Swingy");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -40,6 +44,16 @@ public class GuiView implements View {
     @Override
     public void newGamePage(BiConsumer<HeroClassChoice, String> onChoice) {
         newGamePage.displayPage(onChoice, frame);
+    }
+
+    @Override
+    public void inGamePage(Consumer<InGameChoice> onChoice, Hero hero, Map map) {
+        inGamePage.displayPage(onChoice, frame, hero, map);
+    }
+
+    @Override
+    public void inGameSettingPage(Consumer<InGameSettingChoice> onChoice) {
+        inGameSettingPage.displayPage(onChoice, frame);
     }
 
     @Override

@@ -2,12 +2,11 @@
 
  import swingy.model.PlayerName;
  import swingy.model.ConsoleChoice;
+ import swingy.model.character.Hero;
+ import swingy.model.map.Map;
  import swingy.utils.Colors;
  import swingy.utils.ValidatorClient;
- import swingy.view.game_menu.HeroClassChoice;
- import swingy.view.game_menu.Menu;
- import swingy.view.game_menu.MainMenuChoice;
- import swingy.view.game_menu.SettingMenuChoice;
+ import swingy.view.game_menu.*;
  import jakarta.validation.ConstraintViolation;
  import jakarta.validation.Validator;
 
@@ -66,6 +65,16 @@
                  "Who are you?" + Colors.RESET);
          showMenu(HeroClassChoice.class);
          onChoice.accept(readInput(HeroClassChoice.class), getPlayerName());
+     }
+
+     @Override
+     public void inGamePage(Consumer<InGameChoice> onChoice, Hero hero, Map map) {
+
+     }
+
+     @Override
+     public void inGameSettingPage(Consumer<InGameSettingChoice> onChoice) {
+
      }
 
      @Override
