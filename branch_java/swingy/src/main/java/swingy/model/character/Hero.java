@@ -37,13 +37,13 @@ public abstract class Hero {
         this.experience += experience;
         int expToLevelUp = (int) (this.level * 1000 + Math.pow((this.level - 1), 2) * 450);
         if (this.experience >= expToLevelUp) {
-            levelUp();
+            levelUp(this.experience - expToLevelUp);
         }
     }
 
-    private void levelUp() {
+    private void levelUp(int leftOverExp) {
         this.level += 1;
-        this.experience = 0;
+        this.experience = leftOverExp;
         this.attack += 10;
         this.defense += 10;
         this.hitPoints += 50;
