@@ -1,15 +1,12 @@
 package swingy.view.game_menu;
 
-public enum InGameSettingChoice implements Menu {
-    SWITCH_VIEW("Switch view"),
-    SAVE_GAME("Save game"),
-    MAIN_MENU("Go main menu"),
-    BACK("Back"),
+public enum DefeatChoice implements Menu {
+    MAIN_MENU("Go to main menu"),
     EXIT("Exit to real life");
 
     private final String description;
 
-    InGameSettingChoice(String description) {
+    DefeatChoice(String description) {
         this.description = description;
     }
 

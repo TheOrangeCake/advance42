@@ -58,7 +58,7 @@ public abstract class Hero {
         }
     }
 
-    public void setArtifacts(Artifact artifact) {
+    public void setArtifact(Artifact artifact) {
         this.artifacts.add(artifact);
         this.attack += artifact.getAttack();
         this.defense += artifact.getDefense();

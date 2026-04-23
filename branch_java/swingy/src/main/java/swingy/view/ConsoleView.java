@@ -3,7 +3,7 @@
  import swingy.model.PlayerName;
  import swingy.model.ConsoleChoice;
  import swingy.model.character.Hero;
- import swingy.model.map.Map;
+ import swingy.model.map.GameMap;
  import swingy.utils.Colors;
  import swingy.utils.ValidatorClient;
  import swingy.view.game_menu.*;
@@ -68,7 +68,7 @@
      }
 
      @Override
-     public void inGamePage(Consumer<InGameChoice> onChoice, Hero hero, Map map) {
+     public void inGamePage(Consumer<InGameChoice> onChoice, Hero hero, GameMap gameMap) {
 
      }
 

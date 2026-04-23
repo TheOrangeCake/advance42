@@ -1,12 +1,11 @@
 package swingy.view.gui_view;
 
 import swingy.model.character.Hero;
-import swingy.model.map.Map;
+import swingy.model.map.GameMap;
 import swingy.view.View;
 import swingy.view.game_menu.*;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -47,8 +46,8 @@ public class GuiView implements View {
     }
 
     @Override
-    public void inGamePage(Consumer<InGameChoice> onChoice, Hero hero, Map map) {
-        inGamePage.displayPage(onChoice, frame, hero, map);
+    public void inGamePage(Consumer<InGameChoice> onChoice, Hero hero, GameMap gameMap) {
+        inGamePage.displayPage(onChoice, frame, hero, gameMap);
     }
 
     @Override

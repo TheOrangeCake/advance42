@@ -1,9 +1,10 @@
 package swingy.controller;
 
+import swingy.model.artifact.Artifact;
 import swingy.model.character.Defender;
 import swingy.model.character.Fighter;
 import swingy.model.character.Hero;
-import swingy.model.map.Map;
+import swingy.model.map.GameMap;
 import swingy.view.View;
 import swingy.view.game_menu.*;
 import swingy.utils.Colors;
@@ -11,7 +12,7 @@ import swingy.utils.Colors;
 public class GameController {
     private final View view;
     private Hero hero = null;
-    private Map map = null;
+    private GameMap gameMap = null;
 
     public GameController(View view) {
         this.view = view;
@@ -60,22 +61,22 @@ public class GameController {
                 view.stop();
                 System.exit(-1);
         }
-        this.map = new Map(1);
-        view.inGamePage(this::onInGameChoice, this.hero, this.map);
+        this.gameMap = new GameMap(1);
+        view.inGamePage(this::onInGameChoice, this.hero, this.gameMap);
     }
 
     private void onInGameChoice(InGameChoice choice) {
         switch (choice) {
             case UP:
-                map.moveHero(0, 1);
+                gameMap.moveHero(0, 1);
                 break;
             case DOWN:
-                map.moveHero(0, -1);
+                gameMap.moveHero(0, -1);
                 break;
             case LEFT:
-                map.moveHero(-1, 0);
+                gameMap.moveHero(-1, 0);
             case RIGHT:
-                map.moveHero(1, 0);
+                gameMap.moveHero(1, 0);
                 break;
             case SETTING:
                 view.inGameSettingPage(this::onInGameSettingChoice);
@@ -85,7 +86,14 @@ public class GameController {
                 view.stop();
                 System.exit(-1);
         }
-        view.inGamePage(this::onInGameChoice, this.hero, this.map);
+        if (gameMap.isCombat()) {
+            if (gameMap.isWin()) {
+                // draw win popup with a generated artifact and WinChoice
+            } else {
+                // draw defeat popup with DefeatChoice
+            }
+        }
+        view.inGamePage(this::onInGameChoice, this.hero, this.gameMap);
     }
 
     private void onInGameSettingChoice(InGameSettingChoice choice) {
@@ -93,7 +101,34 @@ public class GameController {
             case SWITCH_VIEW -> System.out.println("Switch view");
             case SAVE_GAME -> System.out.println("Save game");
             case MAIN_MENU -> this.start();
-            case BACK -> view.inGamePage(this::onInGameChoice, this.hero, this.map);
+            case BACK -> view.inGamePage(this::onInGameChoice, this.hero, this.gameMap);
+            case EXIT -> view.stop();
+            default -> {
+                System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
+                view.stop();
+                System.exit(-1);
+            }
+        }
+    }
+
+    private void onWinChoice(WinChoice choice, Artifact artifact) {
+        switch (choice) {
+            case TAKE:
+                hero.setArtifact(artifact);
+                break;
+            case DISCARD:
+                break;
+            default:
+                System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
+                view.stop();
+                System.exit(-1);
+        }
+        view.inGamePage(this::onInGameChoice, this.hero, this.gameMap);
+    }
+
+    private void onDefeatChoice(DefeatChoice choice) {
+        switch (choice) {
+            case MAIN_MENU -> this.start();
             case EXIT -> view.stop();
             default -> {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");

@@ -1,9 +1,6 @@
 package swingy.view.gui_view;
 
-import swingy.model.character.Hero;
-import swingy.model.map.Map;
 import swingy.view.game_menu.InGameSettingChoice;
-import swingy.view.ui.Button;
 import swingy.view.ui.Typography;
 
 import javax.swing.*;
