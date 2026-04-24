@@ -11,6 +11,7 @@ public class GameMap {
     private int level;
     private int size;
     private final int[] heroPosition = {0, 0};
+    private final int[] prevPosition = {0, 0};
     private int nbVillain;
     private final Map<String, Villain> villains = new HashMap<>();
 
@@ -22,6 +23,8 @@ public class GameMap {
         calculateSize();
         this.heroPosition[0] = this.size / 2 + 1;
         this.heroPosition[1] = this.size / 2 + 1;
+        this.prevPosition[0] = this.size / 2 + 1;
+        this.prevPosition[1] = this.size / 2 + 1;
         calculateNbVillain();
         generateVillains();
     }
@@ -29,6 +32,8 @@ public class GameMap {
     public void moveHero(int horizontal, int vertical) {
         int x = Math.clamp(horizontal, -1, 1);
         int y = Math.clamp(vertical, -1, 1);
+        this.prevPosition[0] = this.heroPosition[0];
+        this.prevPosition[1] = this.heroPosition[1];
         this.heroPosition[0] += x;
         this.heroPosition[1] += y;
         if (this.heroPosition[0] > this.size
@@ -47,13 +52,22 @@ public class GameMap {
         villains.remove(heroPosition[0] + "," + heroPosition[1]);
     }
 
-    public boolean isCombat() {
+    public boolean isEncounter() {
         return villains.containsKey(heroPosition[0] + "," + heroPosition[1]);
     }
 
-    public boolean isWin() {
-        // simulate combat
-        return true;
+    // return level of villain if won, -1 if lost
+    // Sorry this is ugly, but it is what it is
+    public int isWin() {
+        System.out.println("Combat!!");
+        Villain villain = getVillainAtHeroPosition();
+        removeVillainAtHeroPosition();
+        return villain.getLevel();
+    }
+
+    public void resetPrevPosition() {
+        this.heroPosition[0] = this.prevPosition[0];
+        this.heroPosition[1] = this.prevPosition[1];
     }
 
     private void levelUp() {
@@ -61,6 +75,8 @@ public class GameMap {
         calculateSize();
         this.heroPosition[0] = this.size / 2 + 1;
         this.heroPosition[1] = this.size / 2 + 1;
+        this.prevPosition[0] = this.size / 2 + 1;
+        this.prevPosition[1] = this.size / 2 + 1;
         calculateNbVillain();
         this.villains.clear();
         generateVillains();

@@ -2,6 +2,7 @@ package swingy.view.gui_view;
 
 import swingy.model.character.Hero;
 import swingy.model.map.GameMap;
+import swingy.view.PopUpType;
 import swingy.view.View;
 import swingy.view.game_menu.*;
 
@@ -46,8 +47,23 @@ public class GuiView implements View {
     }
 
     @Override
-    public void inGamePage(Consumer<InGameChoice> onChoice, Hero hero, GameMap gameMap) {
-        inGamePage.displayPage(onChoice, frame, hero, gameMap);
+    public void inGamePage(
+            Consumer<InGameChoice> onInGameChoice,
+            Consumer<BattleChoice> onBattleChoice,
+            Consumer<WinChoice> onWinChoice,
+            Consumer<DefeatChoice> defeatChoiceConsumer,
+            Hero hero,
+            GameMap gameMap,
+            PopUpType popUpType) {
+        inGamePage.displayPage(
+                onInGameChoice,
+                onBattleChoice,
+                onWinChoice,
+                defeatChoiceConsumer,
+                frame,
+                hero,
+                gameMap,
+                popUpType);
     }
 
     @Override

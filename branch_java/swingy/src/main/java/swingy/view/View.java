@@ -11,7 +11,14 @@ public interface View {
     void startPage(Consumer<MainMenuChoice> onChoice);
     void settingPage(Consumer<SettingMenuChoice> onChoice);
     void newGamePage(BiConsumer<HeroClassChoice, String> onChoice);
-    void inGamePage(Consumer<InGameChoice> onChoice, Hero hero, GameMap gameMap);
+    void inGamePage(
+            Consumer<InGameChoice> onInGameChoice,
+            Consumer<BattleChoice> onBattleChoice,
+            Consumer<WinChoice> onWinChoice,
+            Consumer<DefeatChoice> onDefeatChoice,
+            Hero hero,
+            GameMap gameMap,
+            PopUpType popUpType);
     void inGameSettingPage(Consumer<InGameSettingChoice> onChoice);
     void stop();
 }

@@ -68,7 +68,14 @@
      }
 
      @Override
-     public void inGamePage(Consumer<InGameChoice> onChoice, Hero hero, GameMap gameMap) {
+     public void inGamePage(
+             Consumer<InGameChoice> onInGameChoice,
+             Consumer<BattleChoice> onBattleChoice,
+             Consumer<WinChoice> onWinChoice,
+             Consumer<DefeatChoice> onDefeatChoice,
+             Hero hero,
+             GameMap gameMap,
+             PopUpType popUpType) {
 
      }
 

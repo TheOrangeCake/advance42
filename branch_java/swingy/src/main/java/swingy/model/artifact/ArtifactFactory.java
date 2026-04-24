@@ -6,11 +6,12 @@ public class ArtifactFactory {
     private ArtifactFactory() {}
 
     public static Artifact generateArtifact(int level) {
-        int random = RandomGenerator.getInstance().nextInt(4);
+        int random = RandomGenerator.getInstance().nextInt(6);
         return switch (random) {
             case 0 -> new Helm(level);
             case 1 -> new Armor(level);
-            default -> new Weapon(level);
+            case 2, 3 -> new Weapon(level);
+            default -> null;
         };
     }
 }

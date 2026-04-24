@@ -1,10 +1,13 @@
 package swingy.controller;
 
 import swingy.model.artifact.Artifact;
+import swingy.model.artifact.ArtifactFactory;
 import swingy.model.character.Defender;
 import swingy.model.character.Fighter;
 import swingy.model.character.Hero;
 import swingy.model.map.GameMap;
+import swingy.utils.RandomGenerator;
+import swingy.view.PopUpType;
 import swingy.view.View;
 import swingy.view.game_menu.*;
 import swingy.utils.Colors;
@@ -13,6 +16,7 @@ public class GameController {
     private final View view;
     private Hero hero = null;
     private GameMap gameMap = null;
+    private Artifact artifact = null;
 
     public GameController(View view) {
         this.view = view;
@@ -62,7 +66,14 @@ public class GameController {
                 System.exit(-1);
         }
         this.gameMap = new GameMap(1);
-        view.inGamePage(this::onInGameChoice, this.hero, this.gameMap);
+        view.inGamePage(
+                this::onInGameChoice,
+                this::onBattleChoice,
+                this::onWinChoice,
+                this::onDefeatChoice,
+                this.hero,
+                this.gameMap,
+                PopUpType.NONE);
     }
 
     private void onInGameChoice(InGameChoice choice) {
@@ -87,14 +98,24 @@ public class GameController {
                 view.stop();
                 System.exit(-1);
         }
-        if (gameMap.isCombat()) {
-            if (gameMap.isWin()) {
-                // draw win popup with a generated artifact and WinChoice
-            } else {
-                // draw defeat popup with DefeatChoice
-            }
+        if (gameMap.isEncounter()) {
+            view.inGamePage(
+                    this::onInGameChoice,
+                    this::onBattleChoice,
+                    this::onWinChoice,
+                    this::onDefeatChoice,
+                    this.hero,
+                    this.gameMap,
+                    PopUpType.BATTLE);
         }
-        view.inGamePage(this::onInGameChoice, this.hero, this.gameMap);
+        view.inGamePage(
+                this::onInGameChoice,
+                this::onBattleChoice,
+                this::onWinChoice,
+                this::onDefeatChoice,
+                this.hero,
+                this.gameMap,
+                PopUpType.NONE);
     }
 
     private void onInGameSettingChoice(InGameSettingChoice choice) {
@@ -102,7 +123,14 @@ public class GameController {
             case SWITCH_VIEW -> System.out.println("Switch view");
             case SAVE_GAME -> System.out.println("Save game");
             case MAIN_MENU -> this.start();
-            case BACK -> view.inGamePage(this::onInGameChoice, this.hero, this.gameMap);
+            case BACK ->  view.inGamePage(
+                    this::onInGameChoice,
+                    this::onBattleChoice,
+                    this::onWinChoice,
+                    this::onDefeatChoice,
+                    this.hero,
+                    this.gameMap,
+                    PopUpType.NONE);
             default -> {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
                 view.stop();
@@ -111,19 +139,85 @@ public class GameController {
         }
     }
 
-    private void onWinChoice(WinChoice choice, Artifact artifact) {
+    private void onBattleChoice(BattleChoice choice) {
+        switch (choice) {
+            case RUN -> {
+                int isSuccess = RandomGenerator.getInstance().nextInt(2);
+                switch (isSuccess) {
+                    case 0 -> onBattleChoice(BattleChoice.ATTACK);
+                    case 1 -> {
+                        this.gameMap.resetPrevPosition();
+                        view.inGamePage(
+                                this::onInGameChoice,
+                                this::onBattleChoice,
+                                this::onWinChoice,
+                                this::onDefeatChoice,
+                                this.hero,
+                                this.gameMap,
+                                PopUpType.NONE);
+                    }
+                }
+            }
+            case ATTACK -> {
+                int villainLevel = gameMap.isWin();
+                if (villainLevel > 0) {
+                    // draw win popup with a generated artifact and WinChoice
+                    this.artifact = ArtifactFactory.generateArtifact(villainLevel);
+                    view.inGamePage(
+                            this::onInGameChoice,
+                            this::onBattleChoice,
+                            this::onWinChoice,
+                            this::onDefeatChoice,
+                            this.hero,
+                            this.gameMap,
+                            PopUpType.WIN);
+                } else {
+                    // draw defeat popup with DefeatChoice
+                    view.inGamePage(
+                            this::onInGameChoice,
+                            this::onBattleChoice,
+                            this::onWinChoice,
+                            this::onDefeatChoice,
+                            this.hero,
+                            this.gameMap,
+                            PopUpType.DEFEAT);
+                }
+            }
+            default -> {
+                System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
+                view.stop();
+                System.exit(-1);
+            }
+        }
+    }
+
+    private void onWinChoice(WinChoice choice) {
         switch (choice) {
             case TAKE:
-                hero.setArtifact(artifact);
+                if (this.artifact == null) {
+                    System.err.println(Colors.RED + "Error: " + Colors.RESET + "Fail to generate artifact");
+                    view.stop();
+                    System.exit(-1);
+                }
+                hero.setArtifact(this.artifact);
+                this.artifact = null;
                 break;
             case DISCARD:
+                this.artifact = null;
                 break;
             default:
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
                 view.stop();
                 System.exit(-1);
         }
-        view.inGamePage(this::onInGameChoice, this.hero, this.gameMap);
+        view.inGamePage(
+                this::onInGameChoice,
+                this::onBattleChoice,
+                this::onWinChoice,
+                this::onDefeatChoice,
+                this.hero,
+                this.gameMap,
+                PopUpType.NONE);
     }
 
     private void onDefeatChoice(DefeatChoice choice) {

@@ -4,7 +4,11 @@ import swingy.model.character.Hero;
 import swingy.model.map.GameMap;
 import swingy.model.villain.Villain;
 import swingy.utils.FileLoader;
+import swingy.view.PopUpType;
+import swingy.view.game_menu.BattleChoice;
+import swingy.view.game_menu.DefeatChoice;
 import swingy.view.game_menu.InGameChoice;
+import swingy.view.game_menu.WinChoice;
 import swingy.view.ui.Typography;
 
 import javax.swing.*;
@@ -19,7 +23,15 @@ public class InGamePage {
     private double mapOffsetX = 0;
     private double mapOffsetY = 0;
 
-    public void displayPage(Consumer<InGameChoice> onChoice, JFrame frame, Hero hero, GameMap gameMap) {
+    public void displayPage(
+            Consumer<InGameChoice> onInGameChoice,
+            Consumer<BattleChoice> onBattleChoice,
+            Consumer<WinChoice> onWinChoice,
+            Consumer<DefeatChoice> onDefeatChoice,
+            JFrame frame,
+            Hero hero,
+            GameMap gameMap,
+            PopUpType popUpType) {
         JPanel panel = new JPanel();
         panel.setBackground(Color.BLACK);
         panel.setLayout(new BorderLayout(0, 0));
@@ -42,7 +54,7 @@ public class InGamePage {
 
         g.gridx  = 0;
         g.weightx = 2.0;
-        body.add(buildStatsPanel(hero, onChoice), g);
+        body.add(buildStatsPanel(hero, onInGameChoice), g);
 
         g.gridx  = 1;
         g.weightx = 6.0;
@@ -56,13 +68,18 @@ public class InGamePage {
 
         g.gridx  = 2;
         g.weightx = 1.0;
-        body.add(buildRightPanel(onChoice, mapPanel), g);
+        body.add(buildRightPanel(onInGameChoice, mapPanel), g);
 
         panel.add(body, BorderLayout.CENTER);
 
         frame.setContentPane(panel);
         frame.revalidate();
         frame.repaint();
+
+        if (popUpType == PopUpType.BATTLE) {
+            Villain villain = gameMap.getVillainAtHeroPosition();
+            showBattlePopup(frame, hero, villain, onBattleChoice);
+        }
     }
 
     private JPanel buildStatsPanel(Hero hero, Consumer<InGameChoice> onChoice) {
@@ -221,11 +238,11 @@ public class InGamePage {
         left.addActionListener(_ -> onChoice.accept(InGameChoice.LEFT));
         JButton right = arrowButton(InGameChoice.RIGHT.getDescription());
         right.addActionListener(_ -> onChoice.accept(InGameChoice.RIGHT));
-        Dimension btnSize = new Dimension(100, 32);
-        up.setPreferredSize(btnSize);
-        down.setPreferredSize(btnSize);
-        left.setPreferredSize(btnSize);
-        right.setPreferredSize(btnSize);
+        Dimension buttonSize = new Dimension(100, 32);
+        up.setPreferredSize(buttonSize);
+        down.setPreferredSize(buttonSize);
+        left.setPreferredSize(buttonSize);
+        right.setPreferredSize(buttonSize);
 
         g.gridx = 1; g.gridy = 0; controlPad.add(up, g);
         g.gridx = 0; g.gridy = 1; controlPad.add(left, g);
@@ -276,41 +293,41 @@ public class InGamePage {
     }
 
     private JButton styledButton(String text) {
-        JButton btn = new JButton(text) {
+        JButton button = new JButton(text) {
             @Override protected void paintComponent(Graphics g2) {
                 g2.setColor(getModel().isRollover() ? Color.DARK_GRAY : Color.BLACK);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 6, 6);
                 super.paintComponent(g2);
             }
         };
-        btn.setForeground(Color.WHITE);
-        btn.setFont(Typography.PARAGRAPH.getTypography());
-        btn.setFocusPainted(false);
-        btn.setBorderPainted(false);
-        btn.setContentAreaFilled(false);
-        btn.setOpaque(false);
-        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
-        return btn;
+        button.setForeground(Color.WHITE);
+        button.setFont(Typography.PARAGRAPH.getTypography());
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setOpaque(false);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        button.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
+        return button;
     }
 
     private JButton arrowButton(String symbol) {
-        JButton btn = new JButton(symbol) {
+        JButton button = new JButton(symbol) {
             @Override protected void paintComponent(Graphics g2) {
                 g2.setColor(getModel().isRollover() ? Color.DARK_GRAY : Color.BLACK);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 6, 6);
                 super.paintComponent(g2);
             }
         };
-        btn.setForeground(Color.WHITE);
-        btn.setFont(Typography.H5.getTypography());
-        btn.setPreferredSize(new Dimension(40, 40));
-        btn.setFocusPainted(false);
-        btn.setBorderPainted(false);
-        btn.setContentAreaFilled(false);
-        btn.setOpaque(false);
-        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        return btn;
+        button.setForeground(Color.WHITE);
+        button.setFont(Typography.H5.getTypography());
+        button.setPreferredSize(new Dimension(40, 40));
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setOpaque(false);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        return button;
     }
 
     @FunctionalInterface
@@ -476,5 +493,149 @@ public class InGamePage {
                 g2.drawString(letter, tx, ty);
             }
         }
+    }
+
+    private void showBattlePopup(JFrame frame, Hero hero, Villain villain, Consumer<BattleChoice> onBattleChoice) {
+        JDialog dialog = new JDialog(frame, "Battle!", true);
+        dialog.setUndecorated(true);
+
+        JPanel root = new JPanel(new BorderLayout(0, 16));
+        root.setBackground(new Color(20, 20, 20));
+        root.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.DARK_GRAY, 1),
+                new EmptyBorder(24, 32, 24, 32)
+        ));
+
+        JLabel title = new JLabel("Encounter!", SwingConstants.CENTER);
+        title.setForeground(Color.WHITE);
+        title.setFont(Typography.H3.getTypography());
+        root.add(title, BorderLayout.NORTH);
+
+        JPanel statsRow = new JPanel(new GridBagLayout());
+        statsRow.setBackground(new Color(20, 20, 20));
+        GridBagConstraints g = new GridBagConstraints();
+        g.fill = GridBagConstraints.BOTH;
+        g.insets = new Insets(0, 12, 0, 12);
+        g.weighty = 1.0;
+
+        g.gridx = 0; g.weightx = 1.0;
+        statsRow.add(buildCombatantCard(
+                hero.getName(),
+                hero.getClassName(),
+                hero.getImageUrl(),
+                hero.getLevel(),
+                hero.getAttack(),
+                hero.getDefense(),
+                hero.getHitPoints(),
+                hero.getCrit(),
+                Color.CYAN
+        ), g);
+
+        g.gridx = 1; g.weightx = 0.0;
+        JLabel vs = new JLabel("VS", SwingConstants.CENTER);
+        vs.setForeground(Color.GRAY);
+        vs.setFont(Typography.H3.getTypography());
+        statsRow.add(vs, g);
+
+        g.gridx = 2; g.weightx = 1.0;
+        statsRow.add(buildCombatantCard(
+                villain.getClassName(),
+                villain.getClassName(),
+                villain.getImageUrl(),
+                villain.getLevel(),
+                villain.getAttack(),
+                villain.getDefense(),
+                villain.getHitPoints(),
+                villain.getCrit(),
+                Color.RED
+        ), g);
+
+        root.add(statsRow, BorderLayout.CENTER);
+
+        JPanel buttons = new JPanel(new GridLayout(1, 2, 16, 0));
+        buttons.setBackground(new Color(20, 20, 20));
+
+        JButton attack = styledButton(BattleChoice.ATTACK.getDescription());
+        attack.setForeground(Color.CYAN);
+        attack.addActionListener(_ -> {
+            dialog.dispose();
+            onBattleChoice.accept(BattleChoice.ATTACK);
+        });
+
+        JButton run = styledButton(BattleChoice.RUN.getDescription());
+        run.setForeground(Color.ORANGE);
+        run.addActionListener(_ -> {
+            dialog.dispose();
+            onBattleChoice.accept(BattleChoice.RUN);
+        });
+
+        buttons.add(attack);
+        buttons.add(run);
+        root.add(buttons, BorderLayout.SOUTH);
+
+        dialog.setContentPane(root);
+        dialog.pack();
+        dialog.setMinimumSize(new Dimension(480, 300));
+        dialog.setLocationRelativeTo(frame);
+        dialog.setVisible(true);
+    }
+
+    private JPanel buildCombatantCard(
+            String name,
+            String className,
+            String imageUrl,
+            int level,
+            int atk,
+            int def,
+            int hp,
+            int crit,
+            Color accentColor) {
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(Color.BLACK);
+
+        JLabel img = new JLabel();
+        img.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ImageIcon icon = FileLoader.loadScaledImage(imageUrl, 120, 120);
+        if (icon != null) img.setIcon(icon);
+        else {
+            img.setText("?");
+            img.setFont(Typography.H3.getTypography());
+            img.setForeground(accentColor);
+        }
+        card.add(img);
+        card.add(Box.createVerticalStrut(8));
+
+        JLabel nameLabel = new JLabel(name, SwingConstants.CENTER);
+        nameLabel.setFont(Typography.H5.getTypography());
+        nameLabel.setForeground(accentColor);
+        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        card.add(nameLabel);
+
+        JLabel classLabel = new JLabel(className, SwingConstants.CENTER);
+        classLabel.setFont(Typography.PARAGRAPH.getTypography());
+        classLabel.setForeground(Color.GRAY);
+        classLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        card.add(classLabel);
+
+        JLabel levelLabel = new JLabel("Lv." + level, SwingConstants.CENTER);
+        levelLabel.setFont(Typography.PARAGRAPH.getTypography());
+        levelLabel.setForeground(Color.GRAY);
+        levelLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        card.add(levelLabel);
+
+        card.add(Box.createVerticalStrut(12));
+        card.add(separator());
+        card.add(Box.createVerticalStrut(8));
+
+        card.add(statRow("ATK",  String.valueOf(atk)));
+        card.add(Box.createVerticalStrut(4));
+        card.add(statRow("DEF",  String.valueOf(def)));
+        card.add(Box.createVerticalStrut(4));
+        card.add(statRow("HP",   String.valueOf(hp)));
+        card.add(Box.createVerticalStrut(4));
+        card.add(statRow("CRIT", crit + "%"));
+
+        return card;
     }
 }
