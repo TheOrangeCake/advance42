@@ -1,7 +1,5 @@
 package swingy.controller;
 
-import swingy.model.artifact.Artifact;
-import swingy.model.artifact.ArtifactFactory;
 import swingy.model.character.Defender;
 import swingy.model.character.Fighter;
 import swingy.model.character.Hero;
@@ -16,7 +14,6 @@ public class GameController {
     private final View view;
     private Hero hero = null;
     private GameMap gameMap = null;
-    private Artifact artifact = null;
 
     public GameController(View view) {
         this.view = view;
@@ -77,6 +74,9 @@ public class GameController {
     }
 
     private void onInGameChoice(InGameChoice choice) {
+        if (this.hero == null || this.gameMap == null) {
+            return;
+        }
         switch (choice) {
             case UP:
                 gameMap.moveHero(0, -1);
@@ -107,6 +107,7 @@ public class GameController {
                     this.hero,
                     this.gameMap,
                     PopUpType.BATTLE);
+            return;
         }
         view.inGamePage(
                 this::onInGameChoice,
@@ -140,6 +141,9 @@ public class GameController {
     }
 
     private void onBattleChoice(BattleChoice choice) {
+        if (this.hero == null || this.gameMap == null) {
+            return;
+        }
         switch (choice) {
             case RUN -> {
                 int isSuccess = RandomGenerator.getInstance().nextInt(2);
@@ -161,8 +165,6 @@ public class GameController {
             case ATTACK -> {
                 int villainLevel = gameMap.isWin(hero);
                 if (villainLevel > 0) {
-                    // draw win popup with a generated artifact and WinChoice
-                    System.out.println("WON");
                     view.inGamePage(
                             this::onInGameChoice,
                             this::onBattleChoice,
@@ -172,8 +174,6 @@ public class GameController {
                             this.gameMap,
                             PopUpType.WIN);
                 } else {
-                    // draw defeat popup with DefeatChoice
-                    System.out.println("LOST");
                     view.inGamePage(
                             this::onInGameChoice,
                             this::onBattleChoice,
@@ -193,18 +193,15 @@ public class GameController {
     }
 
     private void onWinChoice(WinChoice choice) {
+        if (this.hero == null || this.gameMap == null) {
+            return;
+        }
         switch (choice) {
             case TAKE:
-                if (this.artifact == null) {
-                    System.err.println(Colors.RED + "Error: " + Colors.RESET + "Fail to generate artifact");
-                    view.stop();
-                    System.exit(-1);
-                }
-                hero.setArtifact(this.artifact);
-                this.artifact = null;
+                gameMap.equipDroppedArtifact(this.hero);
                 break;
             case DISCARD:
-                this.artifact = null;
+                gameMap.clearDroppedArtifact();
                 break;
             default:
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
@@ -222,8 +219,15 @@ public class GameController {
     }
 
     private void onDefeatChoice(DefeatChoice choice) {
+        if (this.hero == null || this.gameMap == null) {
+            return;
+        }
         switch (choice) {
-            case MAIN_MENU -> this.start();
+            case MAIN_MENU -> {
+                this.hero = null;
+                this.gameMap = null;
+                this.start();
+            }
             case EXIT -> view.stop();
             default -> {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");

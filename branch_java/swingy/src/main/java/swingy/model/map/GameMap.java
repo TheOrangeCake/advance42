@@ -78,9 +78,8 @@ public class GameMap {
             villain.takeHit(heroDmg);
             if (villain.getHitPoints() <= 0) {
                 removeVillainAtHeroPosition();
-                if (hero.getHitPoints() <= heroInitialHp / 4) {
-                    hero.heal(heroInitialHp / 4);
-                } else {
+                hero.heal(heroInitialHp / 4);
+                if (hero.getHitPoints() > heroInitialHp) {
                     hero.setHitPoints(heroInitialHp);
                 }
                 hero.addExperience(villain.getExperience());
@@ -159,6 +158,10 @@ public class GameMap {
     }
     public Artifact getDroppedArtifact() {
         return this.droppedArtifact;
+    }
+    public void equipDroppedArtifact(Hero hero) {
+        hero.setArtifact(this.droppedArtifact);
+        clearDroppedArtifact();
     }
     public void clearDroppedArtifact() {
         this.droppedArtifact = null;

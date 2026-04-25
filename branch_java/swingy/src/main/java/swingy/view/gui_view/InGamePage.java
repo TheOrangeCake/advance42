@@ -1,5 +1,6 @@
 package swingy.view.gui_view;
 
+import swingy.model.artifact.Artifact;
 import swingy.model.character.Hero;
 import swingy.model.map.GameMap;
 import swingy.model.villain.Villain;
@@ -79,6 +80,10 @@ public class InGamePage {
         if (popUpType == PopUpType.BATTLE) {
             Villain villain = gameMap.getVillainAtHeroPosition();
             showBattlePopup(frame, hero, villain, onBattleChoice);
+        } else if (popUpType == PopUpType.WIN) {
+            showWinPopup(frame, gameMap, onWinChoice);
+        } else if (popUpType == PopUpType.DEFEAT) {
+            showDefeatPopup(frame, hero, onDefeatChoice);
         }
     }
 
@@ -644,5 +649,178 @@ public class InGamePage {
         card.add(statRow("EXP", String.valueOf(exp)));
 
         return card;
+    }
+
+    private void showWinPopup(JFrame frame, GameMap gameMap, Consumer<WinChoice> onWinChoice) {
+        JDialog dialog = new JDialog(frame, "Victory!", true);
+        dialog.setUndecorated(true);
+
+        JPanel root = new JPanel(new BorderLayout(0, 16));
+        root.setBackground(Color.BLACK);
+        root.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.DARK_GRAY, 1),
+                new EmptyBorder(24, 32, 24, 32)
+        ));
+
+        JLabel title = new JLabel("Victory!", SwingConstants.CENTER);
+        title.setForeground(Color.CYAN);
+        title.setFont(Typography.H3.getTypography());
+        root.add(title, BorderLayout.NORTH);
+
+        // Artifact or no drop
+        Artifact artifact = gameMap.getDroppedArtifact();
+        JPanel center = new JPanel();
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        center.setBackground(Color.BLACK);
+
+        if (artifact == null) {
+            JLabel noDrop = new JLabel("No artifact dropped", SwingConstants.CENTER);
+            noDrop.setForeground(Color.GRAY);
+            noDrop.setFont(Typography.PARAGRAPH.getTypography());
+            noDrop.setAlignmentX(Component.CENTER_ALIGNMENT);
+            center.add(Box.createVerticalGlue());
+            center.add(noDrop);
+            center.add(Box.createVerticalGlue());
+        } else {
+            JLabel img = new JLabel();
+            img.setAlignmentX(Component.CENTER_ALIGNMENT);
+            ImageIcon icon = FileLoader.loadScaledImage(artifact.getImageUrl(), 120, 120);
+            if (icon != null) img.setIcon(icon);
+            else {
+                img.setText("?");
+                img.setFont(Typography.H3.getTypography());
+                img.setForeground(Color.YELLOW);
+            }
+            center.add(img);
+            center.add(Box.createVerticalStrut(8));
+
+            JLabel artifactName = new JLabel(artifact.getName(), SwingConstants.CENTER);
+            artifactName.setFont(Typography.H5.getTypography());
+            artifactName.setForeground(Color.YELLOW);
+            artifactName.setAlignmentX(Component.CENTER_ALIGNMENT);
+            center.add(artifactName);
+
+            center.add(Box.createVerticalStrut(12));
+            center.add(separator());
+            center.add(Box.createVerticalStrut(8));
+
+            if (artifact.getAttack() > 0) {
+                center.add(statRow("ATK", "+" + artifact.getAttack()));
+                center.add(Box.createVerticalStrut(4));
+            }
+            if (artifact.getDefense() > 0) {
+                center.add(statRow("DEF", "+" + artifact.getDefense()));
+                center.add(Box.createVerticalStrut(4));
+            }
+            if (artifact.getHitPoints() > 0) {
+                center.add(statRow("HP", "+" + artifact.getHitPoints()));
+                center.add(Box.createVerticalStrut(4));
+            }
+        }
+        root.add(center, BorderLayout.CENTER);
+
+        JPanel buttons = new JPanel(new GridLayout(1, artifact == null ? 1 : 2, 16, 0));
+        buttons.setBackground(Color.BLACK);
+
+        if (artifact == null) {
+            JButton ok = styledButton("OK");
+            ok.setForeground(Color.CYAN);
+            ok.addActionListener(_ -> dialog.dispose());
+            buttons.add(ok);
+        } else {
+            JButton take = styledButton(WinChoice.TAKE.getDescription());
+            take.setForeground(Color.CYAN);
+            take.addActionListener(_ -> {
+                dialog.dispose();
+                onWinChoice.accept(WinChoice.TAKE);
+            });
+
+            JButton discard = styledButton(WinChoice.DISCARD.getDescription());
+            discard.setForeground(Color.ORANGE);
+            discard.addActionListener(_ -> {
+                dialog.dispose();
+                onWinChoice.accept(WinChoice.DISCARD);
+            });
+
+            buttons.add(take);
+            buttons.add(discard);
+        }
+        root.add(buttons, BorderLayout.SOUTH);
+
+        dialog.setContentPane(root);
+        dialog.pack();
+        dialog.setMinimumSize(new Dimension(360, 300));
+        dialog.setLocationRelativeTo(frame);
+        dialog.setVisible(true);
+    }
+
+    private void showDefeatPopup(JFrame frame, Hero hero, Consumer<DefeatChoice> onDefeatChoice) {
+        JDialog dialog = new JDialog(frame, "Defeat", true);
+        dialog.setUndecorated(true);
+
+        JPanel root = new JPanel(new BorderLayout(0, 16));
+        root.setBackground(Color.BLACK);
+        root.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.DARK_GRAY, 1),
+                new EmptyBorder(24, 32, 24, 32)
+        ));
+
+        JLabel title = new JLabel("Defeated...", SwingConstants.CENTER);
+        title.setForeground(Color.RED);
+        title.setFont(Typography.H3.getTypography());
+        root.add(title, BorderLayout.NORTH);
+
+        JPanel center = new JPanel();
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        center.setBackground(Color.BLACK);
+
+        JLabel deadImg = new JLabel();
+        deadImg.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ImageIcon icon = FileLoader.loadScaledImage(hero.getDeadImageUrl(), 140, 140);
+        if (icon != null) deadImg.setIcon(icon);
+        else {
+            deadImg.setText("?");
+            deadImg.setFont(Typography.H3.getTypography());
+            deadImg.setForeground(Color.RED);
+        }
+        center.add(Box.createVerticalGlue());
+        center.add(deadImg);
+        center.add(Box.createVerticalStrut(12));
+
+        JLabel msg = new JLabel(hero.getName() + " has fallen.", SwingConstants.CENTER);
+        msg.setFont(Typography.PARAGRAPH.getTypography());
+        msg.setForeground(Color.GRAY);
+        msg.setAlignmentX(Component.CENTER_ALIGNMENT);
+        center.add(msg);
+        center.add(Box.createVerticalGlue());
+
+        root.add(center, BorderLayout.CENTER);
+
+        JPanel buttons = new JPanel(new GridLayout(1, 2, 16, 0));
+        buttons.setBackground(Color.BLACK);
+
+        JButton mainMenu = styledButton(DefeatChoice.MAIN_MENU.getDescription());
+        mainMenu.setForeground(Color.CYAN);
+        mainMenu.addActionListener(_ -> {
+            dialog.dispose();
+            onDefeatChoice.accept(DefeatChoice.MAIN_MENU);
+        });
+
+        JButton exit = styledButton(DefeatChoice.EXIT.getDescription());
+        exit.setForeground(Color.RED);
+        exit.addActionListener(_ -> {
+            dialog.dispose();
+            onDefeatChoice.accept(DefeatChoice.EXIT);
+        });
+
+        buttons.add(mainMenu);
+        buttons.add(exit);
+        root.add(buttons, BorderLayout.SOUTH);
+
+        dialog.setContentPane(root);
+        dialog.pack();
+        dialog.setMinimumSize(new Dimension(320, 280));
+        dialog.setLocationRelativeTo(frame);
+        dialog.setVisible(true);
     }
 }

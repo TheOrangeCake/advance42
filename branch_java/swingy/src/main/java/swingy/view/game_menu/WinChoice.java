@@ -1,7 +1,7 @@
 package swingy.view.game_menu;
 
 public enum WinChoice implements Menu {
-    TAKE("Swap artifact"),
+    TAKE("Equip artifact"),
     DISCARD("Discard artifact");
 
     private final String description;
