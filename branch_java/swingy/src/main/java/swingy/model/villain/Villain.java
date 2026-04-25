@@ -7,7 +7,12 @@ public abstract class Villain {
     protected int defense;
     protected int hitPoints;
     protected int crit;
+    protected int experience;
     protected String imageUrl;
+
+    public void takeHit(int damage) {
+        this.hitPoints -= damage;
+    }
 
     public int getLevel() {
         return this.level;
@@ -26,6 +31,9 @@ public abstract class Villain {
     }
     public int getCrit() {
         return this.crit;
+    }
+    public int getExperience() {
+        return this.experience;
     }
     public String getImageUrl() {
         return this.imageUrl;

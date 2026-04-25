@@ -1,13 +1,17 @@
 package swingy.model.villain;
 
+import swingy.utils.RandomGenerator;
+
 public class Skeleton extends Villain {
     public Skeleton(int level) {
+        float modifier = Math.clamp(((float) (RandomGenerator.getInstance().nextInt(100) + 1) / 100), 0.5f, 1.0f);
         this.level = level;
         this.className = "Skeleton";
-        this.attack = (int) (10 * level * 0.7);
-        this.defense = (int) (10 * level * 0.7);
-        this.hitPoints = (int) (75 * level * 0.7);
-        this.crit = 1;
+        this.attack = (int) (15 * level * modifier);
+        this.defense = (int) (10 * level * modifier);
+        this.hitPoints = (int) (85 * level * modifier);
+        this.crit = 10;
+        this.experience = (int)(400 * level * modifier);
         this.imageUrl = "/assets/skeleton.png";
     }
 }

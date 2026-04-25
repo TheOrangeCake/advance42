@@ -30,7 +30,16 @@ public abstract class Hero {
         this.hitPoints = hero.hitPoints;
         this.crit = hero.crit;
         this.imageUrl = hero.imageUrl;
+        this.deadImageUrl = hero.deadImageUrl;
         this.artifacts.addAll(hero.artifacts);
+    }
+
+    public void takeHit(int damage) {
+        this.hitPoints -= damage;
+    }
+
+    public void heal(int damage) {
+        this.hitPoints += damage;
     }
 
     public void addExperience(int experience) {
@@ -88,6 +97,9 @@ public abstract class Hero {
     }
     public int getHitPoints() {
         return this.hitPoints;
+    }
+    public void setHitPoints(int hitPoints) {
+        this.hitPoints = hitPoints;
     }
     public int getCrit() {
         return this.crit;

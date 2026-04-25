@@ -1,5 +1,8 @@
 package swingy.model.map;
 
+import swingy.model.artifact.Artifact;
+import swingy.model.artifact.ArtifactFactory;
+import swingy.model.character.Hero;
 import swingy.model.villain.Villain;
 import swingy.model.villain.VillainFactory;
 import swingy.utils.RandomGenerator;
@@ -14,6 +17,7 @@ public class GameMap {
     private final int[] prevPosition = {0, 0};
     private int nbVillain;
     private final Map<String, Villain> villains = new HashMap<>();
+    private Artifact droppedArtifact = null;
 
     public GameMap(int level) {
         if (level <= 0) {
@@ -57,12 +61,47 @@ public class GameMap {
     }
 
     // return level of villain if won, -1 if lost
-    // Sorry this is ugly, but it is what it is
-    public int isWin() {
-        System.out.println("Combat!!");
+    // Sorry this is ugly, but whatever
+    public int isWin(Hero hero) {
         Villain villain = getVillainAtHeroPosition();
-        removeVillainAtHeroPosition();
-        return villain.getLevel();
+        int heroInitialHp = hero.getHitPoints();
+        while (true) {
+            int hAttack = hero.getAttack();
+            boolean isHeroCrit = (RandomGenerator.getInstance().nextInt(100) + 1) <= hero.getCrit();
+            if (isHeroCrit) {
+                hAttack = (int)(hAttack * 1.5);
+            }
+            int heroDmg = Math.max(hAttack - villain.getDefense(), 0);
+            if (heroDmg == 0) {
+                heroDmg = 1;
+            }
+            villain.takeHit(heroDmg);
+            if (villain.getHitPoints() <= 0) {
+                removeVillainAtHeroPosition();
+                if (hero.getHitPoints() <= heroInitialHp / 4) {
+                    hero.heal(heroInitialHp / 4);
+                } else {
+                    hero.setHitPoints(heroInitialHp);
+                }
+                hero.addExperience(villain.getExperience());
+                this.droppedArtifact = ArtifactFactory.generateArtifact(villain.getLevel());
+                return villain.getLevel();
+            }
+
+            int vAttack = villain.getAttack();
+            boolean isVillainCrit = (RandomGenerator.getInstance().nextInt(100) + 1) <= villain.getCrit();
+            if (isVillainCrit) {
+                vAttack = (int)(vAttack * 1.5);
+            }
+            int villainDmg = Math.max(vAttack - hero.getDefense(), 0);
+            if (villainDmg == 0) {
+                villainDmg = 1;
+            }
+            hero.takeHit(villainDmg);
+            if (hero.getHitPoints() <= 0) {
+                return -1;
+            }
+        }
     }
 
     public void resetPrevPosition() {
@@ -116,6 +155,12 @@ public class GameMap {
         return this.size;
     }
     public int[] getHeroPosition() {
-        return heroPosition;
+        return this.heroPosition;
+    }
+    public Artifact getDroppedArtifact() {
+        return this.droppedArtifact;
+    }
+    public void clearDroppedArtifact() {
+        this.droppedArtifact = null;
     }
 }

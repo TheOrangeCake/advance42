@@ -159,10 +159,10 @@ public class GameController {
                 }
             }
             case ATTACK -> {
-                int villainLevel = gameMap.isWin();
+                int villainLevel = gameMap.isWin(hero);
                 if (villainLevel > 0) {
                     // draw win popup with a generated artifact and WinChoice
-                    this.artifact = ArtifactFactory.generateArtifact(villainLevel);
+                    System.out.println("WON");
                     view.inGamePage(
                             this::onInGameChoice,
                             this::onBattleChoice,
@@ -173,6 +173,7 @@ public class GameController {
                             PopUpType.WIN);
                 } else {
                     // draw defeat popup with DefeatChoice
+                    System.out.println("LOST");
                     view.inGamePage(
                             this::onInGameChoice,
                             this::onBattleChoice,

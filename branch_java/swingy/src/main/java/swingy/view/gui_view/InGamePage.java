@@ -206,6 +206,8 @@ public class InGamePage {
                 villainCard.add(statRow("HP", String.valueOf(villain.getHitPoints())));
                 villainCard.add(Box.createVerticalStrut(4));
                 villainCard.add(statRow("CRIT", villain.getCrit() + "%"));
+                villainCard.add(Box.createVerticalStrut(4));
+                villainCard.add(statRow("EXP", String.valueOf(villain.getExperience())));
             }
             villainCard.revalidate();
             villainCard.repaint();
@@ -528,6 +530,7 @@ public class InGamePage {
                 hero.getDefense(),
                 hero.getHitPoints(),
                 hero.getCrit(),
+                hero.getExperience(),
                 Color.CYAN
         ), g);
 
@@ -547,6 +550,7 @@ public class InGamePage {
                 villain.getDefense(),
                 villain.getHitPoints(),
                 villain.getCrit(),
+                villain.getExperience(),
                 Color.RED
         ), g);
 
@@ -589,6 +593,7 @@ public class InGamePage {
             int def,
             int hp,
             int crit,
+            int exp,
             Color accentColor) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -635,6 +640,8 @@ public class InGamePage {
         card.add(statRow("HP",   String.valueOf(hp)));
         card.add(Box.createVerticalStrut(4));
         card.add(statRow("CRIT", crit + "%"));
+        card.add(Box.createVerticalStrut(4));
+        card.add(statRow("EXP", String.valueOf(exp)));
 
         return card;
     }
