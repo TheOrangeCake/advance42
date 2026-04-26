@@ -1,7 +1,9 @@
 package swingy.view.gui_view;
 
+import org.hibernate.SessionFactory;
 import swingy.model.character.Hero;
 import swingy.model.map.GameMap;
+import swingy.model.state.DatabaseConfig;
 import swingy.view.PopUpType;
 import swingy.view.View;
 import swingy.view.game_menu.*;
@@ -73,6 +75,7 @@ public class GuiView implements View {
 
     @Override
     public void stop() {
+        DatabaseConfig.close();
         frame.dispose();
     }
 }

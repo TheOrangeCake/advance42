@@ -694,7 +694,7 @@ public class InGamePage {
             center.add(img);
             center.add(Box.createVerticalStrut(8));
 
-            JLabel artifactName = new JLabel(artifact.getName(), SwingConstants.CENTER);
+            JLabel artifactName = new JLabel(artifact.getClassName(), SwingConstants.CENTER);
             artifactName.setFont(Typography.H5.getTypography());
             artifactName.setForeground(Color.YELLOW);
             artifactName.setAlignmentX(Component.CENTER_ALIGNMENT);

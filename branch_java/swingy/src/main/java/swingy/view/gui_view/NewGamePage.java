@@ -50,7 +50,7 @@ public class NewGamePage {
         JPanel nameRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 0));
         nameRow.setOpaque(false);
 
-        JLabel nameLabel = new JLabel("Hero name:");
+        JLabel nameLabel = new JLabel("Hero className:");
         nameLabel.setForeground(Color.WHITE);
         nameLabel.setFont(Typography.H5.getTypography());
 
@@ -92,7 +92,7 @@ public class NewGamePage {
             card.add(imageLabel);
             card.add(Box.createVerticalStrut(8));
 
-            // Class name
+            // Class className
             JLabel classNameLabel = new JLabel(choice.getClassName().toUpperCase());
             classNameLabel.setForeground(Color.WHITE);
             classNameLabel.setFont(Typography.H3.getTypography().deriveFont(Font.BOLD, 15f));
@@ -171,9 +171,9 @@ public class NewGamePage {
                 onChoice.accept(selectedChoice[0], playerName.getPlayerName());
             } else {
                 if (!nameOk && !classOk) {
-                    errorLabel.setText("Please enter a valid name and select a class");
+                    errorLabel.setText("Please enter a valid className and select a class");
                 } else if (!nameOk) {
-                    errorLabel.setText("Please enter a valid hero name: " + violations.iterator().next().getMessage());
+                    errorLabel.setText("Please enter a valid hero className: " + violations.iterator().next().getMessage());
                 } else {
                     errorLabel.setText("Please select a hero class");
                 }

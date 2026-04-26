@@ -4,6 +4,7 @@
  import swingy.model.ConsoleChoice;
  import swingy.model.character.Hero;
  import swingy.model.map.GameMap;
+ import swingy.model.state.DatabaseConfig;
  import swingy.utils.Colors;
  import swingy.utils.ValidatorClient;
  import swingy.view.game_menu.*;
@@ -87,6 +88,7 @@
      @Override
      public void stop() {
          scanner.close();
+         DatabaseConfig.close();
          System.out.println(Colors.YELLOW + "Fantasy over! Get back to work!" + Colors.RESET);
      }
 
@@ -136,12 +138,12 @@
      private String getPlayerName() {
          Validator validator = ValidatorClient.getValidator();
          while (true) {
-             System.out.println("What is your name?");
+             System.out.println("What is your className?");
              String input = scanner.nextLine();
              PlayerName playerName = new PlayerName(input);
              Set<ConstraintViolation<PlayerName>> constraintViolations = validator.validate(playerName);
              if (!constraintViolations.isEmpty()) {
-                 System.err.println(Colors.RED + "Invalid name" + Colors.RESET + ": " + constraintViolations.iterator().next().getMessage());
+                 System.err.println(Colors.RED + "Invalid className" + Colors.RESET + ": " + constraintViolations.iterator().next().getMessage());
                  System.out.println();
                  continue;
              }

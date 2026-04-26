@@ -4,7 +4,7 @@ import swingy.utils.RandomGenerator;
 
 public class Helm extends Artifact {
     public Helm(int level) {
-        this.name = "Helm";
+        this.className = "Helm";
         this.attack = 0;
         this.defense = 0;
         this.hitPoints = level * (RandomGenerator.getInstance().nextInt(51) + 50);

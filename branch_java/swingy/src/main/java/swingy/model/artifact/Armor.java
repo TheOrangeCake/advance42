@@ -4,7 +4,7 @@ import swingy.utils.RandomGenerator;
 
 public class Armor extends Artifact {
     public Armor(int level) {
-        this.name = "Armor";
+        this.className = "Armor";
         this.attack = 0;
         this.defense = level * (RandomGenerator.getInstance().nextInt(11) + 5);
         this.hitPoints = 0;
