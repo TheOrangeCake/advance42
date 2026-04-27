@@ -14,4 +14,13 @@ public class ArtifactFactory {
             default -> null;
         };
     }
+
+    public static Artifact generateArtifact(String className) {
+        return switch (className) {
+            case "Armor" -> new Armor();
+            case "Helm" -> new Helm();
+            case "Weapon" -> new Weapon();
+            default -> null;
+        };
+    }
 }

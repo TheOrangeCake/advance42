@@ -86,14 +86,26 @@ public abstract class Hero {
     public int getLevel() {
         return this.level;
     }
+    public void setLevel(int level) {
+        this.level = level;
+    }
     public int getExperience() {
         return this.experience;
+    }
+    public void setExperience(int experience) {
+        this.experience = experience;
     }
     public int getAttack() {
         return this.attack;
     }
+    public void setAttack(int attack) {
+        this.attack = attack;
+    }
     public int getDefense() {
         return this.defense;
+    }
+    public void setDefense(int defense) {
+        this.defense = defense;
     }
     public int getHitPoints() {
         return this.hitPoints;
@@ -104,11 +116,17 @@ public abstract class Hero {
     public int getCrit() {
         return this.crit;
     }
+    public void setCrit(int crit) {
+        this.crit = crit;
+    }
     public String getImageUrl() {
         return this.imageUrl;
     }
     public String getDeadImageUrl() {
         return this.deadImageUrl;
+    }
+    public void setDeadImageUrl(String deadImageUrl) {
+        this.deadImageUrl = deadImageUrl;
     }
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;

@@ -17,25 +17,46 @@ public abstract class Villain {
     public int getLevel() {
         return this.level;
     }
+    public void setLevel(int level) {
+        this.level = level;
+    }
     public String getClassName() {
         return this.className;
     }
     public int getAttack() {
         return this.attack;
     }
+    public void setAttack(int attack) {
+        this.attack = attack;
+    }
     public int getDefense() {
         return this.defense;
+    }
+    public void setDefense(int defense) {
+        this.defense = defense;
     }
     public int getHitPoints() {
         return this.hitPoints;
     }
+    public void setHitPoints(int hitPoints) {
+        this.hitPoints = hitPoints;
+    }
     public int getCrit() {
         return this.crit;
+    }
+    public void setCrit(int crit) {
+        this.crit = crit;
     }
     public int getExperience() {
         return this.experience;
     }
+    public void setExperience(int experience) {
+        this.experience = experience;
+    }
     public String getImageUrl() {
         return this.imageUrl;
+    }
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

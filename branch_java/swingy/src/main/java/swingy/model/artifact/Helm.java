@@ -3,6 +3,11 @@ package swingy.model.artifact;
 import swingy.utils.RandomGenerator;
 
 public class Helm extends Artifact {
+    public Helm() {
+        this.className = "Helm";
+        this.imageUrl = "/assets/helm.png";
+    }
+
     public Helm(int level) {
         this.className = "Helm";
         this.attack = 0;

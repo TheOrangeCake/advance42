@@ -3,6 +3,11 @@ package swingy.model.villain;
 import swingy.utils.RandomGenerator;
 
 public class Goblin extends Villain {
+    public Goblin() {
+        this.className = "Goblin";
+        this.imageUrl = "/assets/goblin.png";
+    }
+
     public Goblin(int level) {
         float modifier = Math.clamp(((float) (RandomGenerator.getInstance().nextInt(100) + 1) / 100), 0.5f, 1.0f);
         this.level = level;

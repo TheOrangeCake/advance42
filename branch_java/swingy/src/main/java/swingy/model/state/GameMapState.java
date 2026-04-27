@@ -1,6 +1,7 @@
 package swingy.model.state;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.PositiveOrZero;
 
@@ -11,6 +12,8 @@ import java.util.List;
 @Table(name = "GAME_MAP")
 public class GameMapState {
     @Id
+    @Min(1)
+    @Max(3)
     private int slot;
 
     @OneToOne
@@ -53,9 +56,6 @@ public class GameMapState {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "artifact_slot")
     private ArtifactState droppedArtifact;
-
-    public int getSlot() { return slot; }
-    public void setSlot(int slot) { this.slot = slot; }
 
     public HeroState getHero() { return hero; }
     public void setHero(HeroState hero) { this.hero = hero; }

@@ -3,6 +3,11 @@ package swingy.model.character;
 public class Fighter extends Hero {
     public static int[] baseStats = {1, 0, 15, 5, 125, 15};
 
+    public Fighter() {
+        this.className = "Fighter";
+        this.imageUrl = "/assets/fighter.png";
+    }
+
     public Fighter(String name) {
         this.name = name;
         this.className = "Fighter";

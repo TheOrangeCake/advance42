@@ -16,8 +16,12 @@ public class GameMap {
     private final int[] heroPosition = {0, 0};
     private final int[] prevPosition = {0, 0};
     private int nbVillain;
-    private final Map<String, Villain> villains = new HashMap<>();
+    private Map<String, Villain> villains = new HashMap<>();
     private Artifact droppedArtifact = null;
+
+    public GameMap() {
+
+    }
 
     public GameMap(int level) {
         if (level <= 0) {
@@ -144,26 +148,57 @@ public class GameMap {
         }
     }
 
-    public int getLevel() {
-        return this.level;
-    }
-    public Map<String, Villain> getVillains() {
-        return this.villains;
-    }
-    public int getSize() {
-        return this.size;
-    }
-    public int[] getHeroPosition() {
-        return this.heroPosition;
-    }
-    public Artifact getDroppedArtifact() {
-        return this.droppedArtifact;
-    }
     public void equipDroppedArtifact(Hero hero) {
         hero.setArtifact(this.droppedArtifact);
         clearDroppedArtifact();
     }
+
     public void clearDroppedArtifact() {
         this.droppedArtifact = null;
+    }
+
+    public int getLevel() {
+        return this.level;
+    }
+    public void setLevel(int level) {
+        this.level = level;
+    }
+    public Map<String, Villain> getVillains() {
+        return this.villains;
+    }
+    public void setVillains(Map<String, Villain> villains) {
+        this.villains = villains;
+    }
+    public int getSize() {
+        return this.size;
+    }
+    public void setSize(int size) {
+        this.size = size;
+    }
+    public int[] getHeroPosition() {
+        return this.heroPosition;
+    }
+    public void setHeroPosition(int x, int y) {
+        this.heroPosition[0] = x;
+        this.heroPosition[1] = y;
+    }
+    public int[] getPrevPosition() {
+        return prevPosition;
+    }
+    public void setPrevPosition(int x, int y) {
+        this.prevPosition[0] = x;
+        this.prevPosition[1] = y;
+    }
+    public int getNbVillain() {
+        return nbVillain;
+    }
+    public void setNbVillain(int nbVillain) {
+        this.nbVillain = nbVillain;
+    }
+    public Artifact getDroppedArtifact() {
+        return this.droppedArtifact;
+    }
+    public void setDroppedArtifact(Artifact droppedArtifact) {
+        this.droppedArtifact = droppedArtifact;
     }
 }
