@@ -6,10 +6,7 @@ import swingy.model.map.GameMap;
 import swingy.model.villain.Villain;
 import swingy.utils.FileLoader;
 import swingy.view.PopUpType;
-import swingy.view.game_menu.BattleChoice;
-import swingy.view.game_menu.DefeatChoice;
-import swingy.view.game_menu.InGameChoice;
-import swingy.view.game_menu.WinChoice;
+import swingy.view.game_menu.*;
 import swingy.view.ui.Typography;
 
 import javax.swing.*;
@@ -29,6 +26,7 @@ public class InGamePage {
             Consumer<BattleChoice> onBattleChoice,
             Consumer<WinChoice> onWinChoice,
             Consumer<DefeatChoice> onDefeatChoice,
+            Consumer<SaveSlotChoice> onSaveChoice,
             JFrame frame,
             Hero hero,
             GameMap gameMap,

@@ -5,6 +5,7 @@
  import swingy.model.character.Hero;
  import swingy.model.map.GameMap;
  import swingy.model.state.DatabaseConfig;
+ import swingy.model.state.HeroState;
  import swingy.utils.Colors;
  import swingy.utils.ValidatorClient;
  import swingy.view.game_menu.*;
@@ -74,6 +75,7 @@
              Consumer<BattleChoice> onBattleChoice,
              Consumer<WinChoice> onWinChoice,
              Consumer<DefeatChoice> onDefeatChoice,
+             Consumer<SaveSlotChoice> onSaveChoice,
              Hero hero,
              GameMap gameMap,
              PopUpType popUpType) {
@@ -82,6 +84,11 @@
 
      @Override
      public void inGameSettingPage(Consumer<InGameSettingChoice> onChoice) {
+
+     }
+
+     @Override
+     public void loadGamePage(Consumer<SaveSlotChoice> onChoice, HeroState[] saves) {
 
      }
 

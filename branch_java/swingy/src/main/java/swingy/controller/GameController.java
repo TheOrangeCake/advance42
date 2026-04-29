@@ -4,6 +4,8 @@ import swingy.model.character.Defender;
 import swingy.model.character.Fighter;
 import swingy.model.character.Hero;
 import swingy.model.map.GameMap;
+import swingy.model.state.DatabaseQueries;
+import swingy.model.state.HeroState;
 import swingy.utils.RandomGenerator;
 import swingy.view.PopUpType;
 import swingy.view.View;
@@ -26,9 +28,27 @@ public class GameController {
     private void onMainMenuChoice(MainMenuChoice choice) {
         switch (choice) {
             case NEW_GAME -> view.newGamePage(this::onNewGameChoice);
-            case CONTINUE_SAVE -> System.out.println("Load Save");
+            case LOAD_GAME -> {
+                HeroState[] saves = DatabaseQueries.loadAllSlots();
+                view.loadGamePage(this::onLoadChoice, saves);
+            }
             case SETTING -> view.settingPage(this::onSettingChoice);
             case EXIT -> view.stop();
+            default -> {
+                System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
+                view.stop();
+                System.exit(-1);
+            }
+        }
+    }
+
+    // Load the choice, then initialize new game map
+    private void onLoadChoice(SaveSlotChoice choice) {
+        switch (choice) {
+            case SLOT_1 -> System.out.println("Choice 1");
+            case SLOT_2 -> System.out.println("Choice 2");
+            case SLOT_3 -> System.out.println("Choice 3");
+            case BACK -> this.start();
             default -> {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
                 view.stop();
@@ -68,6 +88,7 @@ public class GameController {
                 this::onBattleChoice,
                 this::onWinChoice,
                 this::onDefeatChoice,
+                this::onSaveChoice,
                 this.hero,
                 this.gameMap,
                 PopUpType.NONE);
@@ -104,6 +125,7 @@ public class GameController {
                     this::onBattleChoice,
                     this::onWinChoice,
                     this::onDefeatChoice,
+                    this::onSaveChoice,
                     this.hero,
                     this.gameMap,
                     PopUpType.BATTLE);
@@ -114,21 +136,51 @@ public class GameController {
                 this::onBattleChoice,
                 this::onWinChoice,
                 this::onDefeatChoice,
+                this::onSaveChoice,
                 this.hero,
                 this.gameMap,
                 PopUpType.NONE);
     }
 
     private void onInGameSettingChoice(InGameSettingChoice choice) {
+        if (this.hero == null || this.gameMap == null) {
+            return;
+        }
         switch (choice) {
             case SWITCH_VIEW -> System.out.println("Switch view");
             case SAVE_GAME -> System.out.println("Save game");
             case MAIN_MENU -> this.start();
-            case BACK ->  view.inGamePage(
+            case BACK -> view.inGamePage(
                     this::onInGameChoice,
                     this::onBattleChoice,
                     this::onWinChoice,
                     this::onDefeatChoice,
+                    this::onSaveChoice,
+                    this.hero,
+                    this.gameMap,
+                    PopUpType.NONE);
+            default -> {
+                System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
+                view.stop();
+                System.exit(-1);
+            }
+        }
+    }
+
+    private void onSaveChoice(SaveSlotChoice choice) {
+        if (this.hero == null || this.gameMap == null) {
+            return;
+        }
+        switch (choice) {
+            case SLOT_1 -> System.out.println("Choice 1");
+            case SLOT_2 -> System.out.println("Choice 2");
+            case SLOT_3 -> System.out.println("Choice 3");
+            case BACK -> view.inGamePage(
+                    this::onInGameChoice,
+                    this::onBattleChoice,
+                    this::onWinChoice,
+                    this::onDefeatChoice,
+                    this::onSaveChoice,
                     this.hero,
                     this.gameMap,
                     PopUpType.NONE);
@@ -156,6 +208,7 @@ public class GameController {
                                 this::onBattleChoice,
                                 this::onWinChoice,
                                 this::onDefeatChoice,
+                                this::onSaveChoice,
                                 this.hero,
                                 this.gameMap,
                                 PopUpType.NONE);
@@ -170,6 +223,7 @@ public class GameController {
                             this::onBattleChoice,
                             this::onWinChoice,
                             this::onDefeatChoice,
+                            this::onSaveChoice,
                             this.hero,
                             this.gameMap,
                             PopUpType.WIN);
@@ -179,6 +233,7 @@ public class GameController {
                             this::onBattleChoice,
                             this::onWinChoice,
                             this::onDefeatChoice,
+                            this::onSaveChoice,
                             this.hero,
                             this.gameMap,
                             PopUpType.DEFEAT);
@@ -213,6 +268,7 @@ public class GameController {
                 this::onBattleChoice,
                 this::onWinChoice,
                 this::onDefeatChoice,
+                this::onSaveChoice,
                 this.hero,
                 this.gameMap,
                 PopUpType.NONE);

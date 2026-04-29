@@ -197,10 +197,9 @@ public class NewGamePage {
         keyLabel.setForeground(color);
         keyLabel.setFont(Typography.H5.getTypography());
 
-        JLabel dots = new JLabel();
-        dots.setForeground(new Color(160, 160, 200));
+        JLabel dots = new JLabel("....................");
+        dots.setForeground(Color.DARK_GRAY);
         dots.setFont(Typography.H5.getTypography());
-        dots.setText("......................");
         dots.setHorizontalAlignment(SwingConstants.CENTER);
 
         JLabel valueLabel = new JLabel(String.valueOf(value));
@@ -208,8 +207,8 @@ public class NewGamePage {
         valueLabel.setFont(Typography.H5.getTypography());
         valueLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
-        row.add(keyLabel,   BorderLayout.WEST);
-        row.add(dots,       BorderLayout.CENTER);
+        row.add(keyLabel, BorderLayout.WEST);
+        row.add(dots, BorderLayout.CENTER);
         row.add(valueLabel, BorderLayout.EAST);
 
         return row;
