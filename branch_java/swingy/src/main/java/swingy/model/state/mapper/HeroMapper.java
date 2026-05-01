@@ -12,6 +12,9 @@ import java.util.List;
 
 public class HeroMapper {
     public static HeroState mapToState(Hero hero, int slot) {
+        if (hero == null || slot < 1 || slot > 3) {
+            return null;
+        }
         HeroState state = new HeroState();
         state.setSlot(slot);
 
@@ -32,6 +35,9 @@ public class HeroMapper {
     }
 
     public static Hero mapToObject(HeroState state) {
+        if (state == null) {
+            return null;
+        }
         Hero hero;
         switch (state.getClassName()) {
             case "Defender":

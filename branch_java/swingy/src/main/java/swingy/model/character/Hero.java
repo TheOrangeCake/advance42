@@ -31,7 +31,7 @@ public abstract class Hero {
         this.crit = hero.crit;
         this.imageUrl = hero.imageUrl;
         this.deadImageUrl = hero.deadImageUrl;
-        this.artifacts.addAll(hero.artifacts);
+        hero.artifacts.forEach(a -> this.artifacts.add(a.deepCopy()));
     }
 
     public void takeHit(int damage) {
@@ -59,12 +59,8 @@ public abstract class Hero {
     }
 
     public void setArtifacts(List<Artifact> artifacts) {
+        this.artifacts.clear();
         this.artifacts.addAll(artifacts);
-        for (Artifact artifact : artifacts) {
-            this.attack += artifact.getAttack();
-            this.defense += artifact.getDefense();
-            this.hitPoints += artifact.getHitPoints();
-        }
     }
 
     public void setArtifact(Artifact artifact) {

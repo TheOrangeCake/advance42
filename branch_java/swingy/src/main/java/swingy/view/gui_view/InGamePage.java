@@ -26,7 +26,6 @@ public class InGamePage {
             Consumer<BattleChoice> onBattleChoice,
             Consumer<WinChoice> onWinChoice,
             Consumer<DefeatChoice> onDefeatChoice,
-            Consumer<SaveSlotChoice> onSaveChoice,
             JFrame frame,
             Hero hero,
             GameMap gameMap,

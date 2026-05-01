@@ -10,6 +10,19 @@ public abstract class Villain {
     protected int experience;
     protected String imageUrl;
 
+    public abstract Villain deepCopy();
+
+    protected void copyFields(Villain target) {
+        target.level = this.level;
+        target.className = this.className;
+        target.attack = this.attack;
+        target.defense = this.defense;
+        target.hitPoints = this.hitPoints;
+        target.crit = this.crit;
+        target.experience = this.experience;
+        target.imageUrl = this.imageUrl;
+    }
+
     public void takeHit(int damage) {
         this.hitPoints -= damage;
     }

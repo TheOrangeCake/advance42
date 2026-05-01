@@ -10,6 +10,9 @@ import java.util.List;
 
 public class GameMapMapper {
     public static GameMapState mapToState(GameMap gameMap, HeroState heroState) {
+        if (gameMap == null || heroState == null) {
+            return null;
+        }
         GameMapState state = new GameMapState();
         state.setHero(heroState);
         state.setLevel(gameMap.getLevel());
@@ -30,6 +33,9 @@ public class GameMapMapper {
     }
 
     public static GameMap mapToObject(GameMapState state) {
+        if (state == null) {
+            return null;
+        }
         GameMap gameMap = new GameMap();
         gameMap.setLevel(state.getLevel());
         gameMap.setSize(state.getSize());

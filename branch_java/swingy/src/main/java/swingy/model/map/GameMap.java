@@ -23,6 +23,23 @@ public class GameMap {
 
     }
 
+    public GameMap(GameMap gameMap) {
+        this.level = gameMap.level;
+        this.size = gameMap.size;
+        this.heroPosition[0] = gameMap.heroPosition[0];
+        this.heroPosition[1] = gameMap.heroPosition[1];
+        this.prevPosition[0] = gameMap.prevPosition[0];
+        this.prevPosition[1] = gameMap.prevPosition[1];
+        this.nbVillain = gameMap.nbVillain;
+        gameMap.villains.forEach((key, villain) ->
+                this.villains.put(key, villain.deepCopy())
+        );
+
+        this.droppedArtifact = gameMap.droppedArtifact != null
+                ? gameMap.droppedArtifact.deepCopy()
+                : null;
+    }
+
     public GameMap(int level) {
         if (level <= 0) {
             level = 1;

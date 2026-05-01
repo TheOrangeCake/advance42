@@ -8,6 +8,9 @@ import swingy.utils.Colors;
 
 public class VillainMapper {
     public static VillainState mapToState(Villain villain, String positionKey) {
+        if (villain == null || positionKey.isEmpty()) {
+            return null;
+        }
         VillainState state = new VillainState();
         state.setClassName(villain.getClassName());
         state.setPositionKey(positionKey);
@@ -22,6 +25,9 @@ public class VillainMapper {
     }
 
     public static Villain mapToObject(VillainState state) {
+        if (state == null) {
+            return null;
+        }
         Villain villain;
         switch (state.getClassName()) {
             case "Skeleton":

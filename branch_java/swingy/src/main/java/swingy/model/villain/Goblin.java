@@ -8,6 +8,13 @@ public class Goblin extends Villain {
         this.imageUrl = "/assets/goblin.png";
     }
 
+    @Override
+    public Villain deepCopy() {
+        Goblin copy = new Goblin();
+        copyFields(copy);
+        return copy;
+    }
+
     public Goblin(int level) {
         float modifier = Math.clamp(((float) (RandomGenerator.getInstance().nextInt(100) + 1) / 100), 0.5f, 1.0f);
         this.level = level;

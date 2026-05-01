@@ -17,11 +17,10 @@ public interface View {
             Consumer<BattleChoice> onBattleChoice,
             Consumer<WinChoice> onWinChoice,
             Consumer<DefeatChoice> onDefeatChoice,
-            Consumer<SaveSlotChoice> onSaveChoice,
             Hero hero,
             GameMap gameMap,
             PopUpType popUpType);
     void inGameSettingPage(Consumer<InGameSettingChoice> onChoice);
-    void loadGamePage(Consumer<SaveSlotChoice> onChoice, HeroState[] saves);
+    void loadGamePage(Consumer<SaveSlotChoice> onChoice, Hero[] saves, LoadSaveType mode);
     void stop();
 }

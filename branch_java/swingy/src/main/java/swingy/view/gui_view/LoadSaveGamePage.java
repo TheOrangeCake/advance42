@@ -1,7 +1,8 @@
 package swingy.view.gui_view;
 
-import swingy.model.state.HeroState;
+import swingy.model.character.Hero;
 import swingy.utils.FileLoader;
+import swingy.view.LoadSaveType;
 import swingy.view.game_menu.SaveSlotChoice;
 import swingy.view.ui.Button;
 import swingy.view.ui.Typography;
@@ -12,7 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
 
-public class LoadGamePage {
+public class LoadSaveGamePage {
     private static final String[] STAT_LABELS = {"LVL", "EXP", "ATK", "DEF", "HP", "CRIT"};
     private static final Color[] STAT_COLORS = {
             new Color(180, 180, 255),
@@ -30,14 +31,16 @@ public class LoadGamePage {
     };
 
     public void displayPage(Consumer<SaveSlotChoice> onChoice,
-                            HeroState[] saves,
-                            JFrame frame) {
+                            Hero[] saves,
+                            JFrame frame,
+                            LoadSaveType mode) {
         JPanel root = new JPanel();
         root.setBackground(Color.BLACK);
         root.setLayout(new BoxLayout(root, BoxLayout.Y_AXIS));
         root.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JLabel pageTitle = new JLabel("Load Game");
+        String label = mode == LoadSaveType.SAVE ? "Save Game" : "Load Game";
+        JLabel pageTitle = new JLabel(label);
         pageTitle.setForeground(Color.WHITE);
         pageTitle.setFont(Typography.H2.getTypography());
         pageTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -52,7 +55,7 @@ public class LoadGamePage {
 
         for (int i = 0; i < SLOT_CHOICES.length; i++) {
             final SaveSlotChoice slotChoice = SLOT_CHOICES[i];
-            HeroState save = (saves != null && saves.length > i) ? saves[i] : null;
+            Hero save = (saves != null && saves.length > i) ? saves[i] : null;
             boolean isEmpty = (save == null);
 
             JPanel card = new JPanel();
@@ -76,6 +79,24 @@ public class LoadGamePage {
 
             if (isEmpty) {
                 buildEmptySlot(card);
+                if (mode == LoadSaveType.SAVE) {
+                    card.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            onChoice.accept(slotChoice);
+                        }
+
+                        @Override
+                        public void mouseEntered(MouseEvent e) {
+                            card.setBackground(new Color(55, 50, 80));
+                        }
+
+                        @Override
+                        public void mouseExited(MouseEvent e) {
+                            card.setBackground(cardDefault);
+                        }
+                    });
+                }
             } else {
                 buildFilledSlot(card, save);
                 card.addMouseListener(new MouseAdapter() {
@@ -95,6 +116,7 @@ public class LoadGamePage {
                     }
                 });
             }
+            card.add(Box.createVerticalStrut(12));
             cardsPanel.add(card);
         }
         root.add(cardsPanel);
@@ -122,7 +144,7 @@ public class LoadGamePage {
         card.add(Box.createVerticalGlue());
     }
 
-    private void buildFilledSlot(JPanel card, HeroState save) {
+    private void buildFilledSlot(JPanel card, Hero save) {
         ImageIcon icon = FileLoader.loadScaledImage(save.getImageUrl(), 148, 148);
         JLabel imageLabel = new JLabel(icon != null ? icon : new ImageIcon());
         imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);

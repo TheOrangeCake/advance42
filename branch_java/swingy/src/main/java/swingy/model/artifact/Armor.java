@@ -8,6 +8,13 @@ public class Armor extends Artifact {
         this.imageUrl = "/assets/shield.png";
     }
 
+    @Override
+    public Artifact deepCopy() {
+        Armor copy = new Armor();
+        copyFields(copy);
+        return copy;
+    }
+
     public Armor(int level) {
         this.className = "Armor";
         this.attack = 0;

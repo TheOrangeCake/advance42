@@ -7,6 +7,9 @@ import swingy.utils.Colors;
 
 public class ArtifactMapper {
     public static ArtifactState mapToState(Artifact artifact) {
+        if (artifact == null) {
+            return null;
+        }
         ArtifactState state = new ArtifactState();
         state.setClassName(artifact.getClassName());
         state.setAttack(artifact.getAttack());
@@ -17,6 +20,9 @@ public class ArtifactMapper {
     }
 
     public static Artifact mapToObject(ArtifactState state) {
+        if (state == null) {
+            return null;
+        }
         Artifact artifact = ArtifactFactory.generateArtifact(state.getClassName());
         if (artifact == null) {
             System.err.println(Colors.RED + "Error" + Colors.RESET + ": Fail to map artifact, ignored");

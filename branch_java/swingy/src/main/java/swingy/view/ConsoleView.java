@@ -75,7 +75,6 @@
              Consumer<BattleChoice> onBattleChoice,
              Consumer<WinChoice> onWinChoice,
              Consumer<DefeatChoice> onDefeatChoice,
-             Consumer<SaveSlotChoice> onSaveChoice,
              Hero hero,
              GameMap gameMap,
              PopUpType popUpType) {
@@ -88,7 +87,7 @@
      }
 
      @Override
-     public void loadGamePage(Consumer<SaveSlotChoice> onChoice, HeroState[] saves) {
+     public void loadGamePage(Consumer<SaveSlotChoice> onChoice, Hero[] saves, LoadSaveType mode) {
 
      }
 

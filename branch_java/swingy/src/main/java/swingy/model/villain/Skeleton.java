@@ -8,6 +8,13 @@ public class Skeleton extends Villain {
         this.imageUrl = "/assets/skeleton.png";
     }
 
+    @Override
+    public Villain deepCopy() {
+        Skeleton copy = new Skeleton();
+        copyFields(copy);
+        return copy;
+    }
+
     public Skeleton(int level) {
         float modifier = Math.clamp(((float) (RandomGenerator.getInstance().nextInt(100) + 1) / 100), 0.5f, 1.0f);
         this.level = level;

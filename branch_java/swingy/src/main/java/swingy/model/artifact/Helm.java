@@ -8,6 +8,13 @@ public class Helm extends Artifact {
         this.imageUrl = "/assets/helm.png";
     }
 
+    @Override
+    public Artifact deepCopy() {
+        Helm copy = new Helm();
+        copyFields(copy);
+        return copy;
+    }
+
     public Helm(int level) {
         this.className = "Helm";
         this.attack = 0;

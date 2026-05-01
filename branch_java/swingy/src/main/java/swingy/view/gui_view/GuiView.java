@@ -1,10 +1,9 @@
 package swingy.view.gui_view;
 
-import org.hibernate.SessionFactory;
 import swingy.model.character.Hero;
 import swingy.model.map.GameMap;
 import swingy.model.state.DatabaseConfig;
-import swingy.model.state.HeroState;
+import swingy.view.LoadSaveType;
 import swingy.view.PopUpType;
 import swingy.view.View;
 import swingy.view.game_menu.*;
@@ -20,7 +19,7 @@ public class GuiView implements View {
     private final SettingPage settingPage;
     private final InGamePage inGamePage;
     private final InGameSettingPage inGameSettingPage;
-    private final LoadGamePage loadGamePage;
+    private final LoadSaveGamePage loadSaveGamePage;
 
     public GuiView(int height, int width) {
         this.frame = new JFrame();
@@ -29,7 +28,7 @@ public class GuiView implements View {
         this.settingPage = new SettingPage();
         this.inGamePage = new InGamePage();
         this.inGameSettingPage = new InGameSettingPage();
-        this.loadGamePage = new LoadGamePage();
+        this.loadSaveGamePage = new LoadSaveGamePage();
         frame.setSize(width, height);
         frame.setTitle("42 Swingy");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -57,7 +56,6 @@ public class GuiView implements View {
             Consumer<BattleChoice> onBattleChoice,
             Consumer<WinChoice> onWinChoice,
             Consumer<DefeatChoice> onDefeatChoice,
-            Consumer<SaveSlotChoice>  onSaveChoice,
             Hero hero,
             GameMap gameMap,
             PopUpType popUpType) {
@@ -66,7 +64,6 @@ public class GuiView implements View {
                 onBattleChoice,
                 onWinChoice,
                 onDefeatChoice,
-                onSaveChoice,
                 frame,
                 hero,
                 gameMap,
@@ -79,8 +76,8 @@ public class GuiView implements View {
     }
 
     @Override
-    public void loadGamePage(Consumer<SaveSlotChoice> onChoice, HeroState[] saves) {
-        loadGamePage.displayPage(onChoice, saves, frame);
+    public void loadGamePage(Consumer<SaveSlotChoice> onChoice, Hero[] saves, LoadSaveType mode) {
+        loadSaveGamePage.displayPage(onChoice, saves, frame, mode);
     }
 
     @Override

@@ -8,6 +8,13 @@ public class Weapon extends Artifact {
         this.imageUrl = "/assets/sword.png";
     }
 
+    @Override
+    public Artifact deepCopy() {
+        Weapon copy = new Weapon();
+        copyFields(copy);
+        return copy;
+    }
+
     public Weapon(int level) {
         this.className = "Weapon";
         this.attack = level * (RandomGenerator.getInstance().nextInt(11) + 10);

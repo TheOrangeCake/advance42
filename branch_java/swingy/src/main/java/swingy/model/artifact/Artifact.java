@@ -7,6 +7,16 @@ public abstract class Artifact {
     protected int hitPoints;
     protected String imageUrl;
 
+    public abstract Artifact deepCopy();
+
+    protected void copyFields(Artifact target) {
+        target.className = this.className;
+        target.attack = this.attack;
+        target.defense = this.defense;
+        target.hitPoints = this.hitPoints;
+        target.imageUrl = this.imageUrl;
+    }
+
     public String getClassName() {
         return this.className;
     }
