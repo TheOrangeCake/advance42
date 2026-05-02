@@ -1,10 +1,10 @@
 package swingy.view.game_menu;
 
 public enum InGameChoice implements Menu {
-    UP("Up"),
-    DOWN("Down"),
-    LEFT("Left"),
-    RIGHT("Right"),
+    UP("North"),
+    DOWN("South"),
+    LEFT("West"),
+    RIGHT("East"),
     SETTING("Setting");
 
     private final String description;
