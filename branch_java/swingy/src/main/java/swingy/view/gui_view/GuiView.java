@@ -2,7 +2,7 @@ package swingy.view.gui_view;
 
 import swingy.model.character.Hero;
 import swingy.model.map.GameMap;
-import swingy.model.state.DatabaseConfig;
+import swingy.utils.Colors;
 import swingy.view.LoadSaveType;
 import swingy.view.PopUpType;
 import swingy.view.View;
@@ -31,7 +31,7 @@ public class GuiView implements View {
         this.loadSaveGamePage = new LoadSaveGamePage();
         frame.setSize(width, height);
         frame.setTitle("42 Swingy");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
     }
 
@@ -87,7 +87,7 @@ public class GuiView implements View {
 
     @Override
     public void stop() {
-        DatabaseConfig.close();
         frame.dispose();
+        System.out.println(Colors.YELLOW + "Gui view stopped" + Colors.RESET);
     }
 }

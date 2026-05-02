@@ -9,16 +9,23 @@ import swingy.utils.RandomGenerator;
 import swingy.view.LoadSaveType;
 import swingy.view.PopUpType;
 import swingy.view.View;
+import swingy.view.ViewSwitcher;
 import swingy.view.game_menu.*;
 import swingy.utils.Colors;
 
 public class GameController {
-    private final View view;
+    private final ViewSwitcher switcher;
+    private View view;
     private Hero hero = null;
     private GameMap gameMap = null;
 
-    public GameController(View view) {
-        this.view = view;
+    public GameController(ViewSwitcher switcher) {
+        this.switcher = switcher;
+        this.view = switcher.getCurrentView();
+    }
+
+    public void switchView() {
+        this.view = switcher.switchView();
     }
 
     public void start() {
@@ -37,7 +44,6 @@ public class GameController {
             default -> {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
                 view.stop();
-                System.exit(-1);
             }
         }
     }
@@ -79,19 +85,20 @@ public class GameController {
             default -> {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
                 view.stop();
-                System.exit(-1);
             }
         }
     }
 
     private void onSettingChoice(SettingMenuChoice choice) {
         switch (choice) {
-            case SWITCH_VIEW -> System.out.println("Switch view");
+            case SWITCH_VIEW -> {
+                switchView();
+                view.settingPage(this::onSettingChoice);
+            }
             case BACK -> this.start();
             default -> {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
                 view.stop();
-                System.exit(-1);
             }
         }
     }
@@ -107,7 +114,7 @@ public class GameController {
             default:
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
                 view.stop();
-                System.exit(-1);
+                return;
         }
         this.gameMap = new GameMap(1);
         view.inGamePage(
@@ -143,7 +150,7 @@ public class GameController {
             default:
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
                 view.stop();
-                System.exit(-1);
+                return;
         }
         if (gameMap.isEncounter()) {
             view.inGamePage(
@@ -171,7 +178,10 @@ public class GameController {
             return;
         }
         switch (choice) {
-            case SWITCH_VIEW -> System.out.println("Switch view");
+            case SWITCH_VIEW -> {
+                switchView();
+                view.inGameSettingPage(this::onInGameSettingChoice);
+            }
             case SAVE_GAME -> {
                 Hero[] saves = DatabaseQueries.loadAllHeroStates();
                 view.loadGamePage(this::onSaveChoice, saves, LoadSaveType.SAVE);
@@ -191,7 +201,6 @@ public class GameController {
             default -> {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
                 view.stop();
-                System.exit(-1);
             }
         }
     }
@@ -228,7 +237,6 @@ public class GameController {
             default -> {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
                 view.stop();
-                System.exit(-1);
             }
         }
     }
@@ -280,7 +288,6 @@ public class GameController {
             default -> {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
                 view.stop();
-                System.exit(-1);
             }
         }
     }
@@ -299,7 +306,7 @@ public class GameController {
             default:
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
                 view.stop();
-                System.exit(-1);
+                return;
         }
         view.inGamePage(
                 this::onInGameChoice,
@@ -325,7 +332,6 @@ public class GameController {
             default -> {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid choice. Program terminated");
                 view.stop();
-                System.exit(-1);
             }
         }
     }

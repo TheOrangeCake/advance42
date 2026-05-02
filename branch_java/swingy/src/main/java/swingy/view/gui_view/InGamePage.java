@@ -664,7 +664,6 @@ public class InGamePage {
         title.setFont(Typography.H3.getTypography());
         root.add(title, BorderLayout.NORTH);
 
-        // Artifact or no drop
         Artifact artifact = gameMap.getDroppedArtifact();
         JPanel center = new JPanel();
         center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));

@@ -5,7 +5,6 @@ import swingy.model.ConsoleChoice;
 import swingy.model.artifact.Artifact;
 import swingy.model.character.Hero;
 import swingy.model.map.GameMap;
-import swingy.model.state.DatabaseConfig;
 import swingy.model.villain.Villain;
 import swingy.utils.Colors;
 import swingy.utils.ValidatorClient;
@@ -132,7 +131,12 @@ public class ConsoleView implements View {
             Villain villain = gameMap.getVillainAtHeroPosition();
             showBattlePrompt(hero, villain, onBattleChoice);
         } else if (popUpType == PopUpType.WIN) {
-            showWinPrompt(gameMap, onWinChoice);
+            showWinPrompt(onInGameChoice,
+                    onBattleChoice,
+                    onWinChoice,
+                    onDefeatChoice,
+                    hero,
+                    gameMap);
         } else if (popUpType == PopUpType.DEFEAT) {
             showDefeatPrompt(hero, onDefeatChoice);
         } else {
@@ -194,25 +198,36 @@ public class ConsoleView implements View {
 
     private void showBattlePrompt(Hero hero, Villain villain, Consumer<BattleChoice> onBattleChoice) {
         System.out.println(Colors.PURPLE + "\n  ENCOUNTER!" + Colors.RESET);
-        System.out.println(Colors.CYAN + hero.getName() + Colors.RESET + " VS " + Colors.PURPLE + villain.getClassName() + Colors.RESET);
         System.out.println();
-        System.out.printf("%-20s %-20s%n",
-                Colors.CYAN + "[ YOU ]" + Colors.RESET,
+        System.out.println(
+                Colors.CYAN + "[ " + hero.getName() + " ]" + Colors.RESET + "\t\t" +
                 Colors.PURPLE + "[ " + villain.getClassName().toUpperCase() + " ]" + Colors.RESET);
-        System.out.printf("%-20s %-20s%n", "ATK:  " + hero.getAttack(), "ATK:  " + villain.getAttack());
-        System.out.printf("%-20s %-20s%n", "DEF:  " + hero.getDefense(), "DEF:  " + villain.getDefense());
-        System.out.printf("%-20s %-20s%n", "HP:   " + hero.getHitPoints(), "HP:   " + villain.getHitPoints());
-        System.out.printf("%-20s %-20s%n", "CRIT: " + hero.getCrit() + "%", "CRIT: " + villain.getCrit() + "%");
+        System.out.println("ATK:  " + hero.getAttack() + "\t\t" + "ATK:  " + villain.getAttack());
+        System.out.println("DEF:  " + hero.getDefense() + "\t\t" +"DEF:  " + villain.getDefense());
+        System.out.println("HP:   " + hero.getHitPoints() + "\t\t" + "HP:   " + villain.getHitPoints());
+        System.out.println("CRIT: " + hero.getCrit() + "%" + "\t\t" + "CRIT: " + villain.getCrit() + "%");
         System.out.println();
         showMenu(BattleChoice.class);
         onBattleChoice.accept(readInput(BattleChoice.class));
     }
 
-    private void showWinPrompt(GameMap gameMap, Consumer<WinChoice> onWinChoice) {
+    private void showWinPrompt(Consumer<InGameChoice> onInGameChoice,
+                               Consumer<BattleChoice> onBattleChoice,
+                               Consumer<WinChoice> onWinChoice,
+                               Consumer<DefeatChoice> onDefeatChoice,
+                               Hero hero,
+                               GameMap gameMap) {
         System.out.println(Colors.CYAN + "\n  VICTORY!" + Colors.RESET);
         Artifact artifact = gameMap.getDroppedArtifact();
         if (artifact == null) {
             System.out.println("No artifact dropped.");
+            inGamePage(onInGameChoice,
+                    onBattleChoice,
+                    onWinChoice,
+                    onDefeatChoice,
+                    hero,
+                    gameMap,
+                    PopUpType.NONE);
             return;
         }
         System.out.println(Colors.YELLOW + "Artifact dropped: " + artifact.getClassName() + Colors.RESET);
@@ -240,16 +255,15 @@ public class ConsoleView implements View {
 
     @Override
     public void inGameSettingPage(Consumer<InGameSettingChoice> onChoice) {
-        System.out.println(Colors.YELLOW + "SETTING" + Colors.RESET);
+        System.out.println(Colors.YELLOW + "SETTING\n" +
+                "What do you want to do?" + Colors.RESET);
         showMenu(InGameSettingChoice.class);
         onChoice.accept(readInput(InGameSettingChoice.class));
     }
 
     @Override
     public void stop() {
-        scanner.close();
-        DatabaseConfig.close();
-        System.out.println(Colors.YELLOW + "Fantasy over! Get back to work!" + Colors.RESET);
+        System.out.println(Colors.YELLOW + "Console view stopped" + Colors.RESET);
     }
 
     @Override
@@ -291,6 +305,7 @@ public class ConsoleView implements View {
             } catch (NumberFormatException e) {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Does adventurer not know how to read? Please enter valid choice value.");
             } catch (NoSuchElementException e) {
+                System.err.println(Colors.RED + "Error: " + Colors.RESET + "Something went wrong.");
                 this.stop();
                 System.exit(0);
             } catch (IllegalStateException e) {
