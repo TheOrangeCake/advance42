@@ -1,19 +1,19 @@
 package swingy.view.game_menu;
 
-public enum SaveSlotChoice {
-    SLOT_1(1),
-    SLOT_2(2),
-    SLOT_3(3),
-    CLEAR_SAVE(4),
-    BACK(5);
+public enum SaveSlotChoice implements Menu {
+    SLOT_1("1"),
+    SLOT_2("2"),
+    SLOT_3("3"),
+    CLEAR_SAVE("4"),
+    BACK("5");
 
-    final int choiceNumber;
+    final String choiceNumber;
 
-    SaveSlotChoice(int choiceNumber) {
+    SaveSlotChoice(String choiceNumber) {
         this.choiceNumber = choiceNumber;
     }
 
-    public int getChoiceNumber() {
+    public String getDescription() {
         return this.choiceNumber;
     }
 }

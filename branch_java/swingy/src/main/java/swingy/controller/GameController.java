@@ -47,7 +47,7 @@ public class GameController {
             case SLOT_1, SLOT_2, SLOT_3 -> {
                 Hero hero = DatabaseQueries.loadHero(choice);
                 if (hero == null) {
-                    view.showError("Load Error", "Failed to load slot " + choice.getChoiceNumber());
+                    view.showError("Load Error", "Failed to load slot " + choice.getDescription());
                     Hero[] saves = DatabaseQueries.loadAllHeroStates();
                     view.loadGamePage(this::onLoadChoice, saves, LoadSaveType.LOAD);
                     return;
@@ -55,7 +55,7 @@ public class GameController {
                 this.hero = hero;
                 GameMap gameMap = DatabaseQueries.loadMap(choice);
                 if (gameMap == null) {
-                    view.showError("Load Error", "Failed to load slot " + choice.getChoiceNumber());
+                    view.showError("Load Error", "Failed to load slot " + choice.getDescription());
                     Hero[] saves = DatabaseQueries.loadAllHeroStates();
                     view.loadGamePage(this::onLoadChoice, saves, LoadSaveType.LOAD);
                     return;
