@@ -54,6 +54,9 @@ public class LoadSaveGamePage {
         Color cardEmpty    = new Color(30, 30, 45);
 
         for (int i = 0; i < SLOT_CHOICES.length; i++) {
+            if (mode == LoadSaveType.SAVE && i == SLOT_CHOICES.length - 1) {
+                continue;
+            }
             final SaveSlotChoice slotChoice = SLOT_CHOICES[i];
             Hero save = (saves != null && saves.length > i) ? saves[i] : null;
             boolean isEmpty = (save == null);

@@ -176,7 +176,10 @@ public class GameController {
                 Hero[] saves = DatabaseQueries.loadAllHeroStates();
                 view.loadGamePage(this::onSaveChoice, saves, LoadSaveType.SAVE);
             }
-            case MAIN_MENU -> this.start();
+            case MAIN_MENU -> {
+                DatabaseQueries.save(this.hero, this.gameMap, SaveSlotChoice.SLOT_3);
+                this.start();
+            }
             case BACK -> view.inGamePage(
                     this::onInGameChoice,
                     this::onBattleChoice,
@@ -198,7 +201,7 @@ public class GameController {
             return;
         }
         switch (choice) {
-            case SLOT_1, SLOT_3, SLOT_2 -> {
+            case SLOT_1, SLOT_2, SLOT_3 -> {
                 DatabaseQueries.save(this.hero, this.gameMap, choice);
                 view.inGamePage(
                         this::onInGameChoice,
