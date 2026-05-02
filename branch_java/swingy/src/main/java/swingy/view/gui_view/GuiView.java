@@ -81,6 +81,11 @@ public class GuiView implements View {
     }
 
     @Override
+    public void showError(String title, String message) {
+        JOptionPane.showMessageDialog(frame, message, title, JOptionPane.ERROR_MESSAGE);
+    }
+
+    @Override
     public void stop() {
         DatabaseConfig.close();
         frame.dispose();

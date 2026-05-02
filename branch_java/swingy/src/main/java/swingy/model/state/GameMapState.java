@@ -49,11 +49,17 @@ public class GameMapState {
     @PositiveOrZero
     private int nbVillain;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER)
     @JoinColumn(name = "map_slot")
     private List<VillainState> villains = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER)
     @JoinColumn(name = "artifact_slot")
     private ArtifactState droppedArtifact;
 

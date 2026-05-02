@@ -4,7 +4,8 @@ public enum SaveSlotChoice {
     SLOT_1(1),
     SLOT_2(2),
     SLOT_3(3),
-    BACK(4);
+    CLEAR_SAVE(4),
+    BACK(5);
 
     final int choiceNumber;
 

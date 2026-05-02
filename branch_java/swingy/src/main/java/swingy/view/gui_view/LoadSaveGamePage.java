@@ -80,6 +80,7 @@ public class LoadSaveGamePage {
             if (isEmpty) {
                 buildEmptySlot(card);
                 if (mode == LoadSaveType.SAVE) {
+                    card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     card.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mouseClicked(MouseEvent e) {
@@ -121,6 +122,11 @@ public class LoadSaveGamePage {
         }
         root.add(cardsPanel);
         root.add(Box.createVerticalStrut(24));
+
+        Button clearButton = new Button("Clear all saves");
+        clearButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        clearButton.addActionListener(_ -> onChoice.accept(SaveSlotChoice.CLEAR_SAVE));
+        root.add(clearButton);
 
         Button backButton = new Button("Back");
         backButton.setAlignmentX(Component.CENTER_ALIGNMENT);

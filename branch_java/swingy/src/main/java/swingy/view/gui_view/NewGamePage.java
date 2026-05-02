@@ -113,6 +113,7 @@ public class NewGamePage {
                 card.add(Box.createVerticalStrut(4));
             }
 
+            card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             card.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {

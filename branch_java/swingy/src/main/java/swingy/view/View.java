@@ -2,7 +2,6 @@ package swingy.view;
 
 import swingy.model.character.Hero;
 import swingy.model.map.GameMap;
-import swingy.model.state.HeroState;
 import swingy.view.game_menu.*;
 
 import java.util.function.BiConsumer;
@@ -22,5 +21,6 @@ public interface View {
             PopUpType popUpType);
     void inGameSettingPage(Consumer<InGameSettingChoice> onChoice);
     void loadGamePage(Consumer<SaveSlotChoice> onChoice, Hero[] saves, LoadSaveType mode);
+    void showError(String title, String message);
     void stop();
 }

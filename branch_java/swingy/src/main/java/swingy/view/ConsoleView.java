@@ -5,7 +5,6 @@
  import swingy.model.character.Hero;
  import swingy.model.map.GameMap;
  import swingy.model.state.DatabaseConfig;
- import swingy.model.state.HeroState;
  import swingy.utils.Colors;
  import swingy.utils.ValidatorClient;
  import swingy.view.game_menu.*;
@@ -96,6 +95,11 @@
          scanner.close();
          DatabaseConfig.close();
          System.out.println(Colors.YELLOW + "Fantasy over! Get back to work!" + Colors.RESET);
+     }
+
+     @Override
+     public void showError(String title, String message) {
+
      }
 
      private <T extends Enum<T> & Menu> void showMenu(Class<T> enumClass) {

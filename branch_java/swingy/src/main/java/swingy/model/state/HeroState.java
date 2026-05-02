@@ -15,7 +15,10 @@ public class HeroState {
     @Max(3)
     private int slot;
 
-    @OneToOne(mappedBy = "hero", cascade = CascadeType.ALL)
+    @OneToOne(
+            mappedBy = "hero",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER)
     private GameMapState gameMap;
 
     @NotBlank
@@ -56,7 +59,10 @@ public class HeroState {
     @Column(name = "dead_img_url")
     private String deadImageUrl = "/assets/hero_dead.png";
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER)
     @JoinColumn(name = "hero_slot")
     private List<ArtifactState> artifacts = new ArrayList<>();
 

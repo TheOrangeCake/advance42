@@ -42,18 +42,23 @@ public class GameController {
         }
     }
 
-    // Load the choice, then initialize new game map
     private void onLoadChoice(SaveSlotChoice choice) {
         switch (choice) {
             case SLOT_1, SLOT_2, SLOT_3 -> {
                 Hero hero = DatabaseQueries.loadHero(choice);
                 if (hero == null) {
-
+                    view.showError("Load Error", "Failed to load slot " + choice.getChoiceNumber());
+                    Hero[] saves = DatabaseQueries.loadAllHeroStates();
+                    view.loadGamePage(this::onLoadChoice, saves, LoadSaveType.LOAD);
+                    return;
                 }
                 this.hero = hero;
                 GameMap gameMap = DatabaseQueries.loadMap(choice);
                 if (gameMap == null) {
-
+                    view.showError("Load Error", "Failed to load slot " + choice.getChoiceNumber());
+                    Hero[] saves = DatabaseQueries.loadAllHeroStates();
+                    view.loadGamePage(this::onLoadChoice, saves, LoadSaveType.LOAD);
+                    return;
                 }
                 this.gameMap = gameMap;
                 view.inGamePage(
@@ -64,6 +69,11 @@ public class GameController {
                         this.hero,
                         this.gameMap,
                         PopUpType.NONE);
+            }
+            case CLEAR_SAVE -> {
+                DatabaseQueries.clear();
+                Hero[] saves = DatabaseQueries.loadAllHeroStates();
+                view.loadGamePage(this::onLoadChoice, saves, LoadSaveType.LOAD);
             }
             case BACK -> this.start();
             default -> {
@@ -198,6 +208,11 @@ public class GameController {
                         this.hero,
                         this.gameMap,
                         PopUpType.NONE);
+            }
+            case CLEAR_SAVE -> {
+                DatabaseQueries.clear();
+                Hero[] saves = DatabaseQueries.loadAllHeroStates();
+                view.loadGamePage(this::onLoadChoice, saves, LoadSaveType.SAVE);
             }
             case BACK -> view.inGamePage(
                     this::onInGameChoice,

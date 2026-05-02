@@ -50,4 +50,17 @@ public class DatabaseQueries {
             transaction.commit();
         }
     }
+
+    public static void clear() {
+        try (Session session = DatabaseConfig.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            for (int i = 1; i <= 3; i++) {
+                HeroState existing = session.find(HeroState.class, i);
+                if (existing != null) {
+                    session.remove(existing);
+                }
+            }
+            transaction.commit();
+        }
+    }
 }
