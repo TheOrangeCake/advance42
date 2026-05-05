@@ -18,6 +18,7 @@
     <module>broker_module</module>
     <module>market_module</module>
     <module>message_module</module>
+    <module>fix_parser_module</module>
   </modules>
 
   <dependencies>
