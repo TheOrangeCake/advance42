@@ -1,5 +1,6 @@
 package com.nguyen.fix;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,7 +17,7 @@ public class FixParser {
             FixTag.CHECKSUM
     };
 
-    public static Map<FixTag, String> parse(String message) {
+    public static Map<FixTag, String> parse(String message) throws InvalidFixFormatException {
         if (message == null || message.isEmpty()) {
             throw new InvalidFixFormatException("FIX message is empty");
         }
@@ -80,10 +81,40 @@ public class FixParser {
     }
 
     private static void validateChecksum(String message, Map<FixTag, String> fields) {
-
+        try {
+            int receivedChecksum = Integer.parseInt(fields.get(FixTag.CHECKSUM));
+            int checksumIndex = message.lastIndexOf("10=");
+            if (checksumIndex <= 0) {
+                throw new InvalidFixFormatException("No Checksum field");
+            }
+            byte[] messageBytes = message.substring(0, checksumIndex).getBytes(StandardCharsets.US_ASCII);
+            int calculatedChecksum = 0;
+            for (byte b : messageBytes) {
+                calculatedChecksum += b;
+            }
+            calculatedChecksum %= 256;
+            if (calculatedChecksum != receivedChecksum) {
+                throw new InvalidFixFormatException("Checksum incorrect: " + fields.get(FixTag.CHECKSUM));
+            }
+        } catch (NumberFormatException e) {
+            throw new InvalidFixFormatException("Invalid checksum: " + fields.get(FixTag.CHECKSUM));
+        }
     }
 
     private static void validateBodyLength(String message, Map<FixTag, String> fields) {
-
+        try {
+            int receivedBodyLength = Integer.parseInt(fields.get(FixTag.BODY_LENGTH));
+            int messageTypeIndex = message.indexOf("35=");
+            int checksumIndex = message.lastIndexOf("10=");
+            if (messageTypeIndex <= 0 || checksumIndex <= 0) {
+                throw new InvalidFixFormatException("Invalid FIX format");
+            }
+            int calculatedBodyLength = message.substring(messageTypeIndex, checksumIndex).length();
+            if (receivedBodyLength != calculatedBodyLength) {
+                throw new InvalidFixFormatException("Body Length incorrect: " + fields.get(FixTag.BODY_LENGTH));
+            }
+        } catch (NumberFormatException e) {
+            throw new InvalidFixFormatException("Invalid Body Length: " + fields.get(FixTag.BODY_LENGTH));
+        }
     }
 }
