@@ -156,4 +156,37 @@ public class FixParserTest {
         Assertions.assertThrows(InvalidFixFormatException.class,
                 () -> FixParser.parse(corrupted));
     }
+
+    @Test
+    void testBodyLengthNotSecondThrows() {
+        String message = "8=FIX.4.4" + DELIMITER + "35=D" + DELIMITER + "9=3" + DELIMITER + "10=000" + DELIMITER;
+        Assertions.assertThrows(InvalidFixFormatException.class,
+                () -> FixParser.parse(message));
+    }
+
+    @Test
+    void testMsgTypeNotThirdThrows() {
+        String message = "8=FIX.4.4" + DELIMITER + "9=20" + DELIMITER + "49=BROKER_01" + DELIMITER + "35=D" + DELIMITER + "10=000" + DELIMITER;
+        Assertions.assertThrows(InvalidFixFormatException.class,
+                () -> FixParser.parse(message));
+    }
+
+    @Test
+    void testDuplicateTagThrows() {
+        String message = buildValidMessage("D", "BROKER_01", "MARKET_01",
+                "55=AAPL" + DELIMITER + "55=MSFT" + DELIMITER);
+        Assertions.assertThrows(InvalidFixFormatException.class,
+                () -> FixParser.parse(message));
+    }
+
+    @Test
+    void testOptionalFieldsParsedCorrectly() {
+        String extra = "55=AAPL" + DELIMITER + "38=100" + DELIMITER + "54=1" + DELIMITER;
+        String message = buildValidMessage("D", "BROKER_01", "MARKET_01", extra);
+        Map<FixTag, String> fields = FixParser.parse(message);
+
+        Assertions.assertEquals("AAPL", fields.get(FixTag.SYMBOL));
+        Assertions.assertEquals("100",  fields.get(FixTag.ORDER_QTY));
+        Assertions.assertEquals("1",    fields.get(FixTag.SIDE));
+    }
 }

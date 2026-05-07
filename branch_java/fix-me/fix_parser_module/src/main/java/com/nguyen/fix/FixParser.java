@@ -48,6 +48,9 @@ public class FixParser {
             }
             FixTag fixTag = FixTag.checkTag(tagInt);
 
+            if (fields.containsKey(fixTag)) {
+                throw new InvalidFixFormatException("Duplicate tag: " + tagInt);
+            }
             fields.put(fixTag, value);
         }
         validateRequired(fields);
@@ -109,7 +112,7 @@ public class FixParser {
             if (messageTypeIndex <= 0 || checksumIndex <= 0) {
                 throw new InvalidFixFormatException("Invalid FIX format");
             }
-            int calculatedBodyLength = message.substring(messageTypeIndex, checksumIndex).length();
+            int calculatedBodyLength = message.substring(messageTypeIndex, checksumIndex).getBytes(StandardCharsets.US_ASCII).length;
             if (receivedBodyLength != calculatedBodyLength) {
                 throw new InvalidFixFormatException("Body Length incorrect: " + fields.get(FixTag.BODY_LENGTH));
             }
