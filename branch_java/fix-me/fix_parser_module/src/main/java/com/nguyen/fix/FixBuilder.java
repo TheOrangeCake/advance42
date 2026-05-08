@@ -119,10 +119,10 @@ public class FixBuilder {
 
         public Builder beginString(String beginString) {
             if (beginString == null || beginString.isBlank()) {
-                throw new IllegalArgumentException("beginString (Tag 8) must not be blank");
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "beginString (Tag 8) must not be blank");
             }
             if (!beginString.matches("FIX\\.\\d+\\.\\d+")) {
-                throw new IllegalArgumentException("beginString must be in format FIX.X.X, got: " + beginString);
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET +  "beginString must be in format FIX.X.X, got: " + beginString);
             }
             this.beginString = beginString;
             return this;
@@ -130,7 +130,7 @@ public class FixBuilder {
 
         public Builder messageType(String messageType) {
             if (messageType == null || messageType.isBlank()) {
-                throw new IllegalArgumentException("messageType (Tag 35) must not be blank");
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "messageType (Tag 35) must not be blank");
             }
             this.messageType = messageType;
             return this;
@@ -138,7 +138,7 @@ public class FixBuilder {
 
         public Builder senderId(String senderId) {
             if (senderId == null || senderId.isBlank()) {
-                throw new IllegalArgumentException("senderId (Tag 49) must not be blank");
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "senderId (Tag 49) must not be blank");
             }
             this.senderId = senderId;
             return this;
@@ -146,7 +146,7 @@ public class FixBuilder {
 
         public Builder targetId(String targetId) {
             if (targetId == null || targetId.isBlank()) {
-                throw new IllegalArgumentException("targetId (Tag 56) must not be blank");
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "targetId (Tag 56) must not be blank");
             }
             this.targetId = targetId;
             return this;
@@ -154,10 +154,10 @@ public class FixBuilder {
 
         public Builder sequenceNumber(String sequenceNumber) {
             if (sequenceNumber == null || sequenceNumber.isBlank()) {
-                throw new IllegalArgumentException("sequenceNumber (Tag 34) must not be blank");
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "sequenceNumber (Tag 34) must not be blank");
             }
             if (!sequenceNumber.matches("\\d+") || Integer.parseInt(sequenceNumber) <= 0) {
-                throw new IllegalArgumentException("sequenceNumber must be a positive integer, got: " + sequenceNumber);
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "sequenceNumber must be a positive integer, got: " + sequenceNumber);
             }
             this.sequenceNumber = sequenceNumber;
             return this;
@@ -165,7 +165,7 @@ public class FixBuilder {
 
         public Builder sequenceNumber(int sequenceNumber) {
             if (sequenceNumber <= 0) {
-                throw new IllegalArgumentException("sequenceNumber must be a positive integer, got: " + sequenceNumber);
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "sequenceNumber must be a positive integer, got: " + sequenceNumber);
             }
             this.sequenceNumber = String.valueOf(sequenceNumber);
             return this;
@@ -173,10 +173,10 @@ public class FixBuilder {
 
         public Builder sendingTime(String sendingTime) {
             if (sendingTime == null || sendingTime.isBlank()) {
-                throw new IllegalArgumentException("sendingTime (Tag 52) must not be blank");
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "sendingTime (Tag 52) must not be blank");
             }
             if (!sendingTime.matches("\\d{8}-\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?")) {
-                throw new IllegalArgumentException("sendingTime must be in FIX format yyyyMMdd-HH:mm:ss[.SSS], got: " + sendingTime);
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "sendingTime must be in FIX format yyyyMMdd-HH:mm:ss[.SSS], got: " + sendingTime);
             }
             this.sendingTime = sendingTime;
             return this;
@@ -184,7 +184,7 @@ public class FixBuilder {
 
         public Builder sendingTime(Date date) {
             if (date == null) {
-                throw new IllegalArgumentException("sendingTime (Tag 52) date must not be null");
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "sendingTime (Tag 52) date must not be null");
             }
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS");
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -194,7 +194,7 @@ public class FixBuilder {
 
         public Builder bodyLength(String bodyLength) {
             if (bodyLength != null && !bodyLength.matches("\\d+")) {
-                throw new IllegalArgumentException("bodyLength (Tag 9) must be numeric, got: " + bodyLength);
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "bodyLength (Tag 9) must be numeric, got: " + bodyLength);
             }
             this.bodyLength = bodyLength;
             return this;
@@ -202,7 +202,7 @@ public class FixBuilder {
 
         public Builder symbol(String symbol) {
             if (symbol != null && symbol.isBlank()) {
-                throw new IllegalArgumentException("symbol (Tag 55) must not be blank");
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "symbol (Tag 55) must not be blank");
             }
             this.symbol = symbol;
             return this;
@@ -210,7 +210,7 @@ public class FixBuilder {
 
         public Builder orderQuantity(String orderQuantity) {
             if (orderQuantity != null && !orderQuantity.matches("\\d+(\\.\\d+)?")) {
-                throw new IllegalArgumentException("orderQuantity (Tag 38) must be numeric, got: " + orderQuantity);
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "orderQuantity (Tag 38) must be numeric, got: " + orderQuantity);
             }
             this.orderQuantity = orderQuantity;
             return this;
@@ -218,7 +218,7 @@ public class FixBuilder {
 
         public Builder orderQuantity(double orderQuantity) {
             if (orderQuantity <= 0) {
-                throw new IllegalArgumentException("orderQuantity must be positive, got: " + orderQuantity);
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "orderQuantity must be positive, got: " + orderQuantity);
             }
             this.orderQuantity = String.valueOf(orderQuantity);
             return this;
@@ -226,7 +226,7 @@ public class FixBuilder {
 
         public Builder side(String side) {
             if (side != null && !side.matches("[12]")) {
-                throw new IllegalArgumentException("side (Tag 54) must be '1' (Buy) or '2' (Sell), got: " + side);
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "side (Tag 54) must be '1' (Buy) or '2' (Sell), got: " + side);
             }
             this.side = side;
             return this;
@@ -234,7 +234,7 @@ public class FixBuilder {
 
         public Builder price(String price) {
             if (price != null && !price.matches("\\d+(\\.\\d+)?")) {
-                throw new IllegalArgumentException("price (Tag 44) must be numeric, got: " + price);
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "price (Tag 44) must be numeric, got: " + price);
             }
             this.price = price;
             return this;
@@ -242,7 +242,7 @@ public class FixBuilder {
 
         public Builder price(double price) {
             if (price <= 0) {
-                throw new IllegalArgumentException("price must be positive, got: " + price);
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "price must be positive, got: " + price);
             }
             this.price = String.valueOf(price);
             return this;
@@ -250,7 +250,7 @@ public class FixBuilder {
 
         public Builder orderId(String orderId) {
             if (orderId != null && orderId.isBlank()) {
-                throw new IllegalArgumentException("orderId (Tag 37) must not be blank");
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "orderId (Tag 37) must not be blank");
             }
             this.orderId = orderId;
             return this;
@@ -258,7 +258,7 @@ public class FixBuilder {
 
         public Builder checksum(String checksum) {
             if (checksum != null && !checksum.matches("\\d{3}")) {
-                throw new IllegalArgumentException("checksum (Tag 10) must be a 3-digit number, got: " + checksum);
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "checksum (Tag 10) must be a 3-digit number, got: " + checksum);
             }
             this.checksum = checksum;
             return this;
@@ -266,22 +266,22 @@ public class FixBuilder {
 
         private void validate() {
             if (beginString == null) {
-                throw new IllegalStateException("beginString (Tag 8) is required");
+                throw new IllegalStateException(Colors.RED + "Error: " + Colors.RESET + "beginString (Tag 8) is required");
             }
             if (messageType == null) {
-                throw new IllegalStateException("messageType (Tag 35) is required");
+                throw new IllegalStateException(Colors.RED + "Error: " + Colors.RESET + "messageType (Tag 35) is required");
             }
             if (senderId == null) {
-                throw new IllegalStateException("senderId (Tag 49) is required");
+                throw new IllegalStateException(Colors.RED + "Error: " + Colors.RESET + "senderId (Tag 49) is required");
             }
             if (targetId == null) {
-                throw new IllegalStateException("targetId (Tag 56) is required");
+                throw new IllegalStateException(Colors.RED + "Error: " + Colors.RESET + "targetId (Tag 56) is required");
             }
             if (sequenceNumber == null) {
-                throw new IllegalStateException("sequenceNumber (Tag 34) is required");
+                throw new IllegalStateException(Colors.RED + "Error: " + Colors.RESET + "sequenceNumber (Tag 34) is required");
             }
             if (sendingTime == null) {
-                throw new IllegalStateException("sendingTime (Tag 52) is required");
+                throw new IllegalStateException(Colors.RED + "Error: " + Colors.RESET + "sendingTime (Tag 52) is required");
             }
         }
 

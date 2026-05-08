@@ -8,7 +8,7 @@
     <artifactId>fix_me</artifactId>
   </parent>
 
-  <artifactId>fix_parser</artifactId>
+  <artifactId>fixlib</artifactId>
   <packaging>jar</packaging>
 
   <properties>
