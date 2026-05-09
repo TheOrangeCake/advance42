@@ -7,14 +7,24 @@ import java.util.List;
 import java.util.Map;
 
 public class FixParser {
-    private static final char DELIMITER = '\u0001';
-    private static final FixTag[] requiredTags = {
+    private static final char SOH = '\u0001';
+    private static final FixTag[] requiredMainTags = {
             FixTag.BEGIN_STRING,
             FixTag.BODY_LENGTH,
             FixTag.MSG_TYPE,
             FixTag.SENDER_COMP_ID,
             FixTag.TARGET_COMP_ID,
+            FixTag.SENDING_TIME,
+            FixTag.SYMBOL,
+            FixTag.ORDER_QTY,
+            FixTag.PRICE,
             FixTag.CHECKSUM
+    };
+    private static final FixTag[] requiredOrderTags = {
+            FixTag.SIDE,
+    };
+    private static final FixTag[] requiredStatusTags = {
+            FixTag.ORD_STATUS,
     };
 
     public static Map<FixTag, String> parse(String message) throws InvalidFixFormatException {
@@ -22,7 +32,7 @@ public class FixParser {
             throw new InvalidFixFormatException("FIX message is empty");
         }
         Map<FixTag, String> fields = new LinkedHashMap<>();
-        String[] pairs = message.split(String.valueOf(DELIMITER));
+        String[] pairs = message.split(String.valueOf(SOH));
 
         for (String pair : pairs) {
             if (pair.isEmpty()) {
@@ -54,6 +64,7 @@ public class FixParser {
             fields.put(fixTag, value);
         }
         validateRequired(fields);
+        validateFieldsFormat(fields);
         validateOrder(fields);
         validateBodyLength(message, fields);
         validateChecksum(message, fields);
@@ -61,10 +72,90 @@ public class FixParser {
     }
 
     private static void validateRequired(Map<FixTag, String> fields) {
-        for (FixTag fixTag : requiredTags) {
+        for (FixTag fixTag : requiredMainTags) {
             if (!fields.containsKey(fixTag)) {
                 throw new InvalidFixFormatException("Missing required tag: " + fixTag);
             }
+        }
+        String msgType = fields.get(FixTag.MSG_TYPE);
+        if (msgType.equals("D")) {
+            for (FixTag fixTag : requiredOrderTags) {
+                if (!fields.containsKey(fixTag)) {
+                    throw new InvalidFixFormatException("Missing required tag: " + fixTag);
+                }
+            }
+        } else if (msgType.equals("8")) {
+            for (FixTag fixTag : requiredStatusTags) {
+                if (!fields.containsKey(fixTag)) {
+                    throw new InvalidFixFormatException("Missing required tag: " + fixTag);
+                }
+            }
+        } else if (!msgType.equals("3")) {
+            throw new InvalidFixFormatException("Unknown MsgType: " + msgType);
+        }
+    }
+
+    private static void validateFieldsFormat(Map<FixTag, String> fields) {
+        String beginString = fields.get(FixTag.BEGIN_STRING);
+        if (!beginString.equals("FIX.4.4")) {
+            throw new InvalidFixFormatException("Invalid BeginString: " + beginString);
+        }
+
+        String bodyLength = fields.get(FixTag.BODY_LENGTH);
+        try {
+            if (Integer.parseInt(bodyLength) <= 0) {
+                throw new InvalidFixFormatException("BodyLength must be positive: " + bodyLength);
+            }
+        } catch (NumberFormatException e) {
+            throw new InvalidFixFormatException("Invalid BodyLength: " + bodyLength);
+        }
+
+        String senderCompId = fields.get(FixTag.SENDER_COMP_ID);
+        if (!senderCompId.matches("\\d{6}")) {
+            throw new InvalidFixFormatException("Invalid SenderCompID: " + senderCompId);
+        }
+
+        String targetCompId = fields.get(FixTag.TARGET_COMP_ID);
+        if (!targetCompId.matches("\\d{6}")) {
+            throw new InvalidFixFormatException("Invalid TargetCompID: " + targetCompId);
+        }
+
+        String orderQty = fields.get(FixTag.ORDER_QTY);
+        try {
+            if (Integer.parseInt(orderQty) <= 0) {
+                throw new InvalidFixFormatException("OrderQty must be positive: " + orderQty);
+            }
+        } catch (NumberFormatException e) {
+            throw new InvalidFixFormatException("Invalid OrderQty: " + orderQty);
+        }
+
+        String price = fields.get(FixTag.PRICE);
+        try {
+            if (Double.parseDouble(price) <= 0) {
+                throw new InvalidFixFormatException("Price must be positive: " + price);
+            }
+        } catch (NumberFormatException e) {
+            throw new InvalidFixFormatException("Invalid Price: " + price);
+        }
+
+        String side = fields.get(FixTag.SIDE);
+        if (side != null && !side.equals("1") && !side.equals("2")) {
+            throw new InvalidFixFormatException("Invalid Side: " + side);
+        }
+
+        String ordStatus = fields.get(FixTag.ORD_STATUS);
+        if (ordStatus != null && !ordStatus.equals("2") && !ordStatus.equals("8")) {
+            throw new InvalidFixFormatException("Invalid OrdStatus: " + ordStatus);
+        }
+
+        String checksum = fields.get(FixTag.CHECKSUM);
+        try {
+            int checksumInt = Integer.parseInt(checksum);
+            if (checksumInt < 0 || checksumInt > 255) {
+                throw new InvalidFixFormatException("Checksum out of range: " + checksum);
+            }
+        } catch (NumberFormatException e) {
+            throw new InvalidFixFormatException("Invalid Checksum: " + checksum);
         }
     }
 
@@ -78,6 +169,9 @@ public class FixParser {
         }
         if (keys.get(2) != FixTag.MSG_TYPE) {
             throw new InvalidFixFormatException("Tag 35 (MessageType) must be third");
+        }
+        if (keys.get(3) != FixTag.SENDER_COMP_ID) {
+            throw new InvalidFixFormatException("Tag 49 (SenderCompId) must be Fourth");
         }
         if (keys.getLast() != FixTag.CHECKSUM)
             throw new InvalidFixFormatException("Tag 10 (Checksum) must be last");

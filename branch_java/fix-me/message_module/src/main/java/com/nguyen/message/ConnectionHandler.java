@@ -3,7 +3,12 @@ package com.nguyen.message;
 import java.net.Socket;
 
 public class ConnectionHandler implements Runnable {
-    public ConnectionHandler(Socket socket) {
+    private final Socket socket;
+    private final Integer port;
+
+    public ConnectionHandler(Socket socket, Integer port) {
+        this.socket = socket;
+        this.port = port;
     }
 
     @Override

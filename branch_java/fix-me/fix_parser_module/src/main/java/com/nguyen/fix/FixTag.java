@@ -4,16 +4,15 @@ package com.nguyen.fix;
 public enum FixTag {
     BEGIN_STRING(8),
     BODY_LENGTH(9),
-    MSG_TYPE(35),
+    MSG_TYPE(35), // Error = 3 -> fill 58, Buy/Sell = D -> fill 54, Status = 8 -> fill 39
     SENDER_COMP_ID(49),
     TARGET_COMP_ID(56),
-    MSG_SEG_NUM(34),
     SENDING_TIME(52),
     SYMBOL(55), // Instrument
     ORDER_QTY(38),
-    SIDE(54), // Buy = 1 or Sell = 2
     PRICE(44),
-    ORDER_ID(37),
+    SIDE(54), // Buy = 1 or Sell = 2
+    ORD_STATUS(39), // Executed = 2 or Rejected = 8
     TEXT(58),
     CHECKSUM(10);
 

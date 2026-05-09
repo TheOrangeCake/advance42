@@ -11,17 +11,16 @@ public class FixBuilder {
     private final String messageType;
     private final String senderId;
     private final String targetId;
-    private final String sequenceNumber;
     private final String sendingTime;
     private final String symbol;
     private final String orderQuantity;
     private final String side;
     private final String price;
-    private final String orderId;
+    private final String orderStatus;
     private final String text;
     private final String checksum;
 
-    private static final char DELIMITER = '\u0001';
+    private static final char SOH = '\u0001';
 
     private FixBuilder(Builder builder) {
         this.beginString = builder.beginString;
@@ -29,39 +28,37 @@ public class FixBuilder {
         this.messageType = builder.messageType;
         this.senderId = builder.senderId;
         this.targetId = builder.targetId;
-        this.sequenceNumber = builder.sequenceNumber;
         this.sendingTime = builder.sendingTime;
         this.symbol = builder.symbol;
         this.orderQuantity = builder.orderQuantity;
         this.side = builder.side;
         this.price = builder.price;
-        this.orderId = builder.orderId;
+        this.orderStatus = builder.orderStatus;
         this.text = builder.text;
         this.checksum = builder.checksum;
     }
 
     public String getFixMessage() {
         StringBuilder sb = new StringBuilder();
-        sb.append("8=").append(beginString).append(DELIMITER);
-        sb.append("9=").append(bodyLength).append(DELIMITER);
-        sb.append("35=").append(messageType).append(DELIMITER);
-        sb.append("49=").append(senderId).append(DELIMITER);
-        sb.append("56=").append(targetId).append(DELIMITER);
-        sb.append("34=").append(sequenceNumber).append(DELIMITER);
-        sb.append("52=").append(sendingTime).append(DELIMITER);
+        sb.append("8=").append(beginString).append(SOH);
+        sb.append("9=").append(bodyLength).append(SOH);
+        sb.append("35=").append(messageType).append(SOH);
+        sb.append("49=").append(senderId).append(SOH);
+        sb.append("56=").append(targetId).append(SOH);
+        sb.append("52=").append(sendingTime).append(SOH);
         appendIfPresent(sb, "55", symbol);
         appendIfPresent(sb, "38", orderQuantity);
         appendIfPresent(sb, "54", side);
         appendIfPresent(sb, "44", price);
-        appendIfPresent(sb, "37", orderId);
+        appendIfPresent(sb, "39", orderStatus);
         appendIfPresent(sb, "58", text);
-        sb.append("10=").append(checksum).append(DELIMITER);
+        sb.append("10=").append(checksum).append(SOH);
         return sb.toString();
     }
 
     private static void appendIfPresent(StringBuilder sb, String tag, String value) {
         if (value != null) {
-            sb.append(tag).append("=").append(value).append(DELIMITER);
+            sb.append(tag).append("=").append(value).append(SOH);
         }
     }
 
@@ -80,9 +77,6 @@ public class FixBuilder {
     public String getTargetId() {
         return targetId;
     }
-    public String getSequenceNumber() {
-        return sequenceNumber;
-    }
     public String getSendingTime() {
         return sendingTime;
     }
@@ -98,8 +92,8 @@ public class FixBuilder {
     public String getPrice() {
         return price;
     }
-    public String getOrderId() {
-        return orderId;
+    public String getOrderStatus() {
+        return orderStatus;
     }
     public String getText() { return text; }
     public String getChecksum() {
@@ -111,14 +105,13 @@ public class FixBuilder {
         private String messageType;
         private String senderId;
         private String targetId;
-        private String sequenceNumber;
         private String sendingTime;
         private String bodyLength;
         private String symbol;
         private String orderQuantity;
         private String side;
         private String price;
-        private String orderId;
+        private String orderStatus;
         private String text;
         private String checksum;
 
@@ -145,6 +138,9 @@ public class FixBuilder {
             if (senderId == null || senderId.isBlank()) {
                 throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "senderId (Tag 49) must not be blank");
             }
+            if (!senderId.matches("\\d{6}")) {
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "senderId (Tag 49) must be 6 digits");
+            }
             this.senderId = senderId;
             return this;
         }
@@ -153,26 +149,10 @@ public class FixBuilder {
             if (targetId == null || targetId.isBlank()) {
                 throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "targetId (Tag 56) must not be blank");
             }
+            if (!targetId.matches("\\d{6}")) {
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "targetId (Tag 49) must be 6 digits");
+            }
             this.targetId = targetId;
-            return this;
-        }
-
-        public Builder sequenceNumber(String sequenceNumber) {
-            if (sequenceNumber == null || sequenceNumber.isBlank()) {
-                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "sequenceNumber (Tag 34) must not be blank");
-            }
-            if (!sequenceNumber.matches("\\d+") || Integer.parseInt(sequenceNumber) <= 0) {
-                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "sequenceNumber must be a positive integer, got: " + sequenceNumber);
-            }
-            this.sequenceNumber = sequenceNumber;
-            return this;
-        }
-
-        public Builder sequenceNumber(int sequenceNumber) {
-            if (sequenceNumber <= 0) {
-                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "sequenceNumber must be a positive integer, got: " + sequenceNumber);
-            }
-            this.sequenceNumber = String.valueOf(sequenceNumber);
             return this;
         }
 
@@ -253,11 +233,11 @@ public class FixBuilder {
             return this;
         }
 
-        public Builder orderId(String orderId) {
-            if (orderId != null && orderId.isBlank()) {
-                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "orderId (Tag 37) must not be blank if specified");
+        public Builder orderStatus(String orderStatus) {
+            if (orderStatus != null && !orderStatus.matches("[28]")) {
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "orderStatus (Tag 39) must be '2' (Executed) or '8' (Rejected), got: " + orderStatus);
             }
-            this.orderId = orderId;
+            this.orderStatus = orderStatus;
             return this;
         }
 
@@ -290,44 +270,67 @@ public class FixBuilder {
             if (targetId == null) {
                 throw new IllegalStateException(Colors.RED + "Error: " + Colors.RESET + "targetId (Tag 56) is required");
             }
-            if (sequenceNumber == null) {
-                throw new IllegalStateException(Colors.RED + "Error: " + Colors.RESET + "sequenceNumber (Tag 34) is required");
-            }
             if (sendingTime == null) {
                 throw new IllegalStateException(Colors.RED + "Error: " + Colors.RESET + "sendingTime (Tag 52) is required");
+            }
+            if (symbol == null) {
+                throw new IllegalStateException(Colors.RED + "Error: " + Colors.RESET + "symbol (Tag 55) is required");
+            }
+            if (orderQuantity == null) {
+                throw new IllegalStateException(Colors.RED + "Error: " + Colors.RESET + "orderQty (Tag 38) is required");
+            }
+            if (price == null) {
+                throw new IllegalStateException(Colors.RED + "Error: " + Colors.RESET + "price (Tag 44) is required");
+            }
+            switch (messageType) {
+                case "3" -> {
+                    if (text == null) {
+                        throw new IllegalStateException(Colors.RED + "Error: " + Colors.RESET + "text (Tag 58) is required when messageType is 3");
+                    }
+                }
+                case "D" -> {
+                    if (side == null || (!side.equals("1") && !side.equals("2"))) {
+                        throw new IllegalStateException(Colors.RED + "Error: " + Colors.RESET + "side (Tag 54) is missing or bad format when messageType is D");
+                    }
+                }
+                case "8" -> {
+                    if (orderStatus == null || (!orderStatus.equals("2") && !orderStatus.equals("8"))) {
+                        throw new IllegalStateException(Colors.RED + "Error: " + Colors.RESET + "ordStatus (Tag 39) is missing or bad format when messageType is 8");
+                    }
+                }
+                default ->
+                        throw new IllegalStateException(Colors.RED + "Error: " + Colors.RESET + "messageType (Tag 35) must be '3' (error), 'D' (Buy/Sell) or '8' (Executed/Rejected)");
             }
         }
 
         private String calculateBodyLength() {
             StringBuilder sb = new StringBuilder();
-            sb.append("35=").append(messageType).append(DELIMITER);
-            sb.append("49=").append(senderId).append(DELIMITER);
-            sb.append("56=").append(targetId).append(DELIMITER);
-            sb.append("34=").append(sequenceNumber).append(DELIMITER);
-            sb.append("52=").append(sendingTime).append(DELIMITER);
+            sb.append("35=").append(messageType).append(SOH);
+            sb.append("49=").append(senderId).append(SOH);
+            sb.append("56=").append(targetId).append(SOH);
+            sb.append("52=").append(sendingTime).append(SOH);
             appendIfPresent(sb, "55", symbol);
             appendIfPresent(sb, "38", orderQuantity);
             appendIfPresent(sb, "54", side);
             appendIfPresent(sb, "44", price);
-            appendIfPresent(sb, "37", orderId);
+            appendIfPresent(sb, "39", orderStatus);
             appendIfPresent(sb, "58", text);
             return String.valueOf(sb.toString().getBytes(StandardCharsets.US_ASCII).length);
         }
 
         private String calculateChecksum() {
             StringBuilder sb = new StringBuilder();
-            sb.append("8=").append(beginString).append(DELIMITER);
-            sb.append("9=").append(bodyLength).append(DELIMITER);
-            sb.append("35=").append(messageType).append(DELIMITER);
-            sb.append("49=").append(senderId).append(DELIMITER);
-            sb.append("56=").append(targetId).append(DELIMITER);
-            sb.append("34=").append(sequenceNumber).append(DELIMITER);
-            sb.append("52=").append(sendingTime).append(DELIMITER);
+            sb.append("8=").append(beginString).append(SOH);
+            sb.append("9=").append(bodyLength).append(SOH);
+            sb.append("35=").append(messageType).append(SOH);
+            sb.append("49=").append(senderId).append(SOH);
+            sb.append("56=").append(targetId).append(SOH);
+            sb.append("52=").append(sendingTime).append(SOH);
             appendIfPresent(sb, "55", symbol);
             appendIfPresent(sb, "38", orderQuantity);
             appendIfPresent(sb, "54", side);
             appendIfPresent(sb, "44", price);
-            appendIfPresent(sb, "37", orderId);
+            appendIfPresent(sb, "39", orderStatus);
             appendIfPresent(sb, "58", text);
             int sum = 0;
             for (byte b : sb.toString().getBytes(StandardCharsets.US_ASCII)) {

@@ -6,17 +6,18 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.Callable;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class TCPServer implements Callable<Void> {
     private final ServerSocket serverSocket;
     private final int port;
     private final String name;
-    private final Consumer<Socket> connectionHandler;
+    private final BiConsumer<Socket, Integer> connectionHandler;
 
-    public TCPServer(int port, String name, Consumer<Socket> connectionHandler) throws SocketErrorException {
+    public TCPServer(int port, String name, BiConsumer<Socket, Integer> connectionHandler) throws SocketErrorException {
         try {
             this.serverSocket = new ServerSocket(port);
+            // add server ip address as well
             System.out.println(Colors.YELLOW +
                     "Info: " + Colors.RESET +
                     "Server " + name + " is bound to port " + Colors.CYAN +
@@ -43,7 +44,7 @@ public class TCPServer implements Callable<Void> {
                         "Info: " + Colors.RESET +
                         "Server " + name + ":" + port +
                         ": Client connected: " + socket.getInetAddress());
-                connectionHandler.accept(socket);
+                connectionHandler.accept(socket, port);
             }
         } catch (IOException e) {
             close();
