@@ -243,6 +243,12 @@ public class FixBuilderTest {
         assertEquals("500.0", fix.getOrderQuantity());
     }
 
+    @Test
+    void testTextWorks() {
+        FixBuilder fix = validBuilder().text("Syntax error").build();
+        assertEquals("Syntax error", fix.getText());
+    }
+
     @ParameterizedTest
     @ValueSource(doubles = {0.0, -1.0})
     void testNonPositiveOrderQuantityRejected(double value) {

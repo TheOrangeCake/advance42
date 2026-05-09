@@ -14,6 +14,7 @@ public enum FixTag {
     SIDE(54), // Buy = 1 or Sell = 2
     PRICE(44),
     ORDER_ID(37),
+    TEXT(58),
     CHECKSUM(10);
 
     private final int tag;

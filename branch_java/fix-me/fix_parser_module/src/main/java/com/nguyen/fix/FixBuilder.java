@@ -18,6 +18,7 @@ public class FixBuilder {
     private final String side;
     private final String price;
     private final String orderId;
+    private final String text;
     private final String checksum;
 
     private static final char DELIMITER = '\u0001';
@@ -35,6 +36,7 @@ public class FixBuilder {
         this.side = builder.side;
         this.price = builder.price;
         this.orderId = builder.orderId;
+        this.text = builder.text;
         this.checksum = builder.checksum;
     }
 
@@ -52,6 +54,7 @@ public class FixBuilder {
         appendIfPresent(sb, "54", side);
         appendIfPresent(sb, "44", price);
         appendIfPresent(sb, "37", orderId);
+        appendIfPresent(sb, "58", text);
         sb.append("10=").append(checksum).append(DELIMITER);
         return sb.toString();
     }
@@ -98,6 +101,7 @@ public class FixBuilder {
     public String getOrderId() {
         return orderId;
     }
+    public String getText() { return text; }
     public String getChecksum() {
         return checksum;
     }
@@ -115,6 +119,7 @@ public class FixBuilder {
         private String side;
         private String price;
         private String orderId;
+        private String text;
         private String checksum;
 
         public Builder beginString(String beginString) {
@@ -202,7 +207,7 @@ public class FixBuilder {
 
         public Builder symbol(String symbol) {
             if (symbol != null && symbol.isBlank()) {
-                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "symbol (Tag 55) must not be blank");
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "symbol (Tag 55) must not be blank if specified");
             }
             this.symbol = symbol;
             return this;
@@ -250,9 +255,17 @@ public class FixBuilder {
 
         public Builder orderId(String orderId) {
             if (orderId != null && orderId.isBlank()) {
-                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "orderId (Tag 37) must not be blank");
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "orderId (Tag 37) must not be blank if specified");
             }
             this.orderId = orderId;
+            return this;
+        }
+
+        public Builder text(String text) {
+            if (text != null && text.isBlank()) {
+                throw new IllegalArgumentException(Colors.RED + "Error: " + Colors.RESET + "text (Tag 58) must not be blank if specified");
+            }
+            this.text = text;
             return this;
         }
 
@@ -297,6 +310,7 @@ public class FixBuilder {
             appendIfPresent(sb, "54", side);
             appendIfPresent(sb, "44", price);
             appendIfPresent(sb, "37", orderId);
+            appendIfPresent(sb, "58", text);
             return String.valueOf(sb.toString().getBytes(StandardCharsets.US_ASCII).length);
         }
 
@@ -314,6 +328,7 @@ public class FixBuilder {
             appendIfPresent(sb, "54", side);
             appendIfPresent(sb, "44", price);
             appendIfPresent(sb, "37", orderId);
+            appendIfPresent(sb, "58", text);
             int sum = 0;
             for (byte b : sb.toString().getBytes(StandardCharsets.US_ASCII)) {
                 sum += b;
