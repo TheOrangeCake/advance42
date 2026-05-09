@@ -162,12 +162,12 @@ public class FixBuilderTest {
     @ParameterizedTest
     @ValueSource(strings = {"fix.4.4", "FIX44", "4.4", "FIX.4", ""})
     void testInvalidBeginStringRejected(String v) {
-        assertThrows(IllegalArgumentException.class, () -> new FixBuilder.Builder().beginString(v));
+        assertThrows(InvalidFixFormatException.class, () -> new FixBuilder.Builder().beginString(v));
     }
 
     @Test
     void testNullBeginStringThrows() {
-        assertThrows(IllegalArgumentException.class, () -> new FixBuilder.Builder().beginString(null));
+        assertThrows(InvalidFixFormatException.class, () -> new FixBuilder.Builder().beginString(null));
     }
 
     @Test
@@ -177,7 +177,7 @@ public class FixBuilderTest {
 
     @Test
     void testInvalidSenderIdThrows() {
-        assertThrows(IllegalArgumentException.class, () -> new FixBuilder.Builder().senderId("ABC"));
+        assertThrows(InvalidFixFormatException.class, () -> new FixBuilder.Builder().senderId("ABC"));
     }
 
     @ParameterizedTest
@@ -189,7 +189,7 @@ public class FixBuilderTest {
     @ParameterizedTest
     @ValueSource(strings = {"2024-01-01 12:00:00", "20240101", ""})
     void testInvalidSendingTimeRejected(String v) {
-        assertThrows(IllegalArgumentException.class, () -> new FixBuilder.Builder().sendingTime(v));
+        assertThrows(InvalidFixFormatException.class, () -> new FixBuilder.Builder().sendingTime(v));
     }
 
     @Test
@@ -200,7 +200,7 @@ public class FixBuilderTest {
 
     @Test
     void testNullDateThrows() {
-        assertThrows(IllegalArgumentException.class, () -> new FixBuilder.Builder().sendingTime((Date) null));
+        assertThrows(InvalidFixFormatException.class, () -> new FixBuilder.Builder().sendingTime((Date) null));
     }
 
     @Test
@@ -216,7 +216,7 @@ public class FixBuilderTest {
     @ParameterizedTest
     @ValueSource(strings = {"0", "3", "B", ""})
     void testInvalidSideRejected(String v) {
-        assertThrows(IllegalArgumentException.class, () -> new FixBuilder.Builder().side(v));
+        assertThrows(InvalidFixFormatException.class, () -> new FixBuilder.Builder().side(v));
     }
 
     @Test
@@ -232,7 +232,7 @@ public class FixBuilderTest {
     @ParameterizedTest
     @ValueSource(strings = {"0", "1", "X", ""})
     void testInvalidOrdStatusRejected(String v) {
-        assertThrows(IllegalArgumentException.class, () -> new FixBuilder.Builder().orderStatus(v));
+        assertThrows(InvalidFixFormatException.class, () -> new FixBuilder.Builder().orderStatus(v));
     }
 
     @Test
@@ -244,13 +244,13 @@ public class FixBuilderTest {
     @ParameterizedTest
     @ValueSource(doubles = {0.0, -1.0})
     void testNonPositivePriceRejected(double v) {
-        assertThrows(IllegalArgumentException.class, () -> new FixBuilder.Builder().price(v));
+        assertThrows(InvalidFixFormatException.class, () -> new FixBuilder.Builder().price(v));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"abc", "-1", ""})
     void testInvalidPriceStringRejected(String v) {
-        assertThrows(IllegalArgumentException.class, () -> new FixBuilder.Builder().price(v));
+        assertThrows(InvalidFixFormatException.class, () -> new FixBuilder.Builder().price(v));
     }
 
     @Test
@@ -262,7 +262,7 @@ public class FixBuilderTest {
     @ParameterizedTest
     @ValueSource(doubles = {0.0, -1.0})
     void testNonPositiveOrderQtyRejected(double v) {
-        assertThrows(IllegalArgumentException.class, () -> new FixBuilder.Builder().orderQuantity(v));
+        assertThrows(InvalidFixFormatException.class, () -> new FixBuilder.Builder().orderQuantity(v));
     }
 
     @ParameterizedTest
@@ -274,12 +274,12 @@ public class FixBuilderTest {
     @ParameterizedTest
     @ValueSource(strings = {"1", "12", "1234", "abc"})
     void testInvalidChecksumRejected(String v) {
-        assertThrows(IllegalArgumentException.class, () -> new FixBuilder.Builder().checksum(v));
+        assertThrows(InvalidFixFormatException.class, () -> new FixBuilder.Builder().checksum(v));
     }
 
     @Test
     void testMissingBeginStringThrows() {
-        assertThrows(IllegalStateException.class, () ->
+        assertThrows(InvalidFixFormatException.class, () ->
                 new FixBuilder.Builder()
                         .messageType("D").senderId("123456").targetId("654321")
                         .sendingTime("20240101-12:00:00.000")
@@ -289,7 +289,7 @@ public class FixBuilderTest {
 
     @Test
     void testMissingMessageTypeThrows() {
-        assertThrows(IllegalStateException.class, () ->
+        assertThrows(InvalidFixFormatException.class, () ->
                 new FixBuilder.Builder()
                         .beginString("FIX.4.4").senderId("123456").targetId("654321")
                         .sendingTime("20240101-12:00:00.000")
@@ -299,7 +299,7 @@ public class FixBuilderTest {
 
     @Test
     void testMissingSideForMsgTypeDThrows() {
-        assertThrows(IllegalStateException.class, () ->
+        assertThrows(InvalidFixFormatException.class, () ->
                 new FixBuilder.Builder()
                         .beginString("FIX.4.4").messageType("D")
                         .senderId("123456").targetId("654321")
@@ -310,7 +310,7 @@ public class FixBuilderTest {
 
     @Test
     void testMissingOrdStatusForMsgType8Throws() {
-        assertThrows(IllegalStateException.class, () ->
+        assertThrows(InvalidFixFormatException.class, () ->
                 new FixBuilder.Builder()
                         .beginString("FIX.4.4").messageType("8")
                         .senderId("123456").targetId("654321")
@@ -321,7 +321,7 @@ public class FixBuilderTest {
 
     @Test
     void testMissingTextForMsgType3Throws() {
-        assertThrows(IllegalStateException.class, () ->
+        assertThrows(InvalidFixFormatException.class, () ->
                 new FixBuilder.Builder()
                         .beginString("FIX.4.4").messageType("3")
                         .senderId("123456").targetId("654321")
@@ -332,7 +332,7 @@ public class FixBuilderTest {
 
     @Test
     void testUnknownMessageTypeThrows() {
-        assertThrows(IllegalStateException.class, () ->
+        assertThrows(InvalidFixFormatException.class, () ->
                 new FixBuilder.Builder()
                         .beginString("FIX.4.4").messageType("Z")
                         .senderId("123456").targetId("654321")

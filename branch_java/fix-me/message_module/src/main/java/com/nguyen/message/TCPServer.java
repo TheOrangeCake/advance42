@@ -3,6 +3,7 @@ package com.nguyen.message;
 import com.nguyen.fix.Colors;
 import com.nguyen.message.exception.SocketErrorException;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.Callable;
@@ -33,11 +34,11 @@ public class TCPServer implements Callable<Void> {
 
     public Void call() throws SocketErrorException {
         try {
+            String ip = InetAddress.getLocalHost().getHostAddress();
             System.out.println(Colors.YELLOW +
                     "Info: " + Colors.RESET +
-                    "Server " + name + ":" + port +
-                    " is listening to port " + Colors.CYAN +
-                    port + Colors.RESET);
+                    "Server " + name + " is listening on " + Colors.CYAN +
+                    ip + ":" + port + Colors.RESET);
             while (true) {
                 Socket socket = serverSocket.accept();
                 System.out.println(Colors.YELLOW +
