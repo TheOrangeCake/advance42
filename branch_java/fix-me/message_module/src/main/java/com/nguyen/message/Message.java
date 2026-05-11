@@ -13,11 +13,11 @@ public class Message {
         try {
             TCPServer brokerServer = new TCPServer(
                     5000,
-                    "broker server",
+                    "Broker",
                     (socket, port) -> connectionHandlerService.submit(new ConnectionHandler(socket, port)));
             TCPServer marketServer = new TCPServer(
                     5001,
-                    "market server",
+                    "Market",
                     (socket, port) -> connectionHandlerService.submit(new ConnectionHandler(socket, port)));
 
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {

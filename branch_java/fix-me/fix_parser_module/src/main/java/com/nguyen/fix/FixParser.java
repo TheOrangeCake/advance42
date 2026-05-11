@@ -7,13 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 public class FixParser {
-    private static final char SOH = '\u0001';
+    public static final char SOH = '\u0001';
     private static final FixTag[] requiredMainTags = {
             FixTag.BEGIN_STRING,
             FixTag.BODY_LENGTH,
             FixTag.MSG_TYPE,
             FixTag.SENDER_COMP_ID,
-            FixTag.TARGET_COMP_ID,
             FixTag.SENDING_TIME,
             FixTag.SYMBOL,
             FixTag.ORDER_QTY,
@@ -98,7 +97,7 @@ public class FixParser {
     private static void validateFieldsFormat(Map<FixTag, String> fields) {
         String beginString = fields.get(FixTag.BEGIN_STRING);
         if (!beginString.equals("FIX.4.4")) {
-            throw new InvalidFixFormatException("Invalid BeginString: " + beginString);
+            throw new InvalidFixFormatException("Invalid BeginString or bad FIX version (only 4.4): " + beginString);
         }
 
         String bodyLength = fields.get(FixTag.BODY_LENGTH);
@@ -116,7 +115,7 @@ public class FixParser {
         }
 
         String targetCompId = fields.get(FixTag.TARGET_COMP_ID);
-        if (!targetCompId.matches("\\d{6}")) {
+        if (targetCompId != null && !targetCompId.matches("\\d{6}")) {
             throw new InvalidFixFormatException("Invalid TargetCompID: " + targetCompId);
         }
 
