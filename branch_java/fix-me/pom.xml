@@ -19,6 +19,7 @@
     <module>market_module</module>
     <module>message_module</module>
     <module>fix_parser_module</module>
+    <module>helper_module</module>
   </modules>
 
   <dependencies>

@@ -1,6 +1,6 @@
 package com.nguyen.message;
 
-import com.nguyen.fix.Colors;
+import com.nguyen.helper.Colors;
 import com.nguyen.message.exception.SocketErrorException;
 
 import java.util.concurrent.*;

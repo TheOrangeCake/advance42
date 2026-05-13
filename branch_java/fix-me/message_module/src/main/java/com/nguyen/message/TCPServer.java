@@ -1,6 +1,6 @@
 package com.nguyen.message;
 
-import com.nguyen.fix.Colors;
+import com.nguyen.helper.Colors;
 import com.nguyen.message.exception.SocketErrorException;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -18,7 +18,6 @@ public class TCPServer implements Callable<Void> {
     public TCPServer(int port, String name, BiConsumer<Socket, Integer> connectionHandler) throws SocketErrorException {
         try {
             this.serverSocket = new ServerSocket(port);
-            // add server ip address as well
             System.out.println(Colors.YELLOW +
                     "Info: " + Colors.RESET +
                     "Server " + name + " is bound to port " + Colors.CYAN +

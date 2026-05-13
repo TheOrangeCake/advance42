@@ -1,4 +1,4 @@
-package com.nguyen.fix;
+package com.nguyen.helper;
 
 // Source - https://stackoverflow.com/a/45444716
 // Posted by shakram02

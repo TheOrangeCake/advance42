@@ -1,6 +1,6 @@
 package com.nguyen.message.exception;
 
-import com.nguyen.fix.Colors;
+import com.nguyen.helper.Colors;
 
 public class SocketErrorException extends Exception{
     public SocketErrorException(String message) {
