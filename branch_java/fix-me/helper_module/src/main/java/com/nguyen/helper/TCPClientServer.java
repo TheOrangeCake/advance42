@@ -8,8 +8,8 @@ import java.net.Socket;
 
 public class TCPClientServer {
     private final Socket socket;
-    private BufferedReader in;
-    private PrintWriter out;
+    private final BufferedReader in;
+    private final PrintWriter out;
     private String uid;
     // pass handler here
 
