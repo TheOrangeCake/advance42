@@ -43,7 +43,7 @@ public class TCPServer implements Callable<Void> {
                 System.out.println(Colors.YELLOW +
                         "Info: " + Colors.RESET +
                         "Server " + name + ":" + port +
-                        ": Client connected: " + socket.getInetAddress());
+                        " : Client connected: " + socket.getInetAddress());
                 connectionHandler.accept(socket, port);
             }
         } catch (IOException e) {

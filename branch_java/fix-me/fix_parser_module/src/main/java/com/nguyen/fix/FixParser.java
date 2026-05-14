@@ -13,6 +13,7 @@ public class FixParser {
             FixTag.BODY_LENGTH,
             FixTag.MSG_TYPE,
             FixTag.SENDER_COMP_ID,
+            FixTag.TARGET_COMP_ID,
             FixTag.SENDING_TIME,
             FixTag.SYMBOL,
             FixTag.ORDER_QTY,

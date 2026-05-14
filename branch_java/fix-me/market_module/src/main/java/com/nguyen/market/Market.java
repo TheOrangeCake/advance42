@@ -23,12 +23,21 @@ public class Market {
             System.err.println(Colors.RED + "Fail to get Port. Exit" + Colors.RESET);
             return;
         }
-        try {
-            TCPClientServer client = new TCPClientServer(ipv4, port);
 
-            client.close();
+        TCPClientServer client = null;
+        try {
+            client = new TCPClientServer(ipv4, port);
+            client.fetchUid();
         } catch (IOException e) {
-            System.err.println(Colors.RED + "Client server socket error. Exit" + Colors.RESET);
+            System.err.println(Colors.RED + "Client server socket error or closed. Exit" + Colors.RESET);
+        } finally {
+            try {
+                if (client != null) {
+                    client.close();
+                }
+            } catch (IOException e) {
+                System.err.println(Colors.RED + "Fail to close client socket" + Colors.RESET);
+            }
         }
     }
 }

@@ -32,20 +32,26 @@
   </dependencies>
 
   <build>
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
-            <version>3.5.0</version>
-            <configuration>
-                <archive>
-                    <manifest>
-                        <mainClass>com.nguyen.message.Message</mainClass>
-                    </manifest>
-                </archive>
-                <finalName>message</finalName>
-            </configuration>
-        </plugin>
-    </plugins>
-</build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals><goal>shade</goal></goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.nguyen.message.Message</mainClass>
+                                </transformer>
+                            </transformers>
+                            <finalName>message</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+  </build>
 </project>

@@ -12,10 +12,13 @@ import com.nguyen.fix.FixBuilder;
 import com.nguyen.fix.FixParser;
 import com.nguyen.fix.FixTag;
 import com.nguyen.fix.InvalidFixFormatException;
+import com.nguyen.helper.Colors;
 
 public class ConnectionHandler implements Runnable {
     private final Socket socket;
     private final Integer port;
+    private BufferedReader in;
+    private PrintWriter out;
     private String uid;
 
     public ConnectionHandler(Socket socket, Integer port) {
@@ -28,12 +31,10 @@ public class ConnectionHandler implements Runnable {
         RoutingTable routingTable = RoutingTable.getInstance();
 
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.out = new PrintWriter(socket.getOutputStream(), true);
 
-            uid = routingTable.generateUid();
-            routingTable.addToRoutingTable(uid, socket, port);
-            sendUid(out);
+            sendUid(routingTable);
 
             while (!socket.isClosed()) {
                 StringBuilder originalMessage = new StringBuilder();
@@ -43,6 +44,7 @@ public class ConnectionHandler implements Runnable {
                     if (c == -1) {
                         routingTable.removeFromRoutingTable(uid, port);
                         socket.close();
+                        System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Connection " + uid + " disconnected");
                         return;
                     }
                     originalMessage.append((char) c);
@@ -61,21 +63,43 @@ public class ConnectionHandler implements Runnable {
                     sendReject(e.getMessage(), out);
                 }
             }
+
         } catch (IOException e) {
-            System.err.println("Error IO from socket. Close connection");
+            System.err.println(Colors.RED + "Error: " + Colors.RESET + "Error IO from socket. Close connection");
             try {
                 routingTable.removeFromRoutingTable(uid, port);
                 socket.close();
             } catch (IOException ex) {
-                System.err.println("Error closing socket");
+                System.err.println(Colors.RED + "Error: " + Colors.RESET + "Error closing socket");
             }
         } catch (IllegalArgumentException e) {
-            System.err.println("Close connection. Program problem: " + e.getMessage());
+            System.err.println(Colors.RED + "Error: " + Colors.RESET +  "Close connection. Program problem: " + e.getMessage());
         }
     }
 
-    private void sendUid(PrintWriter out) throws IOException {
-        out.println(uid);
+    private void sendUid(RoutingTable routingTable) throws IOException {
+        int attempt = 1;
+        while (true) {
+            if (attempt > 5) {
+                System.err.println(Colors.RED + "Error: " + Colors.RESET + "Fail to assign uid");
+                throw new IOException();
+            }
+
+            String newUid = routingTable.generateUid();
+            out.println(newUid);
+
+            String status = in.readLine();
+            if (status == null) {
+                throw new IOException();
+            }
+
+            if (status.equals("ok")) {
+                uid = newUid;
+                routingTable.addToRoutingTable(uid, socket, port);
+                return;
+            }
+            attempt++;
+        }
     }
 
     private void sendReject(String reason, PrintWriter out) throws IOException {
