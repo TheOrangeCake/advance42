@@ -20,6 +20,7 @@
     <module>message_module</module>
     <module>fix_parser_module</module>
     <module>helper_module</module>
+    <module>colors_module</module>
   </modules>
 
   <dependencies>

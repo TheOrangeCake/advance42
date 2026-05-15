@@ -1,5 +1,6 @@
 package com.nguyen.helper;
 
+import com.nguyen.colors.Colors;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 

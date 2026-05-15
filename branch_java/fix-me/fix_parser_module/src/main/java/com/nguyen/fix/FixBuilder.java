@@ -1,6 +1,7 @@
 package com.nguyen.fix;
 
-import com.nguyen.helper.Colors;
+import com.nguyen.colors.Colors;
+
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -128,8 +129,8 @@ public class FixBuilder {
         }
 
         public Builder messageType(String messageType) {
-            if (messageType == null || !messageType.matches("[D83]")) {
-                throw new InvalidFixFormatException("messageType must be D, 8, or 3, got: " + messageType);
+            if (messageType == null || !messageType.matches("[AD83]")) {
+                throw new InvalidFixFormatException("messageType must be A, D, 8, or 3, got: " + messageType);
             }
             this.messageType = messageType;
             return this;
@@ -274,15 +275,6 @@ public class FixBuilder {
             if (sendingTime == null) {
                 throw new InvalidFixFormatException(Colors.RED + "Error: " + Colors.RESET + "sendingTime (Tag 52) is required");
             }
-            if (symbol == null) {
-                throw new InvalidFixFormatException(Colors.RED + "Error: " + Colors.RESET + "symbol (Tag 55) is required");
-            }
-            if (orderQuantity == null) {
-                throw new InvalidFixFormatException(Colors.RED + "Error: " + Colors.RESET + "orderQty (Tag 38) is required");
-            }
-            if (price == null) {
-                throw new InvalidFixFormatException(Colors.RED + "Error: " + Colors.RESET + "price (Tag 44) is required");
-            }
             switch (messageType) {
                 case "3" -> {
                     if (text == null) {
@@ -293,11 +285,23 @@ public class FixBuilder {
                     if (side == null || (!side.equals("1") && !side.equals("2"))) {
                         throw new InvalidFixFormatException(Colors.RED + "Error: " + Colors.RESET + "side (Tag 54) is missing or bad format when messageType is D");
                     }
+                    if (symbol == null) {
+                        throw new InvalidFixFormatException(Colors.RED + "Error: " + Colors.RESET + "symbol (Tag 55) is required");
+                    }
+                    if (orderQuantity == null) {
+                        throw new InvalidFixFormatException(Colors.RED + "Error: " + Colors.RESET + "orderQty (Tag 38) is required");
+                    }
+                    if (price == null) {
+                        throw new InvalidFixFormatException(Colors.RED + "Error: " + Colors.RESET + "price (Tag 44) is required");
+                    }
                 }
                 case "8" -> {
                     if (orderStatus == null || (!orderStatus.equals("2") && !orderStatus.equals("8"))) {
                         throw new InvalidFixFormatException(Colors.RED + "Error: " + Colors.RESET + "ordStatus (Tag 39) is missing or bad format when messageType is 8");
                     }
+                }
+                case "A" -> {
+                    // All good
                 }
                 default ->
                         throw new InvalidFixFormatException(Colors.RED + "Error: " + Colors.RESET + "messageType (Tag 35) must be '3' (error), 'D' (Buy/Sell) or '8' (Executed/Rejected)");

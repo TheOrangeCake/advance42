@@ -4,7 +4,7 @@ package com.nguyen.fix;
 public enum FixTag {
     BEGIN_STRING(8),
     BODY_LENGTH(9),
-    MSG_TYPE(35), // Error = 3 -> fill 58, Buy/Sell = D -> fill 54, Status = 8 -> fill 39
+    MSG_TYPE(35), // Error = 3 -> fill 58, Buy/Sell = D -> fill 54, Status = 8 -> fill 39, Logon = A
     SENDER_COMP_ID(49),
     TARGET_COMP_ID(56),
     SENDING_TIME(52),

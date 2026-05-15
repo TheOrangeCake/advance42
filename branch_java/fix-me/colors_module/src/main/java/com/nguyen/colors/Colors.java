@@ -1,4 +1,4 @@
-package com.nguyen.helper;
+package com.nguyen.colors;
 
 // Source - https://stackoverflow.com/a/45444716
 // Posted by shakram02

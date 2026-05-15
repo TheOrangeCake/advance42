@@ -13,15 +13,15 @@ public class FixParser {
             FixTag.BODY_LENGTH,
             FixTag.MSG_TYPE,
             FixTag.SENDER_COMP_ID,
-            FixTag.TARGET_COMP_ID,
             FixTag.SENDING_TIME,
-            FixTag.SYMBOL,
-            FixTag.ORDER_QTY,
-            FixTag.PRICE,
+            FixTag.TARGET_COMP_ID,
             FixTag.CHECKSUM
     };
     private static final FixTag[] requiredOrderTags = {
             FixTag.SIDE,
+            FixTag.SYMBOL,
+            FixTag.ORDER_QTY,
+            FixTag.PRICE,
     };
     private static final FixTag[] requiredStatusTags = {
             FixTag.ORD_STATUS,
@@ -90,7 +90,7 @@ public class FixParser {
                     throw new InvalidFixFormatException("Missing required tag: " + fixTag);
                 }
             }
-        } else if (!msgType.equals("3")) {
+        } else if (!msgType.equals("3") && !msgType.equals("A")) {
             throw new InvalidFixFormatException("Unknown MsgType: " + msgType);
         }
     }
@@ -121,21 +121,25 @@ public class FixParser {
         }
 
         String orderQty = fields.get(FixTag.ORDER_QTY);
-        try {
-            if (Integer.parseInt(orderQty) <= 0) {
-                throw new InvalidFixFormatException("OrderQty must be positive: " + orderQty);
+        if (orderQty != null) {
+            try {
+                if (Double.parseDouble(orderQty) <= 0) {
+                    throw new InvalidFixFormatException("OrderQty must be positive: " + orderQty);
+                }
+            } catch (NumberFormatException e) {
+                throw new InvalidFixFormatException("Invalid OrderQty: " + orderQty);
             }
-        } catch (NumberFormatException e) {
-            throw new InvalidFixFormatException("Invalid OrderQty: " + orderQty);
         }
 
         String price = fields.get(FixTag.PRICE);
-        try {
-            if (Double.parseDouble(price) <= 0) {
-                throw new InvalidFixFormatException("Price must be positive: " + price);
+        if (price != null) {
+            try {
+                if (Double.parseDouble(price) <= 0) {
+                    throw new InvalidFixFormatException("Price must be positive: " + price);
+                }
+            } catch (NumberFormatException e) {
+                throw new InvalidFixFormatException("Invalid Price: " + price);
             }
-        } catch (NumberFormatException e) {
-            throw new InvalidFixFormatException("Invalid Price: " + price);
         }
 
         String side = fields.get(FixTag.SIDE);

@@ -12,7 +12,7 @@ import com.nguyen.fix.FixBuilder;
 import com.nguyen.fix.FixParser;
 import com.nguyen.fix.FixTag;
 import com.nguyen.fix.InvalidFixFormatException;
-import com.nguyen.helper.Colors;
+import com.nguyen.colors.Colors;
 
 public class ConnectionHandler implements Runnable {
     private final Socket socket;
@@ -37,23 +37,10 @@ public class ConnectionHandler implements Runnable {
             sendUid(routingTable);
 
             while (!socket.isClosed()) {
-                StringBuilder originalMessage = new StringBuilder();
-                int c;
-                while (true) {
-                    c = in.read();
-                    if (c == -1) {
-                        routingTable.removeFromRoutingTable(uid, port);
-                        socket.close();
-                        System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Connection " + uid + " disconnected");
-                        return;
-                    }
-                    originalMessage.append((char) c);
-                    if (originalMessage.toString().contains(FixParser.SOH + "10=") &&
-                            originalMessage.toString().endsWith(String.valueOf(FixParser.SOH))) {
-                        break;
-                    }
+                StringBuilder originalMessage = receive(routingTable);
+                if (originalMessage == null) {
+                    return;
                 }
-
                 try {
                     Map<FixTag, String> parsedMessage = FixParser.parse(originalMessage.toString());
                     String targetId = parsedMessage.get(FixTag.TARGET_COMP_ID);
@@ -78,27 +65,40 @@ public class ConnectionHandler implements Runnable {
     }
 
     private void sendUid(RoutingTable routingTable) throws IOException {
-        int attempt = 1;
-        while (true) {
-            if (attempt > 5) {
+        String newUid = routingTable.generateUid();
+        String logonFIX = new FixBuilder.Builder()
+                .beginString("FIX.4.4")
+                .messageType("A")
+                .senderId("000000")
+                .targetId(newUid)
+                .sendingTime(new Date())
+                .build()
+                .getFixMessage();
+        out.print(logonFIX);
+        out.flush();
+
+        StringBuilder logonConfirm = receive(routingTable);
+        if (logonConfirm == null) {
+            System.err.println(Colors.RED + "Error: " + Colors.RESET + "Fail to assign uid");
+            throw new IOException();
+        }
+
+        try {
+            Map<FixTag, String> fixMessage = FixParser.parse(logonConfirm.toString());
+            if (!fixMessage.get(FixTag.MSG_TYPE).equals("A")) {
+                System.err.println(Colors.RED + "Error: " + Colors.RESET + "Expected Logon (35=A)");
+                throw new IOException();
+            }
+            if (fixMessage.get(FixTag.SENDER_COMP_ID).equals(newUid)) {
+                uid = newUid;
+                routingTable.addToRoutingTable(uid, socket, port);
+            } else {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Fail to assign uid");
                 throw new IOException();
             }
-
-            String newUid = routingTable.generateUid();
-            out.println(newUid);
-
-            String status = in.readLine();
-            if (status == null) {
-                throw new IOException();
-            }
-
-            if (status.equals("ok")) {
-                uid = newUid;
-                routingTable.addToRoutingTable(uid, socket, port);
-                return;
-            }
-            attempt++;
+        } catch (InvalidFixFormatException e) {
+            System.err.println(Colors.RED + "Error: " + Colors.RESET + "Fail to assign uid");
+            throw new IOException();
         }
     }
 
@@ -109,17 +109,35 @@ public class ConnectionHandler implements Runnable {
                 .senderId("000000")
                 .targetId(uid)
                 .sendingTime(new Date())
-                .symbol("N/A")
-                .orderQuantity(1)
-                .price(1)
                 .text(reason)
                 .build()
                 .getFixMessage();
         out.print(rejectMessage);
+        out.flush();
     }
 
     private void forward(String originalMessage, Socket targetSocket) throws IOException {
         PrintWriter out = new PrintWriter(targetSocket.getOutputStream(), true);
         out.print(originalMessage);
+        out.flush();
+    }
+
+    private StringBuilder receive(RoutingTable routingTable) throws IOException {
+        StringBuilder originalMessage = new StringBuilder();
+        int c;
+        while (true) {
+            c = in.read();
+            if (c == -1) {
+                routingTable.removeFromRoutingTable(uid, port);
+                socket.close();
+                System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Connection " + uid + " disconnected");
+                return null;
+            }
+            originalMessage.append((char) c);
+            if (originalMessage.toString().contains(FixParser.SOH + "10=") &&
+                    originalMessage.toString().endsWith(String.valueOf(FixParser.SOH))) {
+                return originalMessage;
+            }
+        }
     }
 }
