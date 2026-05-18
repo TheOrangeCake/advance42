@@ -3,8 +3,6 @@ package com.nguyen.market;
 import com.nguyen.colors.Colors;
 import com.nguyen.market.model.FirstFlag;
 import com.nguyen.market.model.Instrument;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -40,11 +38,10 @@ public class DbSeeding {
 
     public static boolean isFirstRun(SessionFactory sf) {
         try (Session session = sf.openSession()) {
-            CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-            cq.select(cb.count(cq.from(FirstFlag.class)));
-            long count = session.createQuery(cq).uniqueResult();
-            return count == 0;
+            Long count = session.createQuery(
+                            "SELECT COUNT(f) FROM FirstFlag f", Long.class)
+                    .uniqueResult();
+            return count == null || count == 0;
         }
     }
 }
