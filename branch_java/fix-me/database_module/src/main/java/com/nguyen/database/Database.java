@@ -12,7 +12,7 @@ public class Database {
                 server.stop();
             }));
             while (true) {
-
+                // run until ctrl c
             }
         } catch (SQLException e) {
             System.err.println(Colors.RED + "Error: " + Colors.RESET + "H2 TCP Server failed");

@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class H2TcpServer {
     private static H2TcpServer instance;
-    private Server tcpServer;
+    private final Server tcpServer;
 
     private H2TcpServer() throws  SQLException{
         tcpServer = Server.createTcpServer("-tcpPort", "4242", "-ifNotExists").start();

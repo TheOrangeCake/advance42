@@ -4,8 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity
 @Table(name = "INSTRUMENT")
@@ -18,14 +18,29 @@ public class Instrument {
     private String name;
 
     @Column(name = "stock")
-    @Min(0)
+    @PositiveOrZero
     @NotNull
-    private int stock;
+    private double stock;
 
     @Column(name = "price")
-    @Min(0)
+    @PositiveOrZero
     @NotNull
     private double price;
+
+    public Instrument() {
+    }
+
+    public Instrument(
+            String symbol,
+            String name,
+            double stock,
+            double price
+    ) {
+        this.symbol = symbol;
+        this.name = name;
+        this.stock = stock;
+        this.price = price;
+    }
 
     public String getSymbol() {
         return symbol;
@@ -33,7 +48,7 @@ public class Instrument {
     public String getName() {
         return name;
     }
-    public int getStock() {
+    public double getStock() {
         return stock;
     }
     public double getPrice() {
@@ -46,7 +61,7 @@ public class Instrument {
     public void setName(String name) {
         this.name = name;
     }
-    public void setStock(int stock) {
+    public void setStock(double stock) {
         this.stock = stock;
     }
     public void setPrice(double price) {

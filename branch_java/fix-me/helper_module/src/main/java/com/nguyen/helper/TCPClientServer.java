@@ -66,8 +66,10 @@ public class TCPClientServer {
     }
 
     public void close() throws IOException {
-        socket.close();
-        System.out.println(Colors.YELLOW + "Connection closed. Bye." + Colors.RESET);
+        if (!socket.isClosed()) {
+            socket.close();
+            System.out.println(Colors.YELLOW + "Connection closed. Bye." + Colors.RESET);
+        }
     }
 
     public String getUid() {
