@@ -1,5 +1,7 @@
 package com.nguyen.fix;
 
+import com.nguyen.colors.Colors;
+
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -18,12 +20,14 @@ public class FixParser {
             FixTag.CHECKSUM
     };
     private static final FixTag[] requiredOrderTags = {
+            FixTag.ORDER_ID,
             FixTag.SIDE,
             FixTag.SYMBOL,
             FixTag.ORDER_QTY,
             FixTag.PRICE,
     };
     private static final FixTag[] requiredStatusTags = {
+            FixTag.ORDER_ID,
             FixTag.ORD_STATUS,
     };
 
@@ -118,6 +122,17 @@ public class FixParser {
         String targetCompId = fields.get(FixTag.TARGET_COMP_ID);
         if (targetCompId != null && !targetCompId.matches("\\d{6}")) {
             throw new InvalidFixFormatException("Invalid TargetCompID: " + targetCompId);
+        }
+
+        String orderId = fields.get(FixTag.ORDER_ID);
+        if (orderId != null) {
+            try {
+                if (Long.parseLong(orderId) <= 0) {
+                    throw new InvalidFixFormatException("OrderID must be positive: " + orderId);
+                }
+            } catch (NumberFormatException e) {
+                throw new InvalidFixFormatException("Invalid OrderID, must be a positive number: " + orderId);
+            }
         }
 
         String orderQty = fields.get(FixTag.ORDER_QTY);
@@ -217,5 +232,21 @@ public class FixParser {
         } catch (NumberFormatException e) {
             throw new InvalidFixFormatException("Invalid Body Length: " + fields.get(FixTag.BODY_LENGTH));
         }
+    }
+
+    public static String extractRawTargetId(String message) {
+        String search = '\u0001' + "56=";
+        int start = message.indexOf(search);
+        if (start == -1) {
+            System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid Target Id, throw to the trash");
+            return "000000";
+        }
+        start += search.length();
+        int end = message.indexOf('\u0001', start);
+        if (end == -1) {
+            System.err.println(Colors.RED + "Error: " + Colors.RESET + "Invalid Target Id, throw to the trash");
+            return "000000";
+        }
+        return message.substring(start, end);
     }
 }

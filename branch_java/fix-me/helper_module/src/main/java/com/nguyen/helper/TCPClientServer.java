@@ -20,24 +20,25 @@ public class TCPClientServer {
     private final BufferedReader in;
     private final PrintWriter out;
     private String uid;
-    // pass handler here
+    private final ClientFixHandler handler;
 
-    public TCPClientServer(String ipv4, int port) throws IOException {
+    public TCPClientServer(String ipv4, int port, ClientFixHandler handler) throws IOException {
         socket = new Socket(ipv4, port);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
         System.out.println(Colors.YELLOW + "Connected to " + ipv4 + ":" + port + Colors.RESET);
+        this.handler = handler;
     }
 
     public void fetchUid() throws IOException {
-        StringBuilder logonMessage = receive();
+        String logonMessage = receive();
         if (logonMessage == null) {
             System.err.println(Colors.RED + "Error: " + Colors.RESET + "Fail to retrieve UID");
             throw new IOException();
         }
 
         try {
-            Map<FixTag, String> fixMessage = FixParser.parse(logonMessage.toString());
+            Map<FixTag, String> fixMessage = FixParser.parse(logonMessage);
             if (!fixMessage.get(FixTag.MSG_TYPE).equals("A")) {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Expected Logon (35=A)");
                 throw new IOException();
@@ -60,9 +61,23 @@ public class TCPClientServer {
         }
     }
 
-    public void run() {
-        // loop for activity
-        // call handler
+    public void run() throws IOException {
+        while (true) {
+            String message = receive();
+            if (message == null) {
+                System.err.println(Colors.RED + "Error: " + Colors.RESET + "Fail to receive message");
+                throw new IOException();
+            }
+            String responseMessage = handler.handle(message, uid);
+            if (responseMessage != null) {
+                send(responseMessage);
+            }
+        }
+    }
+
+    public void send(String message) {
+        out.print(message);
+        out.flush();
     }
 
     public void close() throws IOException {
@@ -76,7 +91,7 @@ public class TCPClientServer {
         return uid;
     }
 
-    private StringBuilder receive() throws IOException {
+    private String receive() throws IOException {
         StringBuilder originalMessage = new StringBuilder();
         int c;
         while (true) {
@@ -89,7 +104,7 @@ public class TCPClientServer {
             originalMessage.append((char) c);
             if (originalMessage.toString().contains(SOH + "10=") &&
                     originalMessage.toString().endsWith(String.valueOf(SOH))) {
-                return originalMessage;
+                return originalMessage.toString();
             }
         }
     }

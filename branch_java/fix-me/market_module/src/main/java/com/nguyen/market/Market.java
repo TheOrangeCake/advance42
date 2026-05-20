@@ -40,9 +40,12 @@ public class Market {
         }
 
         TCPClientServer client = null;
+        ConnectionHandler handler = new ConnectionHandler();
         try {
-            client = new TCPClientServer(ipv4, port);
+            client = new TCPClientServer(ipv4, port, handler);
             client.fetchUid();
+            System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "This market UID is " + client.getUid());
+            client.run();
         } catch (IOException e) {
             System.err.println(Colors.RED + "Error: " + Colors.RESET + "Client server socket error or closed. Exit");
         } finally {

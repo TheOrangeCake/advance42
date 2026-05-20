@@ -13,6 +13,7 @@ public class FixBuilder {
     private final String messageType;
     private final String senderId;
     private final String targetId;
+    private final String orderId;
     private final String sendingTime;
     private final String symbol;
     private final String orderQuantity;
@@ -30,6 +31,7 @@ public class FixBuilder {
         this.messageType = builder.messageType;
         this.senderId = builder.senderId;
         this.targetId = builder.targetId;
+        this.orderId = builder.orderId;
         this.sendingTime = builder.sendingTime;
         this.symbol = builder.symbol;
         this.orderQuantity = builder.orderQuantity;
@@ -47,6 +49,7 @@ public class FixBuilder {
         sb.append("35=").append(messageType).append(SOH);
         sb.append("49=").append(senderId).append(SOH);
         sb.append("56=").append(targetId).append(SOH);
+        sb.append("11=").append(orderId).append(SOH);
         sb.append("52=").append(sendingTime).append(SOH);
         appendIfPresent(sb, "55", symbol);
         appendIfPresent(sb, "38", orderQuantity);
@@ -79,6 +82,7 @@ public class FixBuilder {
     public String getTargetId() {
         return targetId;
     }
+    public String getOrderId() { return orderId; }
     public String getSendingTime() {
         return sendingTime;
     }
@@ -107,6 +111,7 @@ public class FixBuilder {
         private String messageType;
         private String senderId;
         private String targetId;
+        private String orderId;
         private String sendingTime;
         private String bodyLength;
         private String symbol;
@@ -155,6 +160,29 @@ public class FixBuilder {
                 throw new InvalidFixFormatException(Colors.RED + "Error: " + Colors.RESET + "targetId (Tag 49) must be 6 digits");
             }
             this.targetId = targetId;
+            return this;
+        }
+
+        public Builder orderId(String orderId) {
+            if (orderId == null || orderId.isBlank()) {
+                throw new InvalidFixFormatException("orderId (Tag 11) must not be blank");
+            }
+            try {
+                if (Long.parseLong(orderId) <= 0) {
+                    throw new InvalidFixFormatException("OrderID must be positive: " + orderId);
+                }
+            } catch (NumberFormatException e) {
+                throw new InvalidFixFormatException("Invalid OrderID, must be a positive number: " + orderId);
+            }
+            this.orderId = orderId;
+            return this;
+        }
+
+        public Builder orderId(Long orderId) {
+            if (orderId == null || orderId <= 0) {
+                throw new InvalidFixFormatException("orderId (Tag 11) must be positive");
+            }
+            this.orderId = String.valueOf(orderId);
             return this;
         }
 
@@ -294,10 +322,16 @@ public class FixBuilder {
                     if (price == null) {
                         throw new InvalidFixFormatException(Colors.RED + "Error: " + Colors.RESET + "price (Tag 44) is required");
                     }
+                    if (orderId == null) {
+                        throw new InvalidFixFormatException(Colors.RED + "Error: " + Colors.RESET + "price (Tag 11) is required");
+                    }
                 }
                 case "8" -> {
                     if (orderStatus == null || (!orderStatus.equals("2") && !orderStatus.equals("8"))) {
                         throw new InvalidFixFormatException(Colors.RED + "Error: " + Colors.RESET + "ordStatus (Tag 39) is missing or bad format when messageType is 8");
+                    }
+                    if (orderId == null) {
+                        throw new InvalidFixFormatException(Colors.RED + "Error: " + Colors.RESET + "price (Tag 11) is required");
                     }
                 }
                 case "A" -> {
@@ -313,6 +347,7 @@ public class FixBuilder {
             sb.append("35=").append(messageType).append(SOH);
             sb.append("49=").append(senderId).append(SOH);
             sb.append("56=").append(targetId).append(SOH);
+            appendIfPresent(sb, "11", orderId);
             sb.append("52=").append(sendingTime).append(SOH);
             appendIfPresent(sb, "55", symbol);
             appendIfPresent(sb, "38", orderQuantity);
@@ -330,6 +365,7 @@ public class FixBuilder {
             sb.append("35=").append(messageType).append(SOH);
             sb.append("49=").append(senderId).append(SOH);
             sb.append("56=").append(targetId).append(SOH);
+            sb.append("11=").append(orderId).append(SOH);
             sb.append("52=").append(sendingTime).append(SOH);
             appendIfPresent(sb, "55", symbol);
             appendIfPresent(sb, "38", orderQuantity);
