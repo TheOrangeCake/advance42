@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity
-@Table(name = "INSTRUMENT")
+@Table(name = "INSTRUMENTS")
 public class Instrument {
     @Id
     private String symbol;

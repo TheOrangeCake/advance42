@@ -4,10 +4,14 @@ import com.nguyen.colors.Colors;
 import com.nguyen.database.HibernateSession;
 import com.nguyen.helper.InputReader;
 import com.nguyen.helper.TCPClientServer;
+import com.nguyen.market.model.FixTransaction;
+import com.nguyen.market.model.MessageStatus;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 public class Market {
@@ -45,6 +49,18 @@ public class Market {
             client = new TCPClientServer(ipv4, port, handler);
             client.fetchUid();
             System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "This market UID is " + client.getUid());
+
+            try (Session session = HibernateSession.getInstance().getSessionFactory().openSession()) {
+                List<FixTransaction> pending = session.createQuery(
+                                "FROM FixTransaction WHERE status = :status", FixTransaction.class)
+                        .setParameter("status", MessageStatus.PENDING)
+                        .list();
+
+                for (FixTransaction ft : pending) {
+                    handler.handle(ft.getFixRequestMessage(), client.getUid());
+                }
+            }
+
             client.run();
         } catch (IOException e) {
             System.err.println(Colors.RED + "Error: " + Colors.RESET + "Client server socket error or closed. Exit");

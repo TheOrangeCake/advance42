@@ -1,11 +1,18 @@
 package com.nguyen.market;
 
 import com.nguyen.colors.Colors;
+import com.nguyen.database.HibernateSession;
 import com.nguyen.fix.FixBuilder;
 import com.nguyen.fix.FixParser;
 import com.nguyen.fix.FixTag;
 import com.nguyen.fix.InvalidFixFormatException;
 import com.nguyen.helper.ClientFixHandler;
+import com.nguyen.market.model.FixTransaction;
+import com.nguyen.market.model.MessageStatus;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 import java.util.Date;
 import java.util.Map;
@@ -13,9 +20,9 @@ import java.util.Map;
 // Validator: https://docs.hibernate.org/validator/9.1/reference/en-US/html_single/#validator-gettingstarted-whatsnext
 public class ConnectionHandler implements ClientFixHandler {
     @Override
-    public String handle(String message, String uid) {
+    public String handle(String rawMessage, String uid) {
         try {
-            Map<FixTag, String> fixMessage = FixParser.parse(message);
+            Map<FixTag, String> fixMessage = FixParser.parse(rawMessage);
             String msgType = fixMessage.get(FixTag.MSG_TYPE);
             switch (msgType) {
                 // Error
@@ -34,7 +41,7 @@ public class ConnectionHandler implements ClientFixHandler {
                 }
                 // Buy / Sell
                 case "D" -> {
-                    return handleTrade(fixMessage);
+                    return handleTrade(fixMessage, rawMessage);
                 }
                 // Status
                 case "8" -> {
@@ -50,8 +57,8 @@ public class ConnectionHandler implements ClientFixHandler {
                 }
             }
 
-        } catch (InvalidFixFormatException e) {
-            String targetId = FixParser.extractRawTargetId(message);
+        } catch (RuntimeException e) {
+            String targetId = FixParser.extractRawTargetId(rawMessage);
             return new FixBuilder.Builder()
                     .beginString("FIX.4.4")
                     .messageType("3")
@@ -64,12 +71,76 @@ public class ConnectionHandler implements ClientFixHandler {
         }
     }
 
-    private String handleTrade(Map<FixTag, String> fixMessage) {
-        // Get the data from fixMessage
-        // Check if transaction already exists by orderId
-        //   -> Not found: create new transaction as PENDING, execute order, update to EXECUTED/REJECTED, return response
-        //   -> Found + PENDING: market crashed mid-execution, re-execute, update status, return response
-        //   -> Found + EXECUTED: duplicate request from broker retry, return the stored response directly (idempotent)
-        //   -> Found + REJECTED: duplicate request, return the stored rejection directly
+    private String handleTrade(Map<FixTag, String> fixMessage, String rawMessage) throws RuntimeException {
+        SessionFactory sf;
+        try {
+            sf = HibernateSession.getInstance().getSessionFactory();
+        } catch (HibernateException e) {
+            System.err.println(Colors.RED + "Error: " + Colors.RESET + "Database connection error");
+            throw new RuntimeException("Market internal error");
+        }
+        long orderId;
+        try {
+            orderId = Long.parseLong(fixMessage.get(FixTag.ORDER_ID));
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Order Id is invalid");
+        }
+        try (Session session = sf.openSession()) {
+            FixTransaction transaction = session.find(FixTransaction.class, orderId);
+            if (transaction == null) {
+                Transaction tx = session.beginTransaction();
+                FixTransaction ft = new FixTransaction(rawMessage, orderId);
+                session.persist(ft);
+                tx.commit();
+                return doTrade(session, orderId, fixMessage);
+            }
+            MessageStatus status = transaction.getStatus();
+            switch (status) {
+                case EXECUTED, REJECTED ->  {
+                    return transaction.getFixResponseMessage();
+                }
+                case PENDING -> {
+                    return doTrade(session, orderId, fixMessage);
+                }
+                default -> {
+                    System.err.println(Colors.RED + "Error: " + Colors.RESET + "Unknown transaction status");
+                    throw new RuntimeException("Market internal error");
+                }
+            }
+        }
+    }
+
+    private String doTrade(Session session, long orderId, Map<FixTag, String> fixMessage) throws RuntimeException {
+        Transaction tx = session.beginTransaction();
+        try {
+            String side = fixMessage.get(FixTag.SIDE);
+            if (side == null) {
+                throw new RuntimeException("Empty Side (54) when Message Type (35) is D");
+            }
+            String responseMessage = switch (side) {
+                case "1" -> doBuy(session, orderId, fixMessage);
+                case "2" -> doSell(session, orderId, fixMessage);
+                default -> throw new RuntimeException("Unknown Side Tag: " + side);
+            };
+            tx.commit();
+            return responseMessage;
+        } catch (Exception e) {
+            tx.rollback();
+            throw e;
+        }
+    }
+
+    private String doBuy(Session session, long orderId, Map<FixTag, String> fixMessage) {
+
+    }
+
+    private String doSell(Session session, long orderId, Map<FixTag, String> fixMessage) {
+
+    }
+
+    private void updateFixTransaction(Session session, long orderId, String response, MessageStatus status) {
+        FixTransaction ft = session.find(FixTransaction.class, orderId);
+        ft.setStatus(status);
+        ft.setFixResponseMessage(response);
     }
 }
