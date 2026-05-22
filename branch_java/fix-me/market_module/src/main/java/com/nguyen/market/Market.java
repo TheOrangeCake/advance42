@@ -5,6 +5,7 @@ import com.nguyen.database.HibernateSession;
 import com.nguyen.helper.InputReader;
 import com.nguyen.helper.TCPClientServer;
 import com.nguyen.market.model.FixTransaction;
+import com.nguyen.market.model.Instrument;
 import com.nguyen.market.model.MessageStatus;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -50,12 +51,20 @@ public class Market {
             client.fetchUid();
             System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "This market UID is " + client.getUid());
 
+            try (Session session = sf.openSession()) {
+                List<Instrument> instruments = session.createQuery("FROM Instrument", Instrument.class).list();
+                Instrument.printAll(instruments);
+            }
+
             try (Session session = HibernateSession.getInstance().getSessionFactory().openSession()) {
                 List<FixTransaction> pending = session.createQuery(
                                 "FROM FixTransaction WHERE status = :status", FixTransaction.class)
                         .setParameter("status", MessageStatus.PENDING)
                         .list();
 
+                if (!pending.isEmpty()) {
+                    System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Found pending transaction, resume");
+                }
                 for (FixTransaction ft : pending) {
                     handler.handle(ft.getFixRequestMessage(), client.getUid());
                 }

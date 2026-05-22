@@ -37,6 +37,7 @@
       <artifactId>hibernate-core</artifactId>
       <version>7.3.2.Final</version>
     </dependency>
+    <!-- Source: https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator -->
     <dependency>
       <groupId>org.hibernate.validator</groupId>
       <artifactId>hibernate-validator</artifactId>
