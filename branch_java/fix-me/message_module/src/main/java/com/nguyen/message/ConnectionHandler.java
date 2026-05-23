@@ -74,6 +74,7 @@ public class ConnectionHandler implements Runnable {
                 .sendingTime(new Date())
                 .build()
                 .getFixMessage();
+        System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Generate uid: " + newUid + ", " + logonFIX);
         out.print(logonFIX);
         out.flush();
 
@@ -117,6 +118,7 @@ public class ConnectionHandler implements Runnable {
     }
 
     private void forward(String originalMessage, Socket targetSocket) throws IOException {
+        System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Forwarding " + originalMessage);
         PrintWriter out = new PrintWriter(targetSocket.getOutputStream(), true);
         out.print(originalMessage);
         out.flush();

@@ -15,6 +15,7 @@
         <!-- Entities -->
         <mapping class="com.nguyen.market.model.Instrument"/>
         <mapping class="com.nguyen.market.model.FirstFlag"/>
+        <mapping class="com.nguyen.market.model.FixTransaction"/>
 
     </session-factory>
 </hibernate-configuration>

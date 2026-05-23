@@ -49,7 +49,7 @@ public class FixBuilder {
         sb.append("35=").append(messageType).append(SOH);
         sb.append("49=").append(senderId).append(SOH);
         sb.append("56=").append(targetId).append(SOH);
-        sb.append("11=").append(orderId).append(SOH);
+        appendIfPresent(sb, "11", orderId);
         sb.append("52=").append(sendingTime).append(SOH);
         appendIfPresent(sb, "55", symbol);
         appendIfPresent(sb, "38", orderQuantity);
@@ -365,7 +365,7 @@ public class FixBuilder {
             sb.append("35=").append(messageType).append(SOH);
             sb.append("49=").append(senderId).append(SOH);
             sb.append("56=").append(targetId).append(SOH);
-            sb.append("11=").append(orderId).append(SOH);
+            appendIfPresent(sb, "11", orderId);
             sb.append("52=").append(sendingTime).append(SOH);
             appendIfPresent(sb, "55", symbol);
             appendIfPresent(sb, "38", orderQuantity);
