@@ -6,7 +6,6 @@ import com.nguyen.fix.FixBuilder;
 import com.nguyen.fix.FixParser;
 import com.nguyen.fix.FixTag;
 import com.nguyen.fix.InvalidFixFormatException;
-import com.nguyen.helper.ClientFixHandler;
 import com.nguyen.market.model.FixTransaction;
 import com.nguyen.market.model.Instrument;
 import com.nguyen.market.model.MessageStatus;
@@ -19,8 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class ConnectionHandler implements ClientFixHandler {
-    @Override
+public class ConnectionHandler {
     public String handle(String rawMessage, String uid) {
         try {
             Map<FixTag, String> fixMessage = FixParser.parse(rawMessage);
@@ -52,6 +50,8 @@ public class ConnectionHandler implements ClientFixHandler {
                 default -> throw new InvalidFixFormatException("Unknown Message Type");
             }
 
+        } catch (HibernateException e) {
+            throw e;
         } catch (RuntimeException e) {
             String targetId = FixParser.extractRawTargetId(rawMessage);
             return new FixBuilder.Builder()
@@ -64,14 +64,16 @@ public class ConnectionHandler implements ClientFixHandler {
                     .build()
                     .getFixMessage();
         }
+
     }
 
-    private String handleTrade(Map<FixTag, String> fixMessage, String rawMessage) throws RuntimeException {
+    private String handleTrade(Map<FixTag, String> fixMessage, String rawMessage) {
         SessionFactory sf;
         try {
             sf = HibernateSession.getInstance().getSessionFactory();
         } catch (HibernateException e) {
             System.err.println(Colors.RED + "Error: " + Colors.RESET + "Database connection error");
+            System.err.println(e.getMessage());
             throw new RuntimeException("Market internal error");
         }
         long orderId;
@@ -105,7 +107,7 @@ public class ConnectionHandler implements ClientFixHandler {
         }
     }
 
-    private String doTrade(Session session, long orderId, Map<FixTag, String> fixMessage) throws RuntimeException {
+    private String doTrade(Session session, long orderId, Map<FixTag, String> fixMessage) {
         Transaction tx = session.beginTransaction();
         try {
             String side = fixMessage.get(FixTag.SIDE);
@@ -120,7 +122,7 @@ public class ConnectionHandler implements ClientFixHandler {
             tx.commit();
             printInstruments(session);
             return responseMessage;
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             tx.rollback();
             throw e;
         }

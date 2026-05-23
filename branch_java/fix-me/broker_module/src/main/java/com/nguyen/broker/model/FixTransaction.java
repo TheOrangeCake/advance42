@@ -1,14 +1,12 @@
-package com.nguyen.market.model;
+package com.nguyen.broker.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "MARKET_ORDERS")
+@Table(name = "BROKER_ORDERS")
 public class FixTransaction {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "request")
@@ -24,9 +22,8 @@ public class FixTransaction {
 
     }
 
-    public FixTransaction(String fixRequestMessage, Long id) {
+    public FixTransaction(String fixRequestMessage) {
         this.fixRequestMessage = fixRequestMessage;
-        this.id = id;
         status = MessageStatus.PENDING;
     }
 
