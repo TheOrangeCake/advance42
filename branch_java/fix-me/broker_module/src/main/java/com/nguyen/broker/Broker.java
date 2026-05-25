@@ -1,5 +1,6 @@
 package com.nguyen.broker;
 
+import com.nguyen.broker.model.Portfolio;
 import com.nguyen.colors.Colors;
 import com.nguyen.database.HibernateSession;
 import com.nguyen.fix.FixBuilder;
@@ -87,7 +88,8 @@ public class Broker {
     }
 
     private static void mainLoop(InputReader inputReader, TCPClientServer client) throws IOException {
-        ResponseHandler responseHandler = new ResponseHandler();
+        Portfolio portfolio = new Portfolio();
+        ResponseHandler responseHandler = new ResponseHandler(portfolio);
         while (true) {
             String side = inputReader.readSide();
             if (side == null) {

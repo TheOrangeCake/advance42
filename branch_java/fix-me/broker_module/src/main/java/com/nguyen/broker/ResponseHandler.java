@@ -1,5 +1,6 @@
 package com.nguyen.broker;
 
+import com.nguyen.broker.model.Portfolio;
 import com.nguyen.colors.Colors;
 import com.nguyen.database.HibernateSession;
 import com.nguyen.fix.FixParser;
@@ -15,6 +16,11 @@ import org.hibernate.Transaction;
 import java.util.Map;
 
 public class ResponseHandler {
+    private final Portfolio portfolio;
+
+    public ResponseHandler(Portfolio portfolio) {
+        this.portfolio = portfolio;
+    }
     public void handle(String rawMessage) {
         Map<FixTag, String> fixMessage = FixParser.parse(rawMessage);
         String msgType = fixMessage.get(FixTag.MSG_TYPE);
@@ -64,7 +70,11 @@ public class ResponseHandler {
                 throw new InvalidFixFormatException("No order status (39)");
             }
             switch (status) {
-                case "2" ->  updateFixTransaction(session, orderId, rawMessage, MessageStatus.EXECUTED);
+                case "2" ->  {
+                    updateFixTransaction(session, orderId, rawMessage, MessageStatus.EXECUTED);
+                    updatePortfolio(fixMessage);
+                    portfolio.printPortfolio();
+                }
                 case "8" -> updateFixTransaction(session, orderId, rawMessage, MessageStatus.REJECTED);
                 default -> {
                     System.err.println(Colors.RED + "Error: " + Colors.RESET + "Unknown transaction status");
@@ -93,6 +103,22 @@ public class ResponseHandler {
         } catch (HibernateException e) {
             tx.rollback();
             throw e;
+        }
+    }
+
+    private void updatePortfolio(Map<FixTag, String> fixMessage) {
+        String symbol = fixMessage.get(FixTag.SYMBOL);
+        String side = fixMessage.get(FixTag.SIDE);
+        double quantity;
+        try {
+            quantity = Double.parseDouble(fixMessage.get(FixTag.ORDER_QTY));
+        } catch (NumberFormatException e) {
+            return;
+        }
+        if ("1".equals(side)) {
+            portfolio.add(symbol, quantity);
+        } else if ("2".equals(side)) {
+            portfolio.remove(symbol, quantity);
         }
     }
 }
