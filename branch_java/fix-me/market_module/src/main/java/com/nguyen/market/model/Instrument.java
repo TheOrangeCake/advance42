@@ -76,7 +76,7 @@ public class Instrument {
     }
 
     public void setSymbol(String symbol) {
-        this.symbol = symbol;
+        this.symbol = symbol.toUpperCase();
     }
     public void setName(String name) {
         this.name = name;

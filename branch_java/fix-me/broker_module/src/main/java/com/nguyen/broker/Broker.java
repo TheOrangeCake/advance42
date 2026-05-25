@@ -21,6 +21,7 @@ public class Broker {
         } catch (HibernateException e) {
             System.err.println(Colors.RED + "Error: " + Colors.RESET + "Database connection error");
             System.err.println(e.getMessage());
+            return;
         }
         Scanner scanner = new Scanner(System.in);
         InputReader inputReader = new InputReader(scanner);
@@ -57,11 +58,26 @@ public class Broker {
 
             ResponseHandler responseHandler = new ResponseHandler();
             while (true) {
-                // get buy or sell
-                // get symbol
-                // get quantity
-                // get price
-                // get target uid
+                String side = inputReader.readSide();
+                if (side == null) {
+                    break;
+                }
+                String symbol = inputReader.readSymbol();
+                if (symbol == null) {
+                    break;
+                }
+                String quantity = inputReader.readQuantity();
+                if (quantity == null) {
+                    break;
+                }
+                String price = inputReader.readPrice();
+                if (price == null) {
+                    break;
+                }
+                String targetUid = inputReader.readTargetUid();
+                if (targetUid == null) {
+                    break;
+                }
                 // send fix request
 
                 String message = client.receive();
