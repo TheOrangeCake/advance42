@@ -19,7 +19,7 @@ public class FixTransaction {
     private MessageStatus status;
 
     public FixTransaction() {
-
+        status = MessageStatus.PENDING;
     }
 
     public FixTransaction(String fixRequestMessage) {

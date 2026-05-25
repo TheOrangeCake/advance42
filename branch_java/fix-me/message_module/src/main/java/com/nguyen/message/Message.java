@@ -36,12 +36,14 @@ public class Message {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Server crashed: " + e.getCause().getMessage());
                 System.exit(1);
             }
+        } catch (NullPointerException e) {
+            System.err.println(Colors.RED + "Error: " + Colors.RESET + "Another Message server already running");
+            System.exit(1);
         } catch (SocketErrorException e) {
             System.err.println(e.getMessage());
             System.exit(1);
         } catch (InterruptedException e) {
             System.err.println(Colors.YELLOW + "WARN: " + Colors.RESET + "Server interrupted: " + e.getMessage());
-            System.exit(0);
         }
     }
 }

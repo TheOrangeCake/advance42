@@ -78,6 +78,7 @@ public class Market {
                 if (message == null) {
                     break;
                 }
+                System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Request received: " + message);
                 try {
                     String responseMessage = handler.handle(message, client.getUid());
                     if (responseMessage != null) {
