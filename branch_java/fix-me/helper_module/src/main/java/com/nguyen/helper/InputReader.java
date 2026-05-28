@@ -50,6 +50,25 @@ public class InputReader {
         }
     }
 
+    public String readUid(String service) {
+        while (true) {
+            System.out.println(Colors.PURPLE + "Enter " + service + " UID (format dddddd). Enter \"none\" to get new uid");
+            try {
+                String input = scanner.nextLine().trim();
+                if (input.equals("none")) {
+                    return "000000";
+                }
+                if (input.matches("\\d{6}")) {
+                    return input;
+                }
+                System.out.println(Colors.RED + "Invalid UID. Please enter numeric value between 000001 and 999999" + Colors.RESET);
+                System.out.println();
+            } catch (NoSuchElementException e) {
+                return null;
+            }
+        }
+    }
+
     public String readSide() {
         while (true) {
             System.out.println(Colors.PURPLE + "Do you want to sell or buy?" + Colors.RESET);

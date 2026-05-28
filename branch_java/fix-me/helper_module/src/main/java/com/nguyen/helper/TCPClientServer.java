@@ -28,7 +28,25 @@ public class TCPClientServer {
         System.out.println(Colors.YELLOW + "Connected to " + ipv4 + ":" + port + Colors.RESET);
     }
 
-    public void fetchUid() throws IOException {
+    public void sendLogon(String inputUid) throws IOException {
+        try {
+            String logonMessage = new FixBuilder.Builder()
+                    .beginString("FIX.4.4")
+                    .messageType("A")
+                    .senderId(inputUid)
+                    .targetId("000000")
+                    .sendingTime(new Date())
+                    .build()
+                    .getFixMessage();
+            out.print(logonMessage);
+            out.flush();
+        } catch (InvalidFixFormatException e) {
+            System.err.println(Colors.RED + "Error: " + Colors.RESET + "Fail to send UID");
+            throw new IOException();
+        }
+    }
+
+    public void fetchUid(String inputUid) throws IOException {
         String logonMessage = receive();
         if (logonMessage == null) {
             System.err.println(Colors.RED + "Error: " + Colors.RESET + "Fail to retrieve UID");
@@ -42,6 +60,10 @@ public class TCPClientServer {
                 throw new IOException();
             }
             String newUid = fixMessage.get(FixTag.TARGET_COMP_ID);
+            if (!newUid.equals(inputUid) && !inputUid.equals("000000")) {
+                System.err.println(Colors.RED + "Error: " + Colors.RESET + "Server did not echo back the requested UID");
+                throw new IOException();
+            }
             String logonConfirm = new FixBuilder.Builder()
                     .beginString("FIX.4.4")
                     .messageType("A")

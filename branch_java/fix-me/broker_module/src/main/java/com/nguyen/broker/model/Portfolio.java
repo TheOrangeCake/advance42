@@ -33,10 +33,12 @@ public class Portfolio {
             System.out.println(Colors.YELLOW + "Portfolio is empty" + Colors.RESET);
             return;
         }
+        System.out.println("-------------------------");
         System.out.printf("%-8s %-10s%n", "Symbol", "Quantity");
         System.out.println("-".repeat(20));
         for (Map.Entry<String, Double> entry : portfolio.entrySet()) {
             System.out.printf("%-8s %-10.2f%n", entry.getKey(), entry.getValue());
         }
+        System.out.println("-------------------------");
     }
 }

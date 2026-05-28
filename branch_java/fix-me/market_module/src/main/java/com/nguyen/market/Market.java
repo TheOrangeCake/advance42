@@ -32,85 +32,108 @@ public class Market {
             System.err.println(e.getMessage());
             return;
         }
+
         Scanner scanner = new Scanner(System.in);
         InputReader inputReader = new InputReader(scanner);
-        String ipv4 = inputReader.readIP();
-        if (ipv4 == null) {
-            System.err.println(Colors.RED + "Fail to get Server IPv4 address. Exit" + Colors.RESET);
-            HibernateSession.getInstance().stop();
-            return;
-        }
-        int port = inputReader.readPort();
-        if (port == -1) {
-            System.err.println(Colors.RED + "Fail to get Port. Exit" + Colors.RESET);
-            HibernateSession.getInstance().stop();
-            return;
-        }
-
-        TCPClientServer client = null;
         ConnectionHandler handler = new ConnectionHandler();
+
         try {
-            client = new TCPClientServer(ipv4, port);
-            client.fetchUid();
-            System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "This market UID is " + client.getUid());
-
-            try (Session session = sf.openSession()) {
-                List<Instrument> instruments = session.createQuery("FROM Instrument", Instrument.class).list();
-                Instrument.printAll(instruments);
-            }
-
-            try (Session session = HibernateSession.getInstance().getSessionFactory().openSession()) {
-                List<FixTransaction> pending = session.createQuery(
-                                "FROM FixTransaction WHERE status = :status", FixTransaction.class)
-                        .setParameter("status", MessageStatus.PENDING)
-                        .list();
-
-                if (!pending.isEmpty()) {
-                    System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Found pending transaction, resume");
-                }
-                for (FixTransaction ft : pending) {
-                    handler.handle(ft.getFixRequestMessage(), client.getUid());
-                }
-            }
-
             while (true) {
-                String message = client.receive();
-                if (message == null) {
+                String ipv4 = inputReader.readIP();
+                if (ipv4 == null) {
+                    System.err.println(Colors.RED + "Fail to get Server IPv4 address. Exit" + Colors.RESET);
                     break;
                 }
-                System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Request received: " + message);
-                try {
-                    String responseMessage = handler.handle(message, client.getUid());
-                    if (responseMessage != null) {
-                        client.send(responseMessage);
-                    }
-                } catch (HibernateException e) {
-                    String targetId = FixParser.extractRawTargetId(message);
-                    client.send(new FixBuilder.Builder()
-                            .beginString("FIX.4.4")
-                            .messageType("3")
-                            .senderId(client.getUid())
-                            .targetId(targetId)
-                            .sendingTime(new Date())
-                            .text(e.getMessage())
-                            .build()
-                            .getFixMessage());
+                int port = inputReader.readPort();
+                if (port == -1) {
+                    System.err.println(Colors.RED + "Fail to get Port. Exit" + Colors.RESET);
                     break;
+                }
+                String uid = inputReader.readUid("market");
+                if (uid == null) {
+                    System.err.println(Colors.RED + "Fail to get UID. Exit" + Colors.RESET);
+                    break;
+                }
+
+                TCPClientServer client = null;
+                try {
+                    client = new TCPClientServer(ipv4, port);
+                    client.sendLogon(uid);
+                    client.fetchUid(uid);
+                    System.out.println(Colors.YELLOW + "Info: " + Colors.RESET +
+                            "This market UID is " + client.getUid());
+
+                    try (Session session = sf.openSession()) {
+                        List<Instrument> instruments =
+                                session.createQuery("FROM Instrument", Instrument.class).list();
+                        Instrument.printAll(instruments);
+                    }
+
+                    retry(client, handler);
+                    mainLoop(client, handler);
+                    break;
+                } catch (IOException e) {
+                    System.err.println(Colors.RED + "Connection lost: " + Colors.RESET + e.getMessage());
+                    System.out.println(Colors.YELLOW + "Will prompt for reconnect..." + Colors.RESET);
+                } catch (HibernateException e) {
+                    System.err.println(Colors.RED + "Error: " + Colors.RESET + "Database connection error");
+                    System.err.println(e.getMessage());
+                    break;
+                } finally {
+                    if (client != null) {
+                        try { client.close(); } catch (IOException ex) {
+                            System.err.println(Colors.RED + "Fail to close client socket" + Colors.RESET);
+                        }
+                    }
                 }
             }
-        } catch (IOException e) {
-            System.err.println(Colors.RED + "Error: " + Colors.RESET + "Client server socket error or closed. Exit");
-        } catch (HibernateException e) {
-            System.err.println(Colors.RED + "Error: " + Colors.RESET + "Database connection error");
-            System.err.println(e.getMessage());
         } finally {
+            HibernateSession.getInstance().stop();
+        }
+    }
+
+    private static void retry(TCPClientServer client, ConnectionHandler handler) {
+        try (Session session = HibernateSession.getInstance().getSessionFactory().openSession()) {
+            List<FixTransaction> pending = session.createQuery(
+                            "FROM FixTransaction WHERE status = :status AND marketId = :uid",
+                            FixTransaction.class)
+                    .setParameter("status", MessageStatus.PENDING)
+                    .setParameter("uid", client.getUid())
+                    .list();
+
+            if (!pending.isEmpty()) {
+                System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Found pending transaction, resume");
+            }
+            for (FixTransaction ft : pending) {
+                handler.handle(ft.getFixRequestMessage(), client.getUid());
+            }
+        }
+    }
+
+    private static void mainLoop(TCPClientServer client, ConnectionHandler handler) throws IOException {
+        while (true) {
+            String message = client.receive();
+            if (message == null) {
+                throw new IOException("Server disconnected");
+            }
+            System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Request received: " + message);
             try {
-                if (client != null) {
-                    client.close();
+                String responseMessage = handler.handle(message, client.getUid());
+                if (responseMessage != null) {
+                    client.send(responseMessage);
                 }
-                HibernateSession.getInstance().stop();
-            } catch (IOException e) {
-                System.err.println(Colors.RED + "Fail to close client socket" + Colors.RESET);
+            } catch (HibernateException e) {
+                String targetId = FixParser.extractRawTargetId(message);
+                client.send(new FixBuilder.Builder()
+                        .beginString("FIX.4.4")
+                        .messageType("3")
+                        .senderId(client.getUid())
+                        .targetId(targetId)
+                        .sendingTime(new Date())
+                        .text(e.getMessage())
+                        .build()
+                        .getFixMessage());
+                break;
             }
         }
     }

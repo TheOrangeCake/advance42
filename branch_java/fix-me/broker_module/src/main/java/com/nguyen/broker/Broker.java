@@ -30,51 +30,64 @@ public class Broker {
         }
         Scanner scanner = new Scanner(System.in);
         InputReader inputReader = new InputReader(scanner);
-        String ipv4 = inputReader.readIP();
-        if (ipv4 == null) {
-            System.err.println(Colors.RED + "Fail to get Server IPv4 address. Exit" + Colors.RESET);
-            return;
-        }
-        int port = inputReader.readPort();
-        if (port == -1) {
-            System.err.println(Colors.RED + "Fail to get Port. Exit" + Colors.RESET);
-            return;
-        }
+        Portfolio portfolio = new Portfolio();
+        ResponseHandler responseHandler = new ResponseHandler(portfolio);
 
-        TCPClientServer client = null;
         try {
-            client = new TCPClientServer(ipv4, port);
-            client.fetchUid();
-            System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "This broker UID is " + client.getUid());
-
-            retry(client);
-
-            mainLoop(inputReader, client);
-
-        } catch (IOException e) {
-            System.err.println(Colors.RED + "Error: " + Colors.RESET + "Client server socket error or closed. Exit");
-        } catch (HibernateException e) {
-            System.err.println(Colors.RED + "Error: " + Colors.RESET + "Database connection error");
-            System.err.println(e.getMessage());
-        } catch (InvalidFixFormatException e) {
-            System.err.println(Colors.RED + "Error: " + Colors.RESET + e.getMessage());
-        } finally {
-            try {
-                if (client != null) {
-                    client.close();
+            while (true) {
+                String ipv4 = inputReader.readIP();
+                if (ipv4 == null) {
+                    System.err.println(Colors.RED + "Fail to get Server IPv4 address. Exit" + Colors.RESET);
+                    break;
                 }
-                HibernateSession.getInstance().stop();
-            } catch (IOException e) {
-                System.err.println(Colors.RED + "Fail to close client socket" + Colors.RESET);
+                int port = inputReader.readPort();
+                if (port == -1) {
+                    System.err.println(Colors.RED + "Fail to get Port. Exit" + Colors.RESET);
+                    break;
+                }
+                String uid = inputReader.readUid("broker");
+                if (uid == null) {
+                    System.err.println(Colors.RED + "Fail to get UID. Exit" + Colors.RESET);
+                    break;
+                }
+
+                TCPClientServer client = null;
+                try {
+                    client = new TCPClientServer(ipv4, port);
+                    client.sendLogon(uid);
+                    client.fetchUid(uid);
+                    System.out.println(Colors.YELLOW + "Info: " + Colors.RESET
+                            + "This broker UID is " + client.getUid());
+
+                    retry(client, responseHandler);
+                    mainLoop(inputReader, client, responseHandler);
+                    break;
+                } catch (IOException e) {
+                    System.err.println(Colors.RED + "Connection lost: " + Colors.RESET + e.getMessage());
+                    System.out.println(Colors.YELLOW + "Will prompt for reconnect..." + Colors.RESET);
+                } catch (InvalidFixFormatException e) {
+                    System.err.println(Colors.RED + "Error: " + Colors.RESET + e.getMessage());
+                    break;
+                } finally {
+                    if (client != null) {
+                        try { client.close(); } catch (IOException ex) {
+                            System.err.println(Colors.RED + "Fail to close client socket" + Colors.RESET);
+                        }
+                    }
+                }
             }
+        } finally {
+            HibernateSession.getInstance().stop();
         }
     }
 
-    private static void retry(TCPClientServer client) {
+    private static void retry(TCPClientServer client, ResponseHandler responseHandler) throws IOException {
         try (Session session = HibernateSession.getInstance().getSessionFactory().openSession()) {
             List<FixTransaction> pending = session.createQuery(
-                            "FROM FixTransaction WHERE status = :status", FixTransaction.class)
+                            "FROM FixTransaction WHERE status = :status AND brokerId = :uid",
+                            FixTransaction.class)
                     .setParameter("status", MessageStatus.PENDING)
+                    .setParameter("uid", client.getUid())
                     .list();
 
             if (!pending.isEmpty()) {
@@ -83,13 +96,17 @@ public class Broker {
             for (FixTransaction ft : pending) {
                 String requestMessage = ft.getFixRequestMessage();
                 client.send(requestMessage);
+                String response = client.receive();
+                if (response != null) responseHandler.handle(response);
             }
         }
     }
 
-    private static void mainLoop(InputReader inputReader, TCPClientServer client) throws IOException {
-        Portfolio portfolio = new Portfolio();
-        ResponseHandler responseHandler = new ResponseHandler(portfolio);
+    private static void mainLoop(
+            InputReader inputReader,
+            TCPClientServer client,
+            ResponseHandler responseHandler
+    ) throws IOException {
         while (true) {
             String side = inputReader.readSide();
             if (side == null) {
@@ -113,6 +130,7 @@ public class Broker {
             }
 
             FixTransaction ft = new FixTransaction();
+            ft.setBrokerId(client.getUid());
             try (Session session = HibernateSession.getInstance().getSessionFactory().openSession()) {
                 Transaction tx1 = session.beginTransaction();
                 session.persist(ft);
@@ -142,7 +160,7 @@ public class Broker {
 
             String message = client.receive();
             if (message == null) {
-                break;
+                throw new IOException("Server disconnected");
             }
             System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Response received: " + message);
             try {

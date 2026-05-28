@@ -11,6 +11,9 @@ public class FixTransaction {
     @Id
     private Long id;
 
+    @Column(name = "market_id")
+    private String marketId;
+
     @Column(name = "request")
     private String fixRequestMessage;
 
@@ -33,6 +36,9 @@ public class FixTransaction {
     public Long getId() {
         return id;
     }
+    public String getMarketId() {
+        return marketId;
+    }
     public String getFixRequestMessage() {
         return fixRequestMessage;
     }
@@ -44,6 +50,9 @@ public class FixTransaction {
     }
 
     public void setId(Long id) { this.id = id; }
+    public void setMarketId(String marketId) {
+        this.marketId = marketId;
+    }
     public void setFixRequestMessage(String fixRequestMessage) {
         this.fixRequestMessage = fixRequestMessage;
     }

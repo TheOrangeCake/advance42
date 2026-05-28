@@ -9,6 +9,9 @@ public class FixTransaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "broker_id")
+    private String brokerId;
+
     @Column(name = "request")
     private String fixRequestMessage;
 
@@ -30,6 +33,7 @@ public class FixTransaction {
     public Long getId() {
         return id;
     }
+    public String getBrokerId() { return brokerId; }
     public String getFixRequestMessage() {
         return fixRequestMessage;
     }
@@ -41,6 +45,7 @@ public class FixTransaction {
     }
 
     public void setId(Long id) { this.id = id; }
+    public void setBrokerId(String brokerId) { this.brokerId = brokerId; }
     public void setFixRequestMessage(String fixRequestMessage) {
         this.fixRequestMessage = fixRequestMessage;
     }

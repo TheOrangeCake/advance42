@@ -85,8 +85,10 @@ public class ConnectionHandler {
         try (Session session = sf.openSession()) {
             FixTransaction transaction = session.find(FixTransaction.class, orderId);
             if (transaction == null) {
-                Transaction tx = session.beginTransaction();
                 FixTransaction ft = new FixTransaction(rawMessage, orderId);
+                String marketId = fixMessage.get(FixTag.TARGET_COMP_ID);
+                ft.setMarketId(marketId);
+                Transaction tx = session.beginTransaction();
                 session.persist(ft);
                 tx.commit();
                 return doTrade(session, orderId, fixMessage);
