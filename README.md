@@ -2,14 +2,15 @@ My path to RNCP 7
 
 RNCP 6:
 * Développement applicatif:
-    - **WORKING ON:** fix-me (stock exchange 15'750)
     - darkly (web security 6'300)
 * Suite (choice):
     - pestilence (virus 15'750) + all prerequise project: woody-woodpacker (9'450), famine (9'450)
     - override (cyber security 35'700) + all prerequise project: cybersecurity piscine (9'450), snow-crash (9'450), rainfall (25'200)
+        - **WORKING ON:** cybersecurity piscine (9'450)
 * Done:
-    - avaj-launcher (UML diagram 4'200)
-    - swingy (RPG in 9'450)
+    - [avaj-launcher](https://github.com/TheOrangeCake/advance42/tree/main/branch_java/avaj-launcher) (UML diagram 4'200) 
+    - [swingy](https://github.com/TheOrangeCake/advance42/tree/main/branch_java/swingy) (RPG in 9'450)
+    - [fix-me](https://github.com/TheOrangeCake/advance42/tree/main/branch_java/fix-me) (stock exchange 15'750) 
  
 RNCP 7:
 * Architecture des bases de données et data: (70'000)
