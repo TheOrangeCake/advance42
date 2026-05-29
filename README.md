@@ -9,8 +9,8 @@ RNCP 6:
         - **WORKING ON:** cybersecurity piscine (9'450)
 * Done:
     - [avaj-launcher](https://github.com/TheOrangeCake/advance42/tree/main/branch_java/avaj-launcher) (UML diagram 4'200) 
-    - [swingy](https://github.com/TheOrangeCake/advance42/tree/main/branch_java/swingy) (RPG in 9'450)
-    - [fix-me](https://github.com/TheOrangeCake/advance42/tree/main/branch_java/fix-me) (stock exchange 15'750) 
+    - [swingy](https://github.com/TheOrangeCake/advance42/tree/main/branch_java/swingy) (SWING RPG in 9'450)
+    - [fix-me](https://github.com/TheOrangeCake/advance42/tree/main/branch_java/fix-me) (stock exchange FIX 15'750) 
  
 RNCP 7:
 * Architecture des bases de données et data: (70'000)
@@ -26,4 +26,4 @@ RNCP 7:
     - pestilence (virus 15'750) + all prerequise project: woody-woodpacker (9'450), famine (9'450)
     - override (cyber security 35'700) + all prerequise project: cybersecurity piscine (9'450), snow-crash (9'450), rainfall (25'200)
 * Done:
-    - ft_linear_regression (price prediction 4'200)
+    - [ft_linear_regression](https://github.com/TheOrangeCake/advance42/tree/main/branch_AI/ft_linear_regression) (regression price prediction 4'200)
