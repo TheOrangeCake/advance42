@@ -11,6 +11,7 @@ import java.util.Map;
 import com.nguyen.fix.FixBuilder;
 import com.nguyen.fix.FixParser;
 import com.nguyen.fix.FixTag;
+import com.nguyen.fix.FixTranslator;
 import com.nguyen.fix.InvalidFixFormatException;
 import com.nguyen.colors.Colors;
 
@@ -46,7 +47,12 @@ public class ConnectionHandler implements Runnable {
                     parsedMessage = FixParser.parse(originalMessage);
                     String targetId = parsedMessage.get(FixTag.TARGET_COMP_ID);
                     ConnectionHandler targetHandler = routingTable.getHandler(targetId, port);
-                    forward(originalMessage, targetHandler);
+                    try {
+                        forward(originalMessage, targetHandler);
+                    } catch (IOException e) {
+                        System.out.println(Colors.YELLOW + "Warn: " + Colors.RESET
+                                + "Forward to " + targetId + " failed, target unreachable. Sender retry will redeliver.");
+                    }
                 } catch (InvalidFixFormatException | IllegalArgumentException e) {
                     String orderId = parsedMessage == null ? null : parsedMessage.get(FixTag.ORDER_ID);
                     sendReject(e.getMessage(), orderId);
@@ -97,6 +103,7 @@ public class ConnectionHandler implements Runnable {
                     .build()
                     .getFixMessage();
             System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Sent Logon " + uid + ", " + secondHandShake);
+            System.out.println(Colors.CYAN + "   -> " + FixTranslator.translate(secondHandShake) + Colors.RESET);
             send(secondHandShake);
         } catch (InvalidFixFormatException e) {
             sendReject(e.getMessage(), null);
@@ -144,11 +151,15 @@ public class ConnectionHandler implements Runnable {
         if (orderId != null) {
             builder.orderId(orderId);
         }
-        send(builder.build().getFixMessage());
+        String rejectMessage = builder.build().getFixMessage();
+        System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Sending reject: " + rejectMessage);
+        System.out.println(Colors.CYAN + "   -> " + FixTranslator.translate(rejectMessage) + Colors.RESET);
+        send(rejectMessage);
     }
 
     private void forward(String originalMessage, ConnectionHandler targetHandler) throws IOException {
         System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Forwarding " + originalMessage);
+        System.out.println(Colors.CYAN + "   -> " + FixTranslator.translate(originalMessage) + Colors.RESET);
         targetHandler.send(originalMessage);
     }
 

@@ -4,6 +4,7 @@ import com.nguyen.colors.Colors;
 import com.nguyen.database.HibernateSession;
 import com.nguyen.fix.FixBuilder;
 import com.nguyen.fix.FixParser;
+import com.nguyen.fix.FixTranslator;
 import com.nguyen.helper.InputReader;
 import com.nguyen.helper.TCPClientServer;
 import com.nguyen.market.model.FixTransaction;
@@ -104,11 +105,13 @@ public class Market {
                 try {
                     String responseMessage = handler.handle(ft.getFixRequestMessage(), client.getUid());
                     if (responseMessage != null) {
+                        System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Resending: " + responseMessage);
+                        System.out.println(Colors.CYAN + "   -> " + FixTranslator.translate(responseMessage) + Colors.RESET);
                         client.send(responseMessage);
                     }
                 } catch (HibernateException e) {
                     String targetId = FixParser.extractRawTargetId(ft.getFixRequestMessage());
-                    client.send(new FixBuilder.Builder()
+                    String rejectMessage = new FixBuilder.Builder()
                             .beginString("FIX.4.4")
                             .messageType("3")
                             .senderId(client.getUid())
@@ -116,7 +119,10 @@ public class Market {
                             .sendingTime(new Date())
                             .text(e.getMessage())
                             .build()
-                            .getFixMessage());
+                            .getFixMessage();
+                    System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Sending reject: " + rejectMessage);
+                    System.out.println(Colors.CYAN + "   -> " + FixTranslator.translate(rejectMessage) + Colors.RESET);
+                    client.send(rejectMessage);
                 }
             }
         }
@@ -129,14 +135,17 @@ public class Market {
                 throw new IOException("Server disconnected");
             }
             System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Request received: " + message);
+            System.out.println(Colors.CYAN + "   -> " + FixTranslator.translate(message) + Colors.RESET);
             try {
                 String responseMessage = handler.handle(message, client.getUid());
                 if (responseMessage != null) {
+                    System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Sending: " + responseMessage);
+                    System.out.println(Colors.CYAN + "   -> " + FixTranslator.translate(responseMessage) + Colors.RESET);
                     client.send(responseMessage);
                 }
             } catch (HibernateException e) {
                 String targetId = FixParser.extractRawTargetId(message);
-                client.send(new FixBuilder.Builder()
+                String rejectMessage = new FixBuilder.Builder()
                         .beginString("FIX.4.4")
                         .messageType("3")
                         .senderId(client.getUid())
@@ -144,7 +153,10 @@ public class Market {
                         .sendingTime(new Date())
                         .text(e.getMessage())
                         .build()
-                        .getFixMessage());
+                        .getFixMessage();
+                System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Sending reject: " + rejectMessage);
+                System.out.println(Colors.CYAN + "   -> " + FixTranslator.translate(rejectMessage) + Colors.RESET);
+                client.send(rejectMessage);
                 break;
             }
         }

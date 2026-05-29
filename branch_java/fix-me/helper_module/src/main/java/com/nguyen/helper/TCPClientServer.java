@@ -4,6 +4,7 @@ import com.nguyen.colors.Colors;
 import com.nguyen.fix.FixParser;
 import com.nguyen.fix.FixBuilder;
 import com.nguyen.fix.FixTag;
+import com.nguyen.fix.FixTranslator;
 import com.nguyen.fix.InvalidFixFormatException;
 
 import java.io.BufferedReader;
@@ -38,6 +39,8 @@ public class TCPClientServer {
                     .sendingTime(new Date())
                     .build()
                     .getFixMessage();
+            System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Sending logon: " + logonMessage);
+            System.out.println(Colors.CYAN + "   -> " + FixTranslator.translate(logonMessage) + Colors.RESET);
             out.print(logonMessage);
             out.flush();
         } catch (InvalidFixFormatException e) {
@@ -52,6 +55,8 @@ public class TCPClientServer {
             System.err.println(Colors.RED + "Error: " + Colors.RESET + "Fail to retrieve UID");
             throw new IOException();
         }
+        System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Received logon: " + logonMessage);
+        System.out.println(Colors.CYAN + "   -> " + FixTranslator.translate(logonMessage) + Colors.RESET);
 
         try {
             Map<FixTag, String> fixMessage = FixParser.parse(logonMessage);
@@ -82,6 +87,8 @@ public class TCPClientServer {
                     .sendingTime(new Date())
                     .build()
                     .getFixMessage();
+            System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Sending logon confirm: " + logonConfirm);
+            System.out.println(Colors.CYAN + "   -> " + FixTranslator.translate(logonConfirm) + Colors.RESET);
             out.print(logonConfirm);
             out.flush();
             uid = newUid;
@@ -108,6 +115,10 @@ public class TCPClientServer {
 
     public String getUid() {
         return uid;
+    }
+
+    public boolean hasData() throws IOException {
+        return in.ready();
     }
 
     public String receive() throws IOException {

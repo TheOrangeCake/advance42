@@ -4,6 +4,7 @@ import com.nguyen.broker.model.Portfolio;
 import com.nguyen.colors.Colors;
 import com.nguyen.database.HibernateSession;
 import com.nguyen.fix.FixBuilder;
+import com.nguyen.fix.FixTranslator;
 import com.nguyen.fix.InvalidFixFormatException;
 import com.nguyen.helper.InputReader;
 import com.nguyen.helper.TCPClientServer;
@@ -56,6 +57,13 @@ public class Broker {
                             + "This broker UID is " + client.getUid());
 
                     retry(client, responseHandler);
+                    if (client.hasData()) {
+                        System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Receiving Market retry response");
+                        while (client.hasData()) {
+                            receiveResponse(client, responseHandler);
+                        }
+                    }
+
                     mainLoop(inputReader, client, responseHandler);
                     break;
                 } catch (IOException e) {
@@ -91,6 +99,8 @@ public class Broker {
             }
             for (FixTransaction ft : pending) {
                 String requestMessage = ft.getFixRequestMessage();
+                System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Resending: " + requestMessage);
+                System.out.println(Colors.CYAN + "   -> " + FixTranslator.translate(requestMessage) + Colors.RESET);
                 client.send(requestMessage);
                 String response = client.receive();
                 if (response == null) {
@@ -158,19 +168,39 @@ public class Broker {
                 session.merge(ft);
                 tx2.commit();
 
+                if (client.hasData()) {
+                    System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Receiving Market retry response");
+                    while (client.hasData()) {
+                        receiveResponse(client, responseHandler);
+                    }
+                }
+                System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Sending: " + requestMessage);
+                System.out.println(Colors.CYAN + "   -> " + FixTranslator.translate(requestMessage) + Colors.RESET);
                 client.send(requestMessage);
             }
 
-            String message = client.receive();
-            if (message == null) {
-                throw new IOException("Server disconnected");
+            receiveResponse(client, responseHandler);
+
+            if (client.hasData()) {
+                System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Receiving Market retry response");
+                while (client.hasData()) {
+                    receiveResponse(client, responseHandler);
+                }
             }
-            System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Response received: " + message);
-            try {
-                responseHandler.handle(message);
-            } catch (RuntimeException e) {
-                System.err.println(Colors.RED + "Error: " + Colors.RESET + e.getMessage());
-            }
+        }
+    }
+
+    private static void receiveResponse(TCPClientServer client, ResponseHandler responseHandler) throws IOException {
+        String message = client.receive();
+        if (message == null) {
+            throw new IOException("Server disconnected");
+        }
+        System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Response received: " + message);
+        System.out.println(Colors.CYAN + "   -> " + FixTranslator.translate(message) + Colors.RESET);
+        try {
+            responseHandler.handle(message);
+        } catch (RuntimeException e) {
+            System.err.println(Colors.RED + "Error: " + Colors.RESET + e.getMessage());
         }
     }
 }
