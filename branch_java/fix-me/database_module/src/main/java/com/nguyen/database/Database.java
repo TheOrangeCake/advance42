@@ -8,11 +8,11 @@ public class Database {
     static void main() {
         try {
             H2TcpServer server = H2TcpServer.getInstance();
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                server.stop();
-            }));
-            while (true) {
-                // run until ctrl c
+            Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
+            try {
+                Thread.currentThread().join();
+            } catch (InterruptedException ignored) {
+
             }
         } catch (SQLException e) {
             System.err.println(Colors.RED + "Error: " + Colors.RESET + "H2 TCP Server failed");

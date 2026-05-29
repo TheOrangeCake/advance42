@@ -1,9 +1,6 @@
 package com.nguyen.market.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "MARKET_ORDERS")
@@ -20,6 +17,7 @@ public class FixTransaction {
     @Column(name = "response")
     private String fixResponseMessage;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private MessageStatus status;
 

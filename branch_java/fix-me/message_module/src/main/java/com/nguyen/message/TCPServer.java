@@ -14,6 +14,7 @@ public class TCPServer implements Callable<Void> {
     private final int port;
     private final String name;
     private final BiConsumer<Socket, Integer> connectionHandler;
+    private volatile boolean closing = false;
 
     public TCPServer(int port, String name, BiConsumer<Socket, Integer> connectionHandler) throws SocketErrorException {
         try {
@@ -47,12 +48,16 @@ public class TCPServer implements Callable<Void> {
                 connectionHandler.accept(socket, port);
             }
         } catch (IOException e) {
+            if (closing) {
+                return null;
+            }
             close();
             throw new SocketErrorException("Server " + name + ":" + port + " fails to create socket: " + e.getMessage());
         }
     }
 
     public void close() {
+        closing = true;
         try {
             if (!serverSocket.isClosed()) {
                 serverSocket.close();

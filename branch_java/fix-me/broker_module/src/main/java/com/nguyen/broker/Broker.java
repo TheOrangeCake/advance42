@@ -97,7 +97,14 @@ public class Broker {
                 String requestMessage = ft.getFixRequestMessage();
                 client.send(requestMessage);
                 String response = client.receive();
-                if (response != null) responseHandler.handle(response);
+                if (response == null) {
+                    throw new IOException("Server disconnected");
+                }
+                try {
+                    responseHandler.handle(response);
+                } catch (RuntimeException e) {
+                    System.err.println(Colors.RED + "Error: " + Colors.RESET + e.getMessage());
+                }
             }
         }
     }

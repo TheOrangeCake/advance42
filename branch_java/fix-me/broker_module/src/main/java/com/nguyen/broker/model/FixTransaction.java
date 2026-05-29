@@ -18,6 +18,7 @@ public class FixTransaction {
     @Column(name = "response")
     private String fixResponseMessage;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private MessageStatus status;
 

@@ -34,27 +34,30 @@ public class ConnectionHandler implements Runnable {
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.out = new PrintWriter(socket.getOutputStream(), true);
 
-            sendUid(routingTable);
+            handleLogon(routingTable);
 
             while (!socket.isClosed()) {
-                StringBuilder originalMessage = receive(routingTable);
+                String originalMessage = receive(routingTable);
                 if (originalMessage == null) {
                     return;
                 }
+                Map<FixTag, String> parsedMessage = null;
                 try {
-                    Map<FixTag, String> parsedMessage = FixParser.parse(originalMessage.toString());
+                    parsedMessage = FixParser.parse(originalMessage);
                     String targetId = parsedMessage.get(FixTag.TARGET_COMP_ID);
-                    Socket targetSocket = routingTable.getSocket(targetId, port);
-                    forward(originalMessage.toString(), targetSocket);
+                    ConnectionHandler targetHandler = routingTable.getHandler(targetId, port);
+                    forward(originalMessage, targetHandler);
                 } catch (InvalidFixFormatException | IllegalArgumentException e) {
-                    sendReject(e.getMessage(), out);
+                    String orderId = parsedMessage == null ? null : parsedMessage.get(FixTag.ORDER_ID);
+                    sendReject(e.getMessage(), orderId);
                 }
             }
-
         } catch (IOException e) {
             System.err.println(Colors.RED + "Error: " + Colors.RESET + "Error IO from socket. Close connection");
             try {
-                routingTable.removeFromRoutingTable(uid, port);
+                if (uid != null) {
+                    routingTable.removeFromRoutingTable(uid, port);
+                }
                 socket.close();
             } catch (IOException ex) {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Error closing socket");
@@ -64,36 +67,55 @@ public class ConnectionHandler implements Runnable {
         }
     }
 
-    private void sendUid(RoutingTable routingTable) throws IOException {
-        String newUid = routingTable.generateUid();
-        String logonFIX = new FixBuilder.Builder()
-                .beginString("FIX.4.4")
-                .messageType("A")
-                .senderId("000000")
-                .targetId(newUid)
-                .sendingTime(new Date())
-                .build()
-                .getFixMessage();
-        System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Generate uid: " + newUid + ", " + logonFIX);
-        out.print(logonFIX);
-        out.flush();
+    private void handleLogon(RoutingTable routingTable) throws IOException {
+        String firstHandShake = receive(routingTable);
+        if (firstHandShake == null) {
+            throw new IOException();
+        }
+        try {
+            Map<FixTag, String> firstLogonFix = FixParser.parse(firstHandShake);
+            String senderUid = firstLogonFix.get(FixTag.SENDER_COMP_ID);
+            if (senderUid.equals("000000")) {
+                uid = routingTable.generateUid();
+                routingTable.addToRoutingTable(uid, this, port);
+            } else {
+                boolean isActive = routingTable.isActive(senderUid, port);
+                if (isActive) {
+                    sendReject("UID already logged on", null);
+                    throw new IOException();
+                }
+                uid = senderUid;
+                routingTable.bumpUidCounter(uid);
+                routingTable.addToRoutingTable(uid, this, port);
+            }
+            String secondHandShake = new FixBuilder.Builder()
+                    .beginString("FIX.4.4")
+                    .messageType("A")
+                    .senderId("000000")
+                    .targetId(uid)
+                    .sendingTime(new Date())
+                    .build()
+                    .getFixMessage();
+            System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Sent Logon " + uid + ", " + secondHandShake);
+            send(secondHandShake);
+        } catch (InvalidFixFormatException e) {
+            sendReject(e.getMessage(), null);
+            throw new IOException();
+        }
 
-        StringBuilder logonConfirm = receive(routingTable);
-        if (logonConfirm == null) {
-            System.err.println(Colors.RED + "Error: " + Colors.RESET + "Fail to assign uid");
+        String thirdHandShake = receive(routingTable);
+        if (thirdHandShake == null) {
+            System.err.println(Colors.RED + "Error: " + Colors.RESET + "Fail to confirm assign uid");
             throw new IOException();
         }
 
         try {
-            Map<FixTag, String> fixMessage = FixParser.parse(logonConfirm.toString());
+            Map<FixTag, String> fixMessage = FixParser.parse(thirdHandShake);
             if (!fixMessage.get(FixTag.MSG_TYPE).equals("A")) {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Expected Logon (35=A)");
                 throw new IOException();
             }
-            if (fixMessage.get(FixTag.SENDER_COMP_ID).equals(newUid)) {
-                uid = newUid;
-                routingTable.addToRoutingTable(uid, socket, port);
-            } else {
+            if (!fixMessage.get(FixTag.SENDER_COMP_ID).equals(uid)) {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Fail to assign uid");
                 throw new IOException();
             }
@@ -103,34 +125,42 @@ public class ConnectionHandler implements Runnable {
         }
     }
 
-    private void sendReject(String reason, PrintWriter out) throws IOException {
-        String rejectMessage = new FixBuilder.Builder()
+    public synchronized void send(String message) throws IOException {
+        out.print(message);
+        out.flush();
+        if (out.checkError()) {
+            throw new IOException("Write to client failed");
+        }
+    }
+
+    private void sendReject(String reason, String orderId) throws IOException {
+        FixBuilder.Builder builder = new FixBuilder.Builder()
                 .beginString("FIX.4.4")
                 .messageType("3")
                 .senderId("000000")
-                .targetId(uid)
+                .targetId(uid == null ? "000000" : uid)
                 .sendingTime(new Date())
-                .text(reason)
-                .build()
-                .getFixMessage();
-        out.print(rejectMessage);
-        out.flush();
+                .text(reason);
+        if (orderId != null) {
+            builder.orderId(orderId);
+        }
+        send(builder.build().getFixMessage());
     }
 
-    private void forward(String originalMessage, Socket targetSocket) throws IOException {
+    private void forward(String originalMessage, ConnectionHandler targetHandler) throws IOException {
         System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Forwarding " + originalMessage);
-        PrintWriter out = new PrintWriter(targetSocket.getOutputStream(), true);
-        out.print(originalMessage);
-        out.flush();
+        targetHandler.send(originalMessage);
     }
 
-    private StringBuilder receive(RoutingTable routingTable) throws IOException {
+    private String receive(RoutingTable routingTable) throws IOException {
         StringBuilder originalMessage = new StringBuilder();
         int c;
         while (true) {
             c = in.read();
             if (c == -1) {
-                routingTable.removeFromRoutingTable(uid, port);
+                if (uid != null) {
+                    routingTable.removeFromRoutingTable(uid, port);
+                }
                 socket.close();
                 System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Connection " + uid + " disconnected");
                 return null;
@@ -138,7 +168,7 @@ public class ConnectionHandler implements Runnable {
             originalMessage.append((char) c);
             if (originalMessage.toString().contains(FixParser.SOH + "10=") &&
                     originalMessage.toString().endsWith(String.valueOf(FixParser.SOH))) {
-                return originalMessage;
+                return originalMessage.toString();
             }
         }
     }

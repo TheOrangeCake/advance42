@@ -1,12 +1,21 @@
 package com.nguyen.message;
 
 import com.nguyen.colors.Colors;
+import com.nguyen.database.HibernateSession;
 import com.nguyen.message.exception.SocketErrorException;
+import org.hibernate.HibernateException;
 
 import java.util.concurrent.*;
 
 public class Message {
     static void main() {
+        try {
+            HibernateSession.init("message.cfg.xml");
+        } catch (HibernateException e) {
+            System.err.println(Colors.RED + "Error: " + Colors.RESET + "Database connection error");
+            System.err.println(e.getMessage());
+            return;
+        }
         ExecutorService serverService = Executors.newFixedThreadPool(2);
         ExecutorService connectionHandlerService = Executors.newCachedThreadPool();
 
@@ -25,6 +34,7 @@ public class Message {
                 marketServer.close();
                 serverService.shutdown();
                 connectionHandlerService.shutdown();
+                HibernateSession.getInstance().stop();
             }));
 
             Future<Void> brokerFuture = serverService.submit(brokerServer);

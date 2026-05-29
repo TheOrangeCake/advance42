@@ -92,7 +92,7 @@ public class Market {
         }
     }
 
-    private static void retry(TCPClientServer client, ConnectionHandler handler) {
+    private static void retry(TCPClientServer client, ConnectionHandler handler) throws IOException {
         try (Session session = HibernateSession.getInstance().getSessionFactory().openSession()) {
             List<FixTransaction> pending = session.createQuery(
                             "FROM FixTransaction WHERE status = :status AND marketId = :uid",
@@ -105,7 +105,23 @@ public class Market {
                 System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "Found pending transaction, resume");
             }
             for (FixTransaction ft : pending) {
-                handler.handle(ft.getFixRequestMessage(), client.getUid());
+                try {
+                    String responseMessage = handler.handle(ft.getFixRequestMessage(), client.getUid());
+                    if (responseMessage != null) {
+                        client.send(responseMessage);
+                    }
+                } catch (HibernateException e) {
+                    String targetId = FixParser.extractRawTargetId(ft.getFixRequestMessage());
+                    client.send(new FixBuilder.Builder()
+                            .beginString("FIX.4.4")
+                            .messageType("3")
+                            .senderId(client.getUid())
+                            .targetId(targetId)
+                            .sendingTime(new Date())
+                            .text(e.getMessage())
+                            .build()
+                            .getFixMessage());
+                }
             }
         }
     }

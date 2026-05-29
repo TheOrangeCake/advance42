@@ -28,8 +28,8 @@ public class ResponseHandler {
             // Error
             case "3" -> {
                 String error = fixMessage.get(FixTag.TEXT);
+                String orderId = fixMessage.get(FixTag.ORDER_ID);
                 if (error == null) {
-                    String orderId = fixMessage.get(FixTag.ORDER_ID);
                     String errorMessage = orderId == null ?
                             "Something went wrong, no Order ID specified"
                             : "Something went wrong with order " + orderId;
@@ -37,7 +37,9 @@ public class ResponseHandler {
                 } else {
                     System.err.println(Colors.RED + "Error: " + Colors.RESET + error);
                 }
-                handleStatus(fixMessage, rawMessage);
+                if (orderId != null) {
+                    handleStatus(fixMessage, rawMessage);
+                }
             }
             // Buy / Sell
             case "D" -> throw new InvalidFixFormatException("I am broker, Message Type D is invalid");
@@ -92,7 +94,7 @@ public class ResponseHandler {
     ) throws  InvalidFixFormatException, HibernateException {
         FixTransaction ft = session.find(FixTransaction.class, orderId);
         if (ft == null) {
-            throw new InvalidFixFormatException("Order Id does not exist");
+            throw new InvalidFixFormatException("No matching local order for response");
         }
         Transaction tx = session.beginTransaction();
         try {

@@ -52,10 +52,10 @@ public class InputReader {
 
     public String readUid(String service) {
         while (true) {
-            System.out.println(Colors.PURPLE + "Enter " + service + " UID (format dddddd). Enter \"none\" to get new uid");
+            System.out.println(Colors.PURPLE + "Enter " + service + " UID (format dddddd). Enter \"new\", \"none\" or leave blank to get new uid");
             try {
                 String input = scanner.nextLine().trim();
-                if (input.equals("none")) {
+                if (input.isEmpty() || input.equalsIgnoreCase("new") || input.equalsIgnoreCase("none")) {
                     return "000000";
                 }
                 if (input.matches("\\d{6}")) {

@@ -55,14 +55,24 @@ public class TCPClientServer {
 
         try {
             Map<FixTag, String> fixMessage = FixParser.parse(logonMessage);
-            if (!fixMessage.get(FixTag.MSG_TYPE).equals("A")) {
-                System.err.println(Colors.RED + "Error: " + Colors.RESET + "Expected Logon (35=A)");
+            String msgType = fixMessage.get(FixTag.MSG_TYPE);
+            if (!msgType.equals("A")) {
+                if (msgType.equals("3")) {
+                    String error = fixMessage.get(FixTag.TEXT);
+                    if (error != null) {
+                        System.err.println(Colors.RED + "Error: " + Colors.RESET + error);
+                    } else {
+                        System.err.println(Colors.RED + "Error: " + Colors.RESET + "Error during logon");
+                    }
+                } else {
+                    System.err.println(Colors.RED + "Error: " + Colors.RESET + "Expected Logon (35=A)");
+                }
                 throw new IOException();
             }
             String newUid = fixMessage.get(FixTag.TARGET_COMP_ID);
             if (!newUid.equals(inputUid) && !inputUid.equals("000000")) {
                 System.err.println(Colors.RED + "Error: " + Colors.RESET + "Server did not echo back the requested UID");
-                throw new IOException();
+                System.out.println(Colors.YELLOW + "Info: " + Colors.RESET + "A new UID is assigned: " + Colors.PURPLE + newUid + Colors.RESET);
             }
             String logonConfirm = new FixBuilder.Builder()
                     .beginString("FIX.4.4")
@@ -81,9 +91,12 @@ public class TCPClientServer {
         }
     }
 
-    public void send(String message) {
+    public void send(String message) throws IOException {
         out.print(message);
         out.flush();
+        if (out.checkError()) {
+            throw new IOException("Write to server failed");
+        }
     }
 
     public void close() throws IOException {
