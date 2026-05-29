@@ -44,11 +44,7 @@ public class Market {
                     System.err.println(Colors.RED + "Fail to get Server IPv4 address. Exit" + Colors.RESET);
                     break;
                 }
-                int port = inputReader.readPort();
-                if (port == -1) {
-                    System.err.println(Colors.RED + "Fail to get Port. Exit" + Colors.RESET);
-                    break;
-                }
+                int port = 5001;
                 String uid = inputReader.readUid("market");
                 if (uid == null) {
                     System.err.println(Colors.RED + "Fail to get UID. Exit" + Colors.RESET);

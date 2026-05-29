@@ -29,6 +29,7 @@ public class InputReader {
         }
     }
 
+    // Unused but can be used in case of not hardcoding port
     public int readPort() {
         while (true) {
             System.out.println(Colors.PURPLE + "Enter server Port to connect:" + Colors.RESET);
