@@ -1,24 +1,29 @@
 package com.nguyen.spider;
 
-import com.nguyen.helper.MyLogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Spider {
+    private static final Logger logger = LogManager.getLogger(Spider.class);
+
     static void main(String[] av) {
-        MyLogger.info("Hello, this is Spider program");
+        logger.info("Hello, this is Spider program.");
 
         if (av.length < 1) {
-            MyLogger.fatal("Please launch with an URL, with optional options r (recursive), l (max_depth) and p (download_path)");
+            logger.fatal("Invalid argument. Retry with arguments: [-rlp] [params] URL.");
             return;
         }
 
-        OptionConfig config = new OptionConfig();
+        OptionConfig config = null;
         try {
+            config = new OptionConfig();
             config.parse(av);
             if (!config.isOption_r()) {
-                MyLogger.debug("HEY");
+                logger.debug("HEY");
             }
-        } catch (OptionParseException e) {
-            MyLogger.fatal("Parse Error", e);
+        } catch (ArgumentsParseException e) {
+            logger.fatal("Parse Error.", e);
+            return;
         }
     }
 }
