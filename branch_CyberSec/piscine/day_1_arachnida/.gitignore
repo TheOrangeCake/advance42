@@ -1,0 +1,8 @@
+classes
+sources.txt
+*.class
+target
+.idea
+dependency-reduced-pom.xml
+*.mv.db
+*.db
