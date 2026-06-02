@@ -1,5 +1,7 @@
 package com.nguyen.spider;
 
+import com.nguyen.spider.exception.ArgumentsParseException;
+import com.nguyen.spider.exception.HttpException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,7 +16,7 @@ public class Spider {
             return;
         }
 
-        OptionConfig config = null;
+        OptionConfig config;
         try {
             config = new OptionConfig();
             config.parse(av);
@@ -24,5 +26,14 @@ public class Spider {
             logger.fatal("Parse Error.", e);
             return;
         }
+
+        HttpHandler handler = new HttpHandler(config);
+        try {
+            handler.run();
+        } catch (HttpException e) {
+            logger.fatal("Http Error.", e);
+            return;
+        }
+
     }
 }

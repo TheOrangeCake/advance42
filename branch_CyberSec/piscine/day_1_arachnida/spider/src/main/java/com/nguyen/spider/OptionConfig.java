@@ -1,11 +1,11 @@
 package com.nguyen.spider;
 
+import com.nguyen.spider.exception.ArgumentsParseException;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 

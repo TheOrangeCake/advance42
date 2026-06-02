@@ -1,4 +1,4 @@
-package com.nguyen.spider;
+package com.nguyen.spider.exception;
 
 public class ArgumentsParseException extends RuntimeException {
     public ArgumentsParseException(String message) {
