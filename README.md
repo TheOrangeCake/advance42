@@ -37,5 +37,6 @@ RNCP 7:
         - override (cyber security 35'700)
           
 Fun:
+* Data Science
     - [ft_linear_regression](https://github.com/TheOrangeCake/advance42/tree/main/branch_AI/ft_linear_regression) (regression price prediction 4'200)
     - dslr (data science 6'000)
