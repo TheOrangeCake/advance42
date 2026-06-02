@@ -13,7 +13,6 @@ RNCP 6:
         - Piscine OCaml​​ (9'450)
         - ft_turing (9'450)
     - Suite (choice):
-        - **WORKING ON:** cybersecurity piscine (9'450)
         - override (cyber security 35'700)
 
  
@@ -36,7 +35,9 @@ RNCP 7:
     - Suite (choice):
         - override (cyber security 35'700)
           
-Fun:
-* Data Science
+Extra:
+* Cyber Security:
+- **WORKING ON:** cybersecurity piscine (9'450)
+* Data Science:
     - [ft_linear_regression](https://github.com/TheOrangeCake/advance42/tree/main/branch_AI/ft_linear_regression) (regression price prediction 4'200)
     - dslr (data science 6'000)
