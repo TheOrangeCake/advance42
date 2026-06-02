@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 
 @Getter
@@ -14,7 +15,7 @@ public class OptionConfig {
     private String URL;
     private boolean option_r = false;
     private boolean option_l = false;
-    private int max_depth = 0;
+    private int max_depth = 1;
     private boolean option_p = false;
     private String defaultPath = "./data/";
     private Path path;
@@ -23,8 +24,7 @@ public class OptionConfig {
     public OptionConfig() {
         try {
             path = Path.of(defaultPath);
-        } catch (IllegalArgumentException | FileSystemNotFoundException | SecurityException e) {
-            logger.error("Fail to access default path: {}", defaultPath, e);
+        } catch (InvalidPathException e) {
             throw new ArgumentsParseException("Problem with default path: " + defaultPath);
         }
     }
@@ -40,38 +40,82 @@ public class OptionConfig {
             return;
         }
 
-        for (int i = 0; i < av.length - 2; i++) {
-            if (av[i].startsWith("-")) {
-                parseOption(av[i].substring(1));
-                continue;
-            } else {
+        String pending = null;
+        for (int i = 0; i < av.length - 1; i++) {
+            if (pending != null) {
+                if (av[i].startsWith("-")) {
+                    handlePendingDefault(pending);
+                    pending = null;
+                } else {
+                    consumeArgument(pending, av[i]);
+                    pending = null;
+                    continue;
+                }
+            }
 
+            if (av[i].startsWith("-")) {
+                String flags = av[i].substring(1);
+                if (flags.isEmpty()) {
+                    throw new ArgumentsParseException("Invalid flag: '-'");
+                }
+                pending = parseOption(flags);
+            } else {
+                throw new ArgumentsParseException("Unexpected argument: '" + av[i] + "'. Argument-taking flags (-l, -p) must be last in a cluster.");
             }
         }
+
+        if (pending != null) {
+            handlePendingDefault(pending);
+        }
+
         if (option_l && !option_r) {
             logger.warn("Flag l is specified without flag r, flag r enabled");
             option_r = true;
         }
     }
 
-    private void parseOption(String avOption) {
+    private String parseOption(String avOption) {
         if (avOption == null) {
             throw new ArgumentsParseException("Invalid flag.");
         }
-        for (char option : avOption.toCharArray()) {
-            switch (option) {
+
+        char[] chars = avOption.toCharArray();
+        String pending = null;
+
+        for (int i = 0; i < chars.length; i++) {
+            boolean isLast = (i == chars.length - 1);
+            switch (chars[i]) {
                 case 'r' -> option_r = true;
                 case 'l' -> {
                     option_l = true;
                     max_depth = 5;
+                    if (isLast) {
+                        pending = "l";
+                    }
                 }
                 case 'p' -> {
                     option_p = true;
+                    if (isLast) {
+                        pending = "p";
+                    }
                 }
-                default -> {
-                    logger.warn("Invalid flag {}, ignored.", option);
-                }
+                default -> throw new ArgumentsParseException("Unknown flag: '-" + chars[i] + "'.");
             }
+        }
+        return pending;
+    }
+
+    private void consumeArgument(String flag, String argument) {
+        switch (flag) {
+            case "l" -> parseMaxDepth(argument);
+            case "p" -> parsePath(argument);
+        }
+    }
+
+    private void handlePendingDefault(String flag) {
+        switch (flag) {
+            case "l" -> logger.info("-l with no depth provided, using default: {}.", max_depth);
+            case "p" -> logger.info("-p with no path provided, using default: {}.", defaultPath);
         }
     }
 
@@ -99,8 +143,7 @@ public class OptionConfig {
     private void parsePath(String providedPath) {
         try {
             path = Path.of(providedPath);
-        } catch (IllegalArgumentException | FileSystemNotFoundException | SecurityException e) {
-            logger.error("Fail to parse path: {}", providedPath, e);
+        } catch (InvalidPathException e) {
             throw new ArgumentsParseException("Problem parsing PATH: " + providedPath);
         }
     }

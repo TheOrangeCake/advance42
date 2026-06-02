@@ -18,9 +18,8 @@ public class Spider {
         try {
             config = new OptionConfig();
             config.parse(av);
-            if (!config.isOption_r()) {
-                logger.debug("HEY");
-            }
+
+            logger.info("CONFIG: r: {} | l: {} | p: {} | depth: {} | path: {} | url: {}", config.isOption_r(), config.isOption_l(), config.isOption_p(), config.getMax_depth(), config.getPath().toString(), config.getURL());
         } catch (ArgumentsParseException e) {
             logger.fatal("Parse Error.", e);
             return;
