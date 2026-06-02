@@ -37,7 +37,7 @@ RNCP 7:
           
 Extra:
 * Cyber Security:
-- **WORKING ON:** cybersecurity piscine (9'450)
+    - **WORKING ON:** cybersecurity piscine (9'450)
 * Data Science:
     - [ft_linear_regression](https://github.com/TheOrangeCake/advance42/tree/main/branch_AI/ft_linear_regression) (regression price prediction 4'200)
     - dslr (data science 6'000)
