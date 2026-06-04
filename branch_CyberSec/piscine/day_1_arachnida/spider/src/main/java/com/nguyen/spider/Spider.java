@@ -2,6 +2,7 @@ package com.nguyen.spider;
 
 import com.nguyen.spider.exception.ArgumentsParseException;
 import com.nguyen.spider.exception.HttpException;
+import com.nguyen.spider.exception.ImageDownloadException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,7 +34,15 @@ public class Spider {
             return;
         }
 
-        HttpHandler handler = new HttpHandler(config);
+        HtmlParser parser = new HtmlParser();
+        ImageDownloader downloader;
+        try {
+            downloader = new ImageDownloader(config.getPath());
+        } catch (ImageDownloadException e) {
+            logger.fatal("Bad Path.", e);
+            return;
+        }
+        HttpHandler handler = new HttpHandler(config, parser, downloader);
         try {
             handler.run();
         } catch (HttpException e) {

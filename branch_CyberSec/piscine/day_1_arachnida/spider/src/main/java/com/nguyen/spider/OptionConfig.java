@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 
@@ -130,7 +132,18 @@ public class OptionConfig {
     }
 
     private String parseDomain(String providedUrl) {
-        String startPos = providedUrl.indexOf(".//");
+        try {
+            URI uri = new URI(providedUrl);
+
+            String host = uri.getHost();
+            if (host == null || host.isEmpty()) {
+                throw new ArgumentsParseException("Bad URL format. missing domain.");
+            }
+
+            return host;
+        } catch (URISyntaxException e) {
+            throw new ArgumentsParseException("Invalid URL format.");
+        }
     }
 
     private void parseMaxDepth(String providedDepth) {
