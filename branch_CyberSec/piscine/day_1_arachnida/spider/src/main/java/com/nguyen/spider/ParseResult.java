@@ -1,9 +1,9 @@
 package com.nguyen.spider;
 
-import java.util.List;
+import java.util.Set;
 
 public record ParseResult(
-        List<String> urlList,
-        List<String> imageList
+        Set<String> urlList,
+        Set<String> imageList
 ) {
 }
