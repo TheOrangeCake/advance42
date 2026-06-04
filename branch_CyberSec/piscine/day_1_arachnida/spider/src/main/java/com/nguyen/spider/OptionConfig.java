@@ -6,30 +6,24 @@ import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+
+import static com.nguyen.spider.Spider.defaultPath;
 
 @Getter
 @Setter
 public class OptionConfig {
     private String URL;
-    private String domain;
     private boolean optionR = false;
     private boolean optionL = false;
     private int max_depth = 1;
     private boolean optionP = false;
-    private String defaultPath = "./data/";
     private Path path;
     private static final Logger logger = LogManager.getLogger(OptionConfig.class);
 
     public OptionConfig() {
-        try {
-            path = Path.of(defaultPath);
-        } catch (InvalidPathException e) {
-            throw new ArgumentsParseException("Problem with default path: " + defaultPath);
-        }
+        path = defaultPath;
     }
 
     public void parse(String[] av) {
@@ -88,10 +82,12 @@ public class OptionConfig {
         for (int i = 0; i < chars.length; i++) {
             boolean isLast = (i == chars.length - 1);
             switch (chars[i]) {
-                case 'r' -> optionR = true;
+                case 'r' -> {
+                    optionR = true;
+                    max_depth = 5;
+                }
                 case 'l' -> {
                     optionL = true;
-                    max_depth = 5;
                     if (isLast) {
                         pending = "l";
                     }
@@ -117,7 +113,7 @@ public class OptionConfig {
 
     private void handlePendingDefault(String flag) {
         switch (flag) {
-            case "l" -> logger.info("-l with no depth provided, using default: {}.", max_depth);
+            case "l" -> throw new ArgumentsParseException("-l requires a depth value.");
             case "p" -> logger.info("-p with no path provided, using default: {}.", defaultPath);
         }
     }
@@ -125,25 +121,9 @@ public class OptionConfig {
     private void parseURL(String providedUrl) {
         if (providedUrl.startsWith("https://") || providedUrl.startsWith("http://")) {
             URL = providedUrl;
-            domain = parseDomain(providedUrl);
             return;
         }
         throw new ArgumentsParseException("Bad URL format. Must start with either \"https://\" or \"http://\".");
-    }
-
-    private String parseDomain(String providedUrl) {
-        try {
-            URI uri = new URI(providedUrl);
-
-            String host = uri.getHost();
-            if (host == null || host.isEmpty()) {
-                throw new ArgumentsParseException("Bad URL format. missing domain.");
-            }
-
-            return host;
-        } catch (URISyntaxException e) {
-            throw new ArgumentsParseException("Invalid URL format.");
-        }
     }
 
     private void parseMaxDepth(String providedDepth) {
