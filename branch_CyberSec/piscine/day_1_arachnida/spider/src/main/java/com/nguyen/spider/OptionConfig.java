@@ -13,10 +13,11 @@ import java.nio.file.Path;
 @Setter
 public class OptionConfig {
     private String URL;
-    private boolean option_r = false;
-    private boolean option_l = false;
+    private String domain;
+    private boolean optionR = false;
+    private boolean optionL = false;
     private int max_depth = 1;
-    private boolean option_p = false;
+    private boolean optionP = false;
     private String defaultPath = "./data/";
     private Path path;
     private static final Logger logger = LogManager.getLogger(OptionConfig.class);
@@ -68,9 +69,9 @@ public class OptionConfig {
             handlePendingDefault(pending);
         }
 
-        if (option_l && !option_r) {
+        if (optionL && !optionR) {
             logger.warn("Flag l is specified without flag r, flag r enabled");
-            option_r = true;
+            optionR = true;
         }
     }
 
@@ -85,16 +86,16 @@ public class OptionConfig {
         for (int i = 0; i < chars.length; i++) {
             boolean isLast = (i == chars.length - 1);
             switch (chars[i]) {
-                case 'r' -> option_r = true;
+                case 'r' -> optionR = true;
                 case 'l' -> {
-                    option_l = true;
+                    optionL = true;
                     max_depth = 5;
                     if (isLast) {
                         pending = "l";
                     }
                 }
                 case 'p' -> {
-                    option_p = true;
+                    optionP = true;
                     if (isLast) {
                         pending = "p";
                     }
@@ -120,13 +121,16 @@ public class OptionConfig {
     }
 
     private void parseURL(String providedUrl) {
-        if (providedUrl.startsWith("https://") ||
-                providedUrl.startsWith("http://") ||
-                providedUrl.startsWith("www.")) {
+        if (providedUrl.startsWith("https://") || providedUrl.startsWith("http://")) {
             URL = providedUrl;
+            domain = parseDomain(providedUrl);
             return;
         }
-        throw new ArgumentsParseException("Bad URL format. Must start with either \"https://\", \"http://\" or \"www.\".");
+        throw new ArgumentsParseException("Bad URL format. Must start with either \"https://\" or \"http://\".");
+    }
+
+    private String parseDomain(String providedUrl) {
+        String startPos = providedUrl.indexOf(".//");
     }
 
     private void parseMaxDepth(String providedDepth) {

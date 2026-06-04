@@ -21,7 +21,13 @@ public class Spider {
             config = new OptionConfig();
             config.parse(av);
 
-            logger.info("CONFIG: r: {} | l: {} | p: {} | depth: {} | path: {} | url: {}", config.isOption_r(), config.isOption_l(), config.isOption_p(), config.getMax_depth(), config.getPath().toString(), config.getURL());
+            logger.info("CONFIG: r: {} | l: {} | p: {} | depth: {} | path: {} | url: {}",
+                    config.isOptionR(),
+                    config.isOptionL(),
+                    config.isOptionP(),
+                    config.getMax_depth(),
+                    config.getPath().toString(),
+                    config.getURL());
         } catch (ArgumentsParseException e) {
             logger.fatal("Parse Error.", e);
             return;
