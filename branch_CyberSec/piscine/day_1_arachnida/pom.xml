@@ -16,6 +16,7 @@
   
   <modules>
     <module>spider</module>
+    <module>scorpion</module>
   </modules>
 
   <dependencies>

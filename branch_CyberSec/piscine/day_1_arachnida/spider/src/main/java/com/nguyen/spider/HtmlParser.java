@@ -18,16 +18,18 @@ public class HtmlParser {
         for (String href : extractAttribute(html, lowerHtml, "href")) {
             try {
                 String resolved = base.resolve(href).toString();
-                if (resolved.startsWith("http") && new URI(resolved).getHost().equals(base.getHost()))
+                if (resolved.startsWith("http") && new URI(resolved).getHost().equals(base.getHost())) {
                     urls.add(resolved);
+                }
             } catch (IllegalArgumentException | URISyntaxException ignored) {}
         }
 
         for (String src : extractAttribute(html, lowerHtml, "src")) {
             try {
                 String resolved = base.resolve(src).toString();
-                if (isImage(resolved))
+                if (isImage(resolved)) {
                     images.add(resolved);
+                }
             } catch (IllegalArgumentException ignored) {}
         }
 
@@ -56,7 +58,9 @@ public class HtmlParser {
     private boolean isImage(String url) {
         try {
             String path = new URI(url).getPath();
-            if (path == null) return false;
+            if (path == null) {
+                return false;
+            }
             path = path.toLowerCase();
             return path.endsWith(".jpg") || path.endsWith(".jpeg")
                     || path.endsWith(".png") || path.endsWith(".gif")
