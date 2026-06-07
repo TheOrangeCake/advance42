@@ -1,4 +1,4 @@
-package com.nguyen.scorpion;
+package com.nguyen.scorpion.model;
 
 import lombok.Getter;
 

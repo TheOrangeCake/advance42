@@ -1,11 +1,16 @@
 package com.nguyen.scorpion;
 
+import com.nguyen.scorpion.chain.ChainAbstract;
+import com.nguyen.scorpion.chain.ParserChain;
+import com.nguyen.scorpion.chain.PrinterChain;
+import com.nguyen.scorpion.chain.ValidatorChain;
+import com.nguyen.scorpion.exception.ScorpionException;
+import com.nguyen.scorpion.model.ImageContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
-import java.util.Map;
-import java.util.Set;
+import java.nio.file.Paths;
 
 public class Scorpion {
     private static final Logger logger = LogManager.getLogger(Scorpion.class);
@@ -18,13 +23,19 @@ public class Scorpion {
             return;
         }
 
-        ImageValidator reader = new ImageValidator();
-        Set<Path> files = reader.validateFile(av);
-        if (files.isEmpty()) {
-            logger.fatal("Invalid argument. No valid image file.");
-        }
+        ChainAbstract head = new ValidatorChain();
+        head.setNext(new ParserChain())
+                .setNext(new PrinterChain());
 
-        MetaDataParser parser = new MetaDataParser();
-        Map<Path, Map<ExifTag, String>> parsedFiles = parser.parse(files);
+        for (String arg : av) {
+            logger.info("Handling: {}", arg);
+            Path path = Paths.get(arg);
+            ImageContext context = new ImageContext(path);
+            try {
+                head.handle(context);
+            } catch (ScorpionException e) {
+                logger.error("Detected problem. Skip", e);
+            }
+        }
     }
 }
