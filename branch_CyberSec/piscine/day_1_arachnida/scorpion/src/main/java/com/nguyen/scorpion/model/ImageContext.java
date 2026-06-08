@@ -10,7 +10,9 @@ import java.util.Map;
 @Getter
 public class ImageContext {
     private final Path path;
+    private String extension;
     private Map<ExifTag, String> metadata;
+    private Map<String, String> basicAttributes;
 
     public ImageContext(Path path) {
         this.path = path;
