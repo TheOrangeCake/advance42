@@ -39,6 +39,10 @@ public class Crawler {
             List<String> nextUrlList = new ArrayList<>();
             int count = 1;
             for (String url : currentUrlList) {
+                if (currentUrlList.isEmpty()) {
+                    logger.info("No more link, end before max depth.");
+                    return;
+                }
                 logger.info("[Depth {}/{}] Handling link {}/{} : {}", i + 1, config.getMax_depth(), count, listSize, url);
                 count++;
                 try {
@@ -48,7 +52,13 @@ public class Crawler {
                         continue;
                     }
 
-                    ParseResult result = parser.parse(response.body(), url);
+                    ParseResult result;
+                    if (parser.isImage(url)) {
+                        result = new ParseResult(Set.of(), Set.of(url));
+                    } else {
+                        result = parser.parse(response.body(), url);
+                    }
+
                     if (result.urlList().isEmpty() && result.imageList().isEmpty()) {
                         logger.info("No link nor image.");
                         continue;
@@ -85,11 +95,6 @@ public class Crawler {
             }
 
             currentUrlList = nextUrlList;
-
-            if (currentUrlList.isEmpty()) {
-                logger.info("No more link, end before max depth.");
-                return;
-            }
         }
     }
 

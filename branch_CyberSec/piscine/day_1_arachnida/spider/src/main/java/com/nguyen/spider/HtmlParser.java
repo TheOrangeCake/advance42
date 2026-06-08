@@ -48,14 +48,14 @@ public class HtmlParser {
                     i = lowerHtml.indexOf(search, start);
                     continue;
                 }
-                list.add(html.substring(start, end));
+                list.add(html.substring(start, end).replace("&amp;", "&"));
                 i = lowerHtml.indexOf(search, end + 1);
             }
         }
         return list;
     }
 
-    private boolean isImage(String url) {
+    public boolean isImage(String url) {
         try {
             String path = new URI(url).getPath();
             if (path == null) {
