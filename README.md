@@ -4,7 +4,7 @@ RNCP 6:
 * Développement applicatif:
     - Option: OOP (min 10'000 DONE)
         - [avaj-launcher](./branch_java/avaj-launcher) (Concept: UML diagram, GoF pattern. Exp: 4'200)
-        - [swingy](./branch_java/swingy) (Concept: Event driven programming, SWING Framework, GoF pattern. Exp: 9'450)
+        - [swingy](./branch_java/swingy) (Concept: MVC architecture, Event driven programming, SWING Framework, GoF pattern. Exp: 9'450)
         - [fix-me](./branch_java/fix-me) (Concept: Multi module Maven build, FIX message, TCP server/client, threading, GoF pattern. Exp: 15'750)
     - Option: Imperative programming (min 10'000)
         - snow-crash (9'450)
