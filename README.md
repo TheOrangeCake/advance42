@@ -3,7 +3,7 @@ My path to RNCP 7
 RNCP 6:
 * Développement applicatif:
     - Option: OOP (min 10'000 DONE)
-        - [avaj-launcher](https://github.com/TheOrangeCake/advance42/tree/main/branch_java/avaj-launcher) (UML diagram 4'200)
+        - [avaj-launcher](./branch_java/avaj-launcher) (UML diagram 4'200)
         - [swingy](https://github.com/TheOrangeCake/advance42/tree/main/branch_java/swingy) (SWING RPG in 9'450)
         - [fix-me](https://github.com/TheOrangeCake/advance42/tree/main/branch_java/fix-me) (stock exchange FIX 15'750)
     - Option: Imperative programming (min 10'000)
