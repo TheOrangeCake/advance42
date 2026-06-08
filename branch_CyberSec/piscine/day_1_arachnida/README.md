@@ -68,13 +68,27 @@ java -jar spider/target/spider.jar -r https://www.example.com
 
 Receives one or more image files and parses them for EXIF and other metadata, displaying the results on screen. Supports the same extensions as spider (`jpg`, `jpeg`, `png`, `gif`, `bmp`).
 
-> Not yet implemented.
-
 ### Usage
 
 ```
 java -jar scorpion/target/scorpion.jar FILE1 [FILE2 ...]
 ```
+
+### Output
+
+For each file, scorpion prints:
+- **Basic attributes** — file name, format, size, creation/modification/access timestamps
+- **Image attributes** — format-specific fields (dimensions, color type, bit depth, etc.)
+- **EXIF metadata** — grouped by category (Image, Exposure, Date/Time, GPS, Lens, etc.) when present
+
+### Format support
+
+| Format | Basic attrs | EXIF |
+|--------|-------------|------|
+| jpg/jpeg | ✅ | ✅ Full TIFF/IFD parsing |
+| png | ✅ + IHDR/pHYs/tIME/text chunks | ✅ via eXIf chunk |
+| gif | ✅ + version, dimensions, color table | — |
+| bmp | ✅ + dimensions, BPP, compression | — |
 
 ---
 
@@ -91,7 +105,13 @@ arachnida/
 │   │   ├── OptionConfig.java    # CLI argument parser
 │   │   └── ParseResult.java     # Result record (urls + images)
 │   └── pom.xml
-├── scorpion/                    # Ex02 — not yet implemented
+├── scorpion/
+│   ├── src/main/java/com/nguyen/scorpion/
+│   │   ├── Scorpion.java        # Entry point
+│   │   ├── chain/               # Chain of responsibility: Validator → Parser → Printer
+│   │   ├── model/               # ImageContext, ExifTag enum
+│   │   └── parser/              # JpgMetaParser, PngMetaParser, TiffParser, EndianReader
+│   └── pom.xml
 └── subject/
     └── en.subject.pdf
 ```
