@@ -3,9 +3,9 @@ My path to RNCP 7
 RNCP 6:
 * Développement applicatif:
     - Option: OOP (min 10'000 DONE)
-        - [avaj-launcher](./branch_java/avaj-launcher) (UML diagram 4'200)
-        - [swingy](https://github.com/TheOrangeCake/advance42/tree/main/branch_java/swingy) (SWING RPG in 9'450)
-        - [fix-me](https://github.com/TheOrangeCake/advance42/tree/main/branch_java/fix-me) (stock exchange FIX 15'750)
+        - [avaj-launcher](./branch_java/avaj-launcher) (Concept: UML diagram, GoF pattern. Exp: 4'200)
+        - [swingy](./branch_java/swingy) (Concept: Event driven programming, SWING Framework, GoF pattern. Exp: 9'450)
+        - [fix-me](./branch_java/fix-me) (Concept: Multi module Maven build, FIX message, TCP server/client, threading, GoF pattern. Exp: 15'750)
     - Option: Imperative programming (min 10'000)
         - snow-crash (9'450)
         - rainfall (25'200)
@@ -38,6 +38,7 @@ RNCP 7:
 Extra:
 * Cyber Security:
     - **WORKING ON:** cybersecurity piscine (9'450)
+        - [day 1 Arachnida](./branch_cyberSec/piscine/day_1_arachnida) (Concept: Web crawler, image metadata, Jpg, Png, Gif, Bmp metadata structure. Exp: 1'350)
 * Data Science:
-    - [ft_linear_regression](https://github.com/TheOrangeCake/advance42/tree/main/branch_AI/ft_linear_regression) (regression price prediction 4'200)
+    - [ft_linear_regression](./branch_ai/ft_linear_regression) (Concept: Linear Regression, model trainning. Exp: 4'200)
     - dslr (data science 6'000)
