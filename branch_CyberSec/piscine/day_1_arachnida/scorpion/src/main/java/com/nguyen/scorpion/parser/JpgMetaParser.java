@@ -255,7 +255,7 @@ public class JpgMetaParser {
         return ((data[pos] & 0xFF) << 8) | (data[pos + 1] & 0xFF);
     }
 
-    private int readInt(byte[] data, int pos, boolean le) {
+    public int readInt(byte[] data, int pos, boolean le) {
         if (pos < 0 || pos + 4 > data.length) {
             return 0;
         }

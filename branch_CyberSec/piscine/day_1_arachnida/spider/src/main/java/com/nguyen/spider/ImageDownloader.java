@@ -49,6 +49,11 @@ public class ImageDownloader {
 
                 HttpResponse<byte[]> data = sendImageRequest(imageUrl);
 
+                if (data.statusCode() != 200) {
+                    logger.warn("Bad status {}: {}", data.statusCode(), imageUrl);
+                    continue;
+                }
+
                 Files.write(savePath, data.body());
 
             } catch (URISyntaxException | ImageDownloadException e) {
