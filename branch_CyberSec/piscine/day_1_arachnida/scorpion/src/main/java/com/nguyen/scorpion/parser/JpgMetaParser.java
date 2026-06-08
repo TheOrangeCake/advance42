@@ -245,7 +245,7 @@ public class JpgMetaParser {
                 && data[pos + 3] == 'f' && data[pos + 4] == 0 && data[pos + 5] == 0;
     }
 
-    private int readShort(byte[] data, int pos, boolean le) {
+    public int readShort(byte[] data, int pos, boolean le) {
         if (pos < 0 || pos + 2 > data.length) {
             return 0;
         }
