@@ -2,7 +2,9 @@ package com.nguyen.scorpion.chain;
 
 import com.nguyen.scorpion.exception.ScorpionException;
 import com.nguyen.scorpion.model.ImageContext;
+import com.nguyen.scorpion.parser.EndianReader;
 import com.nguyen.scorpion.parser.JpgMetaParser;
+import com.nguyen.scorpion.parser.PngMetaParser;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -56,11 +58,11 @@ public class ParserChain extends ChainAbstract {
     }
 
     private void handlePng(ImageContext context) {
+        PngMetaParser.getInstance().parse(context);
     }
 
     // https://en.wikipedia.org/wiki/GIF
     private void handleGif(ImageContext context) {
-        JpgMetaParser parser = JpgMetaParser.getInstance();
         byte[] data;
         try {
             data = Files.readAllBytes(context.getPath());
@@ -76,8 +78,8 @@ public class ParserChain extends ChainAbstract {
             throw new ScorpionException("Not GIF file");
         }
         attrs.put("GIF Version", new String(data, 3, 3, StandardCharsets.US_ASCII));
-        attrs.put("Width", String.valueOf(parser.readShort(data, 6, true)));
-        attrs.put("Height", String.valueOf(parser.readShort(data, 8, true)));
+        attrs.put("Width", String.valueOf(EndianReader.readShort(data, 6, true)));
+        attrs.put("Height", String.valueOf(EndianReader.readShort(data, 8, true)));
         int packed = data[10] & 0xFF;
         boolean hasColorTable = (packed & 0x80) != 0;
         attrs.put("Global Color Table", hasColorTable ? (2 << (packed & 0x07)) + " colors" : "No");
@@ -85,7 +87,6 @@ public class ParserChain extends ChainAbstract {
 
     // https://upload.wikimedia.org/wikipedia/commons/7/75/BMPfileFormat.svg
     private void handleBmp(ImageContext context) {
-        JpgMetaParser parser = JpgMetaParser.getInstance();
         byte[] data;
         try {
             data = Files.readAllBytes(context.getPath());
@@ -100,13 +101,13 @@ public class ParserChain extends ChainAbstract {
         if (!new String(data, 0, 2, StandardCharsets.US_ASCII).equals("BM")) {
             throw new ScorpionException("Not BMP file");
         }
-        attrs.put("Width", String.valueOf(parser.readInt(data, 18, true)));
-        attrs.put("Height", String.valueOf(Math.abs(parser.readInt(data, 22, true))));
-        attrs.put("Bits Per Pixel", String.valueOf(parser.readShort(data, 28, true)));
-        attrs.put("Compression", bmpCompression(parser.readInt(data, 30, true)));
+        attrs.put("Width", String.valueOf(EndianReader.readInt(data, 18, true)));
+        attrs.put("Height", String.valueOf(Math.abs(EndianReader.readInt(data, 22, true))));
+        attrs.put("Bits Per Pixel", String.valueOf(EndianReader.readShort(data, 28, true)));
+        attrs.put("Compression", bmpCompression(EndianReader.readInt(data, 30, true)));
         if (data.length >= 46) {
-            int xPpm = parser.readInt(data, 38, true);
-            int yPpm = parser.readInt(data, 42, true);
+            int xPpm = EndianReader.readInt(data, 38, true);
+            int yPpm = EndianReader.readInt(data, 42, true);
             if (xPpm > 0) {
                 attrs.put("X Resolution", xPpm + " px/m");
             }
