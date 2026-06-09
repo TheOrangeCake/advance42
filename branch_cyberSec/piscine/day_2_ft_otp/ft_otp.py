@@ -1,13 +1,29 @@
-from colorama import Fore
 import sys
 
+from logger import error, info
+from n_handler import handle as n_handler
+from g_handler import handle as g_handler
+from k_handler import handle as k_handler
+
 def main():
-    print(f"{Fore.CYAN}ft_otp started.{Fore.RESET}")
-    if (len(sys.argv) < 2):
-        print(f"{Fore.RED}No argument provided.{Fore.RESET}", "Use \"-g\" to replace the hex key, or \"-k\" to generate a 6 digit TOTP key.")
+    info("ft_otp started")
+
+    if (len(sys.argv) < 3):
+        error("Not enough argument. Format: -flag(n/g/k) argument")
         return
-    for av in sys.argv[1:]:
-        print(av)
+    if (len(sys.argv) > 3):
+        error("Too many argument. Format: -flag(n/g/k) argument")
+        return
+    
+    match sys.argv[1]:
+        case "-n":
+            n_handler()
+        case "-g":
+            g_handler(sys.argv[2])
+        case "-k":
+            k_handler(sys.argv[2])
+        case _:
+            error("Invalid flag. Format: -flag(n/g/k) argument")
 
 if __name__ == "__main__":
     main()
