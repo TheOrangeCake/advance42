@@ -17,7 +17,7 @@ def main():
     
     match sys.argv[1]:
         case "-n":
-            n_handler()
+            n_handler(sys.argv[2])
         case "-g":
             g_handler(sys.argv[2])
         case "-k":
