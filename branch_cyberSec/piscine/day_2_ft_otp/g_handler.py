@@ -1,4 +1,5 @@
 import re
+import os
 from cryptography.fernet import Fernet
 
 from logger import *
@@ -11,6 +12,7 @@ def is_validate(key: str) -> bool:
         error("key must be 64 hexadecimal characters.")
         return False
     if (not re.fullmatch("[a-fA-F0-9]+", key)):
+        error(f"Invalid key: '{key}'")
         return False
     return True
 
@@ -30,7 +32,7 @@ def generate_secret_key() -> bytes | None:
 def handle(key: str) -> None:
     hex_key: str
 
-    if (key.endswith(".txt") or key.endswith(".hex")):
+    if os.path.isfile(key):
         try:
             with (open(key, "r") as file):
                 hex_key = file.read().strip()
@@ -41,7 +43,6 @@ def handle(key: str) -> None:
         hex_key = key.strip()
     
     if (not is_validate(hex_key)):
-        error(f"Invalid key: '{hex_key}'")
         return
     
     secret_key = generate_secret_key()
