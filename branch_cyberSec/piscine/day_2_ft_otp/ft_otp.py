@@ -1,6 +1,6 @@
 import sys
 
-from logger import error, info
+from logger import *
 from n_handler import handle as n_handler
 from g_handler import handle as g_handler
 from k_handler import handle as k_handler
