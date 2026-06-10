@@ -39,6 +39,7 @@ Extra:
 * Cyber Security:
     - **WORKING ON:** cybersecurity piscine (9'450)
         - [day 1 Arachnida](./branch_cyberSec/piscine/day_1_arachnida) (Concept: Web crawler, image metadata, Jpg, Png, Gif, Bmp metadata structure. Exp: 1'350)
+        - [day 2 Ft_otp](./branch_cyberSec/piscine/day_2_ft_otp) (Concetp: TOTP, HOTP, encryption, hash, symetric key, Exp: 1'350)
 * Data Science:
     - [ft_linear_regression](./branch_ai/ft_linear_regression) (Concept: Linear Regression, model trainning. Exp: 4'200)
     - dslr (data science 6'000)
