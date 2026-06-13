@@ -79,6 +79,7 @@ A key must be **exactly 64 hexadecimal characters** (256 bits), or it is rejecte
 You can cross-check the output against a reference implementation:
 
 ```bash
+brew install oath-toolkit
 oathtool --totp $(cat key.hex)
 ```
 

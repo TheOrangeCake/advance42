@@ -1,4 +1,4 @@
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, InvalidToken
 from math import floor
 import hmac
 import hashlib
@@ -29,7 +29,13 @@ def handle(key: str) -> None:
 
     fernet = Fernet(secret_key)
 
-    hex_seed: str = fernet.decrypt(encrypted_key).decode()
+    hex_seed: str
+    try:
+        hex_seed = fernet.decrypt(encrypted_key).decode()
+    except InvalidToken:
+        error(f"Invalid key: '{encrypted_key}'")
+        return
+
     if (not is_validate(hex_seed)):
         error(f"Invalid key: '{hex_seed}'")
         return
