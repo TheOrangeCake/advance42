@@ -1,0 +1,17 @@
+Port 4242
+ListenAddress 0.0.0.0
+
+PermitRootLogin no
+StrictModes no
+
+PubkeyAuthentication yes
+
+AuthorizedKeysFile      .ssh/authorized_keys
+
+PasswordAuthentication yes
+PermitEmptyPasswords no
+
+LoginGraceTime 0
+
+Subsystem   sftp  /usr/lib/sftp-server
+UseDNS no
