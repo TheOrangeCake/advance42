@@ -1,4 +1,7 @@
-# Run in the foreground.
+# Send log messages to stdout
+Log warn stdout
+
+# Run in the foreground
 RunAsDaemon 0
 
 ############### Location-hidden service

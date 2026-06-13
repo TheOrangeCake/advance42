@@ -1,5 +1,5 @@
 Port 4242
-ListenAddress 0.0.0.0
+ListenAddress 127.0.0.1
 
 PermitRootLogin no
 StrictModes no
