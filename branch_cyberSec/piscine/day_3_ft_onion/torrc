@@ -6,9 +6,9 @@ RunAsDaemon 0
 
 ############### Location-hidden service
 
-# Location where Tor stores the service's private key and its .onion hostname.
+# Location where Tor stores the service's private key and its .onion hostname
 HiddenServiceDir /var/lib/tor/hidden_service
 
-# Expose port.
+# Expose port
 HiddenServicePort 80 127.0.0.1:80
 HiddenServicePort 4242 127.0.0.1:4242
