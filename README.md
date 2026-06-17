@@ -41,6 +41,7 @@ Extra:
         - [day 1 Arachnida](./branch_cyberSec/piscine/day_1_arachnida) (Concept: Web crawler, image metadata, Jpg, Png, Gif, Bmp metadata structure. Exp: 1'350)
         - [day 2 Ft_otp](./branch_cyberSec/piscine/day_2_ft_otp) (Concept: TOTP, HOTP, encryption, hash, symetric key, Exp: 1'350)
         - [day 3 Ft_onion](./branch_cyberSec/piscine/day_3_ft_onion) (Concept: Tor network, Tor hidden service, Exp: 1'350)
+        - [day 4 Reverse me](./branch_cyberSec/piscine/day_4_reverse_me) (Concept: Reverse engineering, GDB, assembly/assembler, Exp: 1'350)
 * Data Science:
     - [ft_linear_regression](./branch_ai/ft_linear_regression) (Concept: Linear Regression, model trainning. Exp: 4'200)
     - dslr (data science 6'000)
