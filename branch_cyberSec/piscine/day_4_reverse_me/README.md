@@ -15,19 +15,19 @@ sudo apt install libc6:i386
 # Level 1
 Step by step to reverse engineering the program:
 - **Step 1**: run [ltrace](https://www.man7.org/linux/man-pages/man1/ltrace.1.html) (A call tracer that show library call and its parameters)
-```sh
-ltrace ./level1
+    ```sh
+    ltrace ./level1
 
-Result:
-__libc_start_main(0x64c111c0, 1, 0xffbc0324, 0 <unfinished ...>
-printf("Please enter key: ")                            = 18
-__isoc99_scanf(0x64c12029, 0xffbc01fc, 0x64c14000, 0x5f5f0001Please enter key: test
-) = 1
-strcmp("test", "__stack_check")                         = 1
-printf("Nope.\n"Nope.
-)                                       = 6
-+++ exited (status 0) +++
-```
+    Result:
+    __libc_start_main(0x64c111c0, 1, 0xffbc0324, 0 <unfinished ...>
+    printf("Please enter key: ")                            = 18
+    __isoc99_scanf(0x64c12029, 0xffbc01fc, 0x64c14000, 0x5f5f0001Please enter key: test
+    ) = 1
+    strcmp("test", "__stack_check")                         = 1
+    printf("Nope.\n"Nope.
+    )                                       = 6
+    +++ exited (status 0) +++
+    ```
 - **Step 2**: analyse the result. Just by interpreting the tracer, we can see the program called:
     - `main()`
     - `printf("Please enter key: ")`
@@ -35,11 +35,18 @@ printf("Nope.\n"Nope.
     - `strcmp("test", "__stack_check")` -> This is the most important finding, it compares my input with "__stack_check" which is the password that we need to find
     - `printf("Nope.\n")` (Obviously wrong key)
 - **Step 3**: test the password `__stack_check`
-```sh
-./level1
-Please enter key: __stack_check
-Good job.
-```
+    ```sh
+    ltrace ./level1
+    
+    __libc_start_main(0x650261c0, 1, 0xff93f654, 0 <unfinished ...>
+    printf("Please enter key: ")                            = 18
+    __isoc99_scanf(0x65027029, 0xff93f52c, 0x65029000, 0x5f5f0001Please enter key: __stack_check
+    ) = 1
+    strcmp("__stack_check", "__stack_check")                = 0
+    printf("Good job.\n"Good job.
+    )                                   = 10
+    +++ exited (status 0) +++
+    ```
 
 ---
 # Level 2
@@ -192,7 +199,7 @@ Step by step to reverse engineering the program:
     gdb disas main
     ```
     A quick scan of the result show the flow: <br>
-    `printf()`->`scanf()`->`malloc()`->`fflush()`->`memset()`->`strlen()`->`atoi()`->`strcmp()`->`free()`
+    `printf()`->`scanf()`->`fflush()`->`memset()`->`strlen()`->`atoi()`->`strcmp()`
 
 - **Step 2**: Analyse in depth
     - Under `scanf()` validation:
