@@ -2,6 +2,7 @@
 
 NAME = stockholm
 DIR = src/
+SODIUM = libsodium-stable
 SOURCE = $(DIR)main.c $(DIR)infect.c $(DIR)desinfect.c
 
 OBJ_DIR = obj
@@ -22,8 +23,18 @@ $(NAME): $(OBJECTS) | $(OBJ_DIR)
 	@$(GCC) $(FLAGS) $(OBJECTS) -o $(NAME) $(LDFLAGS)
 	@echo "Built $(NAME)"
 
+install:
+	tar -xvf libsodium.gz
+	cd $(SODIUM) && \
+	./configure && \
+	make && make check && \
+	sudo make install && \
+	cd .. && \
+	make
+
 clean:
 	@$(RM) -r $(OBJ_DIR)
+	@$(RM) -r $(SODIUM)
 	@echo "Deleted object files"
 
 fclean: clean
@@ -32,6 +43,6 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re install
 
 -include $(OBJECTS:.o=.d)

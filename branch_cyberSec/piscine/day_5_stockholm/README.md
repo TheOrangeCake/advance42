@@ -1,11 +1,7 @@
 ### Quick Start
-- Libsodium: for encryption. [Guide](https://doc.libsodium.org/doc/quickstart)
+- Install Libsodium for encryption. [Guide](https://doc.libsodium.org/doc/quickstart)
     ```sh
-    cd dependencies/libsodium/
-    ./configure
-    make && make check
-    sudo make install
-    cd ../../
+    make install
     ```
 
 - Run:
