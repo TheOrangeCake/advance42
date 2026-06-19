@@ -3,7 +3,8 @@
 NAME = stockholm
 DIR = src/
 SODIUM = libsodium-stable
-SOURCE = $(DIR)main.c $(DIR)infect.c $(DIR)desinfect.c
+SECRET = secret.hex
+SOURCE = $(DIR)main.c $(DIR)infect.c $(DIR)desinfect.c $(DIR)secret.c
 
 OBJ_DIR = obj
 OBJECTS = $(patsubst $(DIR)%.c,$(OBJ_DIR)/%.o,$(SOURCE))
@@ -33,12 +34,11 @@ install:
 	make
 
 clean:
-	@$(RM) -r $(OBJ_DIR)
-	@$(RM) -r $(SODIUM)
+	@$(RM) -r $(OBJ_DIR) $(SODIUM)
 	@echo "Deleted object files"
 
 fclean: clean
-	@$(RM) $(NAME)
+	@$(RM) $(NAME) $(SECRET)
 	@echo "Deleted $(NAME)"
 
 re: fclean all

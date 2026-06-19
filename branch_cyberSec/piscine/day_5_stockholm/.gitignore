@@ -1,5 +1,7 @@
 *.o
 *.d
+*.hex
+
 /obj
 /libsodium-stable
 stockholm
