@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/19 16:58:25 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/06/24 20:06:11 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/06/24 20:16:51 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,8 @@ int generate(bool s_flag) {
 
 	fd = open(save_file, O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (fd < 0) {
-		if (errno == EEXIST) {
-			if (!s_flag)
-				fprintf(stderr, "Error: %s already exists\n", save_file);
-		} else {
-			if (!s_flag)
-				fprintf(stderr, "Error: cannot create %s: %s\n", save_file, strerror(errno));
-		}
+		if (!s_flag)
+			fprintf(stderr, "Error: fail to open %s\n", save_file);
 		return -1;
 	}
 
