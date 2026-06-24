@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/18 21:56:56 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/06/19 17:12:19 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/06/24 19:37:01 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int main(int ac, char** av) {
 
 	if (sodium_init() < 0) {
 		printf("Error: Sodium library couldn't be initialized\n");
-		return 1;
+		return -1;
 	}
 
 	while ((opt = getopt_long(ac, av, ":hvgr:s", long_options, NULL)) != -1) {
@@ -55,14 +55,13 @@ int main(int ac, char** av) {
 				break;
 			case 'g':
 				g_flag = true;
-				
 				break;
 			case ':':
-				fprintf(stderr, "Option -%c requires a key\n", optopt);
-				return 1;
+				fprintf(stderr, "Error: option -%c requires a key\n", optopt);
+				return -1;
 			case '?':
-				fprintf(stderr, "Unknown option: -%c\n", optopt);
-				return 1;
+				fprintf(stderr, "Error: unknown option: -%c\n", optopt);
+				return -1;
 		}
 	}
 	if (v_flag)
@@ -73,10 +72,13 @@ int main(int ac, char** av) {
 		return generate(s_flag);
 	if (v_flag || h_flag || g_flag)
 		return 0;
-	if (r_flag) {
+	if (r_flag)
 		return desinfect(r_key, s_flag);
+	if (optind >= ac) {
+		fprintf(stderr, "Error: a key is required to infect\nUsage: ./stockholm <key_or_keyfile>\n");
+		return -1;
 	}
-	return infect(s_flag);
+	return infect(av[optind], s_flag);
 }
 
 

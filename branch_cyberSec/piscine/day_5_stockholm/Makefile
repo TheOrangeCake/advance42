@@ -4,7 +4,7 @@ NAME = stockholm
 DIR = src/
 SODIUM = libsodium-stable
 SECRET = secret.hex
-SOURCE = $(DIR)main.c $(DIR)infect.c $(DIR)desinfect.c $(DIR)secret.c
+SOURCE = $(DIR)main.c $(DIR)infect.c $(DIR)desinfect.c $(DIR)secret.c $(DIR)helper.c
 
 OBJ_DIR = obj
 OBJECTS = $(patsubst $(DIR)%.c,$(OBJ_DIR)/%.o,$(SOURCE))
