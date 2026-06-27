@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/24 18:01:14 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/06/24 20:06:30 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/06/28 00:33:22 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ unsigned char *load_key(char *arg, bool s_flag) {
 	return key;
 }
 
-bool is_affected_extension(char *ext) {
+bool is_affected_extension(char *file_name) {
 	char	*affected_ext[] = {
 			".der",
 			".pfx",
@@ -181,6 +181,8 @@ bool is_affected_extension(char *ext) {
 			".bz2",
 			".PAQ",
 			".ARC",
+			".paq",
+			".arc",
 			".aes",
 			".gpg",
 			".vmx",
@@ -238,8 +240,12 @@ bool is_affected_extension(char *ext) {
 			".doc",
 			0
 		};
-	int i = 0;
+	int		i = 0;
+	char	*ext;
 
+	ext = strrchr(file_name, '.');
+	if (ext == NULL)
+		return false;
 	while (affected_ext[i] != 0) {
 		if (strcmp(ext, affected_ext[i]) == 0)
 			return true;

@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/18 21:59:31 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/06/24 20:14:28 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/06/27 22:49:28 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 #include <limits.h>
 
 #define KEY_LEN 32
+#define CHUNK_SIZE 4096
 
 int				desinfect(char *key, bool s_flag);
 int				infect(char *key, bool s_flag);

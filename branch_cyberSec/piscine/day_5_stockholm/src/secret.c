@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/19 16:58:25 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/06/24 20:16:51 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/06/27 23:20:02 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,27 +29,10 @@ int generate(bool s_flag) {
 			fprintf(stderr, "Error: fail to open %s\n", save_file);
 		return -1;
 	}
-
-	FILE *f = fdopen(fd, "w");
-	if (f == NULL) {
-		if (!s_flag)
-			fprintf(stderr, "Error: fdopen failed: %s\n", strerror(errno));
-		close(fd);
-		return -1;
-	}
-
-	if (fprintf(f, "%s\n", hex) < 0) {
-		if (!s_flag)
-			fprintf(stderr, "Error: failed writing to %s\n", save_file);
-		fclose(f);
-		return -1;
-	}
-
-	if (fclose(f) != 0) {
-		if (!s_flag)
-			fprintf(stderr, "Error: failed closing %s\n", save_file);
-		return -1;
-	}
+	
+	write(fd, hex, KEY_LEN * 2);
+	write(fd, "\n", 1);
+	close(fd);
 
 	if (!s_flag)
 		printf("New secret: %s\n", hex);
