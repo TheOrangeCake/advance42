@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/18 21:59:31 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/06/27 22:49:28 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/06/28 16:38:15 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ int				desinfect(char *key, bool s_flag);
 int				infect(char *key, bool s_flag);
 int				generate(bool s_flag);
 bool			is_affected_extension(char *ext);
+bool			is_encrypted(char *file_name);
+void			clean_up(FILE *target, FILE *source, char *target_file);
 unsigned char	*load_key(char *arg, bool s_flag);
 
 #endif

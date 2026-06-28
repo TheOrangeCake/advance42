@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/24 18:01:14 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/06/28 00:33:22 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/06/28 16:37:33 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,4 +252,19 @@ bool is_affected_extension(char *file_name) {
 		i++;
 	}
 	return false;
+}
+
+bool is_encrypted(char *file_name) {
+	char	*ext;
+
+	ext = strrchr(file_name, '.');
+	if (ext == NULL)
+		return false;
+	return strcmp(ext, ".ft") == 0 ? true : false;
+}
+
+void clean_up(FILE *target, FILE *source, char *target_file) {
+	fclose(target);
+	fclose(source);
+	remove(target_file);
 }

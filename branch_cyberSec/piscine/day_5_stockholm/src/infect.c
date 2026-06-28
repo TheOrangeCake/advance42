@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/18 23:26:24 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/06/28 00:35:45 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/06/28 16:37:26 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,8 +146,3 @@ bool encrypt_file(char *source_file, unsigned char *key) {
 	return true;
 }
 
-void clean_up(FILE *target, FILE *source, char *target_file) {
-	fclose(target);
-	fclose(source);
-	remove(target_file);
-}
