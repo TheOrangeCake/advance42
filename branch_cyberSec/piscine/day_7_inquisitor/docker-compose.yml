@@ -1,0 +1,32 @@
+name: inquisitor
+
+services:
+
+
+  ftp-server:
+    build:
+      context: ./ftp_server
+      dockerfile: Dockerfile
+    entrypoint: []
+    networks:
+      - app_net
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    entrypoint: []
+    networks:
+      - app_net
+
+  poison:
+    build:
+      context: ./poison
+      dockerfile: Dockerfile
+    entrypoint: []
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    driver: bridge
