@@ -1,6 +1,6 @@
 COMPOSE = docker compose -f docker-compose.yml
 
-.PHONY: rebuild up down restart logs ps build clean
+.PHONY: rebuild up down restart logs ps build clean re
 
 rebuild:
 	$(COMPOSE) up -d --build
@@ -26,3 +26,5 @@ build:
 
 clean:
 	$(COMPOSE) down -v
+
+re: clean rebuild
