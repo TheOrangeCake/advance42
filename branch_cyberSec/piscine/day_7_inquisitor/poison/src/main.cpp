@@ -6,11 +6,12 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/28 18:34:55 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/06/29 00:18:01 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/07/06 23:28:38 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "inquisitor.hpp"
+#include "Victims.hpp"
 
 int main(int argc, char *argv[]) {
 	if (argc < 5) {
@@ -18,21 +19,14 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	if (!pcpp::IPv4Address::isValidIPv4Address(argv[1]) || !pcpp::IPv4Address::isValidIPv4Address(argv[3])) {
-		std::cerr << "Error: invalid IPv4 address." << std::endl;
-		return 1;
-	}
-	pcpp::IPv4Address ip_src(argv[1]);
-	pcpp::IPv4Address ip_tar(argv[3]);
-
-
-	pcpp::MacAddress mac_src;
-	pcpp::MacAddress mac_tar;
+	Victims victims;
 	try {
-		mac_src = pcpp::MacAddress(argv[2]);
-		mac_tar = pcpp::MacAddress(argv[4]);
+		victims.set_Ip(argv[1], SOURCE);
+		victims.set_Mac(argv[2], SOURCE);
+		victims.set_Ip(argv[3], TARGET);
+		victims.set_Mac(argv[4], TARGET);
 	} catch (std::invalid_argument &e) {
-		std::cerr << "Error: invalid MAC address." << std::endl;
+		std::cerr << e.what() << std::endl;
 		return 1;
 	}
 
