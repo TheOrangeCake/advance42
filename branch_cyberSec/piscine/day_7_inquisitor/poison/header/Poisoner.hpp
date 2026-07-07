@@ -1,25 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   inquisitor.hpp                                     :+:      :+:    :+:   */
+/*   Poisoner.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/28 18:29:33 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/07/07 23:16:33 by hoannguy         ###   ########.fr       */
+/*   Created: 2026/07/07 23:15:39 by hoannguy          #+#    #+#             */
+/*   Updated: 2026/07/07 23:16:58 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef INQUISITOR_HPP
-#define INQUISITOR_HPP
-#include <iostream>
-#include <string>
-#include <stdexcept>
-#include <MacAddress.h>
-#include <IpAddress.h>
-#include <PcapLiveDeviceList.h>
+#ifndef POISONER_HPP
+#define POISONER_HPP
+#include "inquisitor.hpp"
 
-#define SOURCE 1
-#define TARGET 2
+class Poisoner {
+	private:
+		
+};
 
 #endif
