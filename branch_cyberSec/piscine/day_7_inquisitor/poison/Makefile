@@ -14,6 +14,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	@$(GCC) $(FLAGS) -o $@ $^ $(LDFLAGS)
+	@echo "Compiled binary $(NAME)"
 
 %.o: %.cpp
 	@$(GCC) $(FLAGS) $(HEADER) -c $< -o $@
