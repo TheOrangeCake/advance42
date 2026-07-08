@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/28 18:34:55 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/07/08 00:03:25 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/07/08 17:17:19 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,10 @@ int main(int argc, char *argv[]) {
 
 	Victims victims;
 	try {
-		victims.set_Ip(argv[1], SOURCE)
-			.set_Mac(argv[2], SOURCE)
-			.set_Ip(argv[3], TARGET)
-			.set_Mac(argv[4], TARGET);
+		victims.set_Ip(argv[1], SERVER)
+			.set_Mac(argv[2], SERVER)
+			.set_Ip(argv[3], CLIENT)
+			.set_Mac(argv[4], CLIENT);
 	} catch (std::invalid_argument &e) {
 		std::cerr << e.what() << std::endl;
 		return 1;
@@ -45,12 +45,6 @@ int main(int argc, char *argv[]) {
 		<< "   MAC address:           " << device->getMacAddress() << std::endl // get interface MAC address
 		<< "   Default gateway:       " << device->getDefaultGateway() << std::endl; // get default gateway
 
-	// First poison to server: create L1 with src MAC (this poison) and dest MAC (server)
-	// Create L2 with src IP (client IP) and dest IP (server IP)
-	// Create new package with those 4 layers
-	//  pcpp::Packet newPacket(100); newPacket.addLayer();
-	// newPacket.computeCalculateFields();
-	// Do the same for poison to client
 
 	Poisoner poison(victims, device->getMacAddress());
 	

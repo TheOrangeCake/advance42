@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/07 23:15:39 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/07/07 23:34:28 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/07/08 16:57:09 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,12 @@ class Poisoner {
 		pcpp::Packet		good_server_packet;
 		pcpp::Packet		good_client_packet;
 
-		
+		pcpp::Packet create_packet(
+			pcpp::MacAddress m_src,
+			pcpp::MacAddress m_dest,
+			pcpp::IPv4Address i_src,
+			pcpp::IPv4Address i_dest
+		);
 
 	public:
 		Poisoner(Victims &victims, pcpp::MacAddress poison_mac);

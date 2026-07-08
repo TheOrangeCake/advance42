@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/06 22:16:13 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/07/06 23:24:00 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/07/08 16:13:52 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,15 @@
 
 class Victims {
 	private:
-		pcpp::IPv4Address	ip_src;
-		pcpp::MacAddress	mac_src;
-		pcpp::IPv4Address	ip_tar;
-		pcpp::MacAddress	mac_tar;
+		pcpp::IPv4Address	s_ip;
+		pcpp::MacAddress	s_mac;
+		pcpp::IPv4Address	c_ip;
+		pcpp::MacAddress	c_mac;
 
-		bool	ip_src_set = false;
-		bool	mac_src_set = false;
-		bool	ip_tar_set = false;
-		bool	mac_tar_set = false;
+		bool	s_ip_set = false;
+		bool	s_mac_set = false;
+		bool	c_ip_set = false;
+		bool	c_mac_set = false;
 		
 	public:
 		Victims();
