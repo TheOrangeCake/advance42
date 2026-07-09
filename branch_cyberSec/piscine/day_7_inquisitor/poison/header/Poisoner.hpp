@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/07 23:15:39 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/07/08 16:57:09 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/07/09 11:28:30 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,14 @@
 
 class Poisoner {
 	private:
-		pcpp::MacAddress	poison_mac;
-		pcpp::Packet		poisoned_server_packet;
-		pcpp::Packet		poisoned_client_packet;
-		pcpp::Packet		good_server_packet;
-		pcpp::Packet		good_client_packet;
-
+		pcpp::PcapLiveDevice	*device;
+		pcpp::MacAddress		poison_mac;
+		pcpp::Packet			poisoned_server_packet;
+		pcpp::Packet			poisoned_client_packet;
+		pcpp::Packet			good_client_packet;
+		pcpp::Packet			good_server_packet;
+		std::atomic<bool>		stop;
+		
 		pcpp::Packet create_packet(
 			pcpp::MacAddress m_src,
 			pcpp::MacAddress m_dest,
@@ -31,8 +33,12 @@ class Poisoner {
 		);
 
 	public:
-		Poisoner(Victims &victims, pcpp::MacAddress poison_mac);
+		Poisoner(Victims &victims, pcpp::PcapLiveDevice *device);
 		~Poisoner();
+
+		void poison();
+		void stop_poison();
+		void restore();
 };
 
 #endif

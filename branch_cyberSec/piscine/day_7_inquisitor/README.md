@@ -1,107 +1,143 @@
-# Inquisitor — Day 7
+# Inquisitor
 
-ARP-poisoning. Three containers on the Docker bridge `custom_net`
+ARP-poisoning MITM. Three containers on the Docker bridge `custom_net`
 (`10.5.0.0/16`):
 
-| Service      | IP          | Role                                                        |
-|--------------|-------------|-------------------------------------------------------------|
-| `ftp-server` | `10.5.0.17` | vsftpd, **plaintext** FTP (`ssl_enable=NO`)                 |
-| `client`     | `10.5.0.18` | loops `lftp` login + upload to the server every 5s          |
-| `poison`     | `10.5.0.19` | ARP-spoofer (NET_RAW/NET_ADMIN, `ip_forward=1`) — *WIP stub* |
+| Service      | IP          | Role                                                          |
+|--------------|-------------|--------------------------------------------------------------|
+| `ftp-server` | `10.5.0.17` | vsftpd, **plaintext** FTP (`ssl_enable=NO`)                  |
+| `client`     | `10.5.0.18` | idle box with `lftp` + `/test` files, for driving FTP by hand |
+| `poison`     | `10.5.0.19` | ARP-spoofer (NET_RAW/NET_ADMIN, `ip_forward=1`)              |
 
-> The `poison` ARP-spoofer is still under implementation. This README covers
-> the working **client** and **ftp-server** setup and how to test them.
+`poison` sits between the server and client, poisons both ARP caches so their
+FTP traffic is routed through it, and prints the filenames from every
+`RETR`/`STOR`/`APPE` command it sees. On exit (Ctrl-C) it restores the real
+ARP mappings.
 
 ## Setup
 
-Everything is orchestrated with Docker Compose via the `Makefile`.
+Everything is orchestrated with Docker Compose via the top-level `Makefile`.
 
 ```sh
 make            # build + start all containers detached (up -d --build)
 make ps         # show container status
-make logs       # follow logs (last 200 lines)
+make logs       # follow logs of all services (last 200 lines)
 make down       # stop and remove containers
 make clean      # down + remove volumes
 make re         # clean rebuild from scratch
 ```
 
 Container names are prefixed with the compose project name `inquisitor`
-(e.g. `inquisitor-client-1`). Use `make ps` to get the exact names.
+(e.g. `inquisitor-poison-1`). Use `make ps` for the exact names. The
+`inquisitor` binary is compiled **inside** the poison image at build time
+(`make install && make` in `poison/Dockerfile`), so a `make re` always ships a
+fresh binary.
 
-## Testing the FTP server
+## Getting the victim MACs
 
-Credentials: `ftpuser` / `ftppass`. Uploaded files land in `/home/ftpuser`
-(the user's chrooted home).
+Docker assigns MACs at container creation, so they **change on every
+`make re`**.
 
-Shell into the server and inspect what the client uploaded:
+The tool takes the IP **and** MAC of both victims. It auto-detects its *own*
+MAC (`poison` box), so you only need the server's and the client's.
+
+**Direct — ask each container for its own MAC:**
 
 ```sh
-docker container exec -it inquisitor-ftp-server-1 ash
+docker exec inquisitor-ftp-server-1 cat /sys/class/net/eth0/address   # server MAC
+docker exec inquisitor-client-1     cat /sys/class/net/eth0/address   # client MAC
+```
+
+## Running the attack (end-to-end test)
+
+1. **Start the stack** and confirm all three are up:
+
+   ```sh
+   make
+   make ps
+   ```
+
+2. **Grab both victim MACs** (see section above), e.g.:
+
+   ```sh
+   docker exec inquisitor-ftp-server-1 cat /sys/class/net/eth0/address
+   docker exec inquisitor-client-1     cat /sys/class/net/eth0/address
+   ```
+
+3. **Shell into the poison box and launch `inquisitor`.** Argument order is
+   `<IP-src> <MAC-src> <IP-target> <MAC-target>` — src = ftp-server,
+   target = client:
+
+   ```sh
+   docker exec -it inquisitor-poison-1 bash
+   ./inquisitor 10.5.0.17 <server-MAC> 10.5.0.18 <client-MAC>
+   ```
+
+   It prints the interface info, `Packet capturing started`, then begins
+   poisoning silently.
+
+4. **Stop with Ctrl-C.** `inquisitor` sends the real MACs back (restore) and
+   exits. Re-checking `ip neigh` on a victim should show the correct MAC again
+   within a few seconds.
+
+## Testing each detected FTP command
+
+`inquisitor` prints on three client→server commands — **STOR** (upload),
+**RETR** (download) and **APPE** (append). With the attack running (steps 1–4
+above), open a shell on the client and trigger each one by hand; each should
+produce exactly one line on the poison box.
+
+```sh
+docker exec -it inquisitor-client-1 ash
+# local files live in /test (hello.txt, evaluator.key, work.md, place.hex)
+```
+
+**STOR — upload a file** (`lftp put`):
+
+```sh
+lftp -u ftpuser,ftppass 10.5.0.17 -e 'put /test/hello.txt; bye'
+```
+→ poison box prints: `STOR > hello.txt`
+
+**RETR — download a file** (`lftp get`). The file must already exist on the
+server, so STOR it first:
+
+```sh
+lftp -u ftpuser,ftppass 10.5.0.17 -e 'get hello.txt -o /tmp/hello.txt; bye'
+```
+→ poison box prints: `RETR > hello.txt`
+
+**APPE — append to a file.** `lftp` has no APPE verb, so use `curl --append`
+(install curl once with `apk add --no-cache curl`):
+
+```sh
+curl -T /test/hello.txt --append ftp://ftpuser:ftppass@10.5.0.17/hello.txt
+```
+→ poison box prints: `APPE > hello.txt`
+
+## Testing the pieces individually
+
+### FTP server
+
+Credentials: `ftpuser` / `ftppass`. Uploads land in `/home/ftpuser` (the user's
+chrooted home).
+
+```sh
+docker exec -it inquisitor-ftp-server-1 ash
 ls -l /home/ftpuser        # expect hello.txt, evaluator.key, work.md, place.hex
 ```
 
-## Testing the client
+### Client
 
-The client automatically runs, every 5 seconds:
-
-```sh
-lftp -u ftpuser,ftppass 10.5.0.17 -e 'mirror -R /test; ls; bye'
-```
-
-which mirrors its local `/test` directory (`hello.txt`, `evaluator.key`,
-`work.md`, `place.hex`) up to the server.
-
-Follow the client to see login + upload succeed:
+The client is an idle box (`sleep infinity`) with `lftp` and the `/test` files
+ready. Drive it by hand — mirror the whole `/test` dir, or open an interactive
+session:
 
 ```sh
-docker compose logs -f client
+docker exec -it inquisitor-client-1 ash
+lftp -u ftpuser,ftppass 10.5.0.17 -e 'mirror -R /test; ls; bye'   # one-shot upload
+lftp -u ftpuser,ftppass 10.5.0.17                                 # interactive session
 ```
-
-Or drive it manually:
-
-```sh
-docker container exec -it inquisitor-client-1 ash
-lftp -u ftpuser,ftppass 10.5.0.17     # interactive session
-# ls / put / bye ...
-```
-
-## Testing the poison box (WIP)
-
-`inquisitor` takes the IP + MAC of both victims:
-
-```sh
-docker container exec -it inquisitor-poison-1 bash   # Ubuntu image → bash, not ash
-./inquisitor <IP-src> <MAC-src> <IP-target> <MAC-target>
-# src = ftp-server (10.5.0.17), target = client (10.5.0.18)
-```
-
-### Finding the victim MACs
-
-Docker assigns MACs at container creation, so they **change on every
-`make re`** — look them up fresh each run, never hardcode.
-
-From the **poison** box, ping both victims to populate the ARP cache, then read
-it:
-
-```sh
-docker container exec -it inquisitor-poison-1 bash
-ping -c1 10.5.0.17 && ping -c1 10.5.0.18
-ip neigh          # 10.5.0.17 ... lladdr <server MAC>, 10.5.0.18 ... lladdr <client MAC>
-```
-
-Or ask each container for its own MAC directly:
-
-```sh
-docker container exec inquisitor-ftp-server-1 cat /sys/class/net/eth0/address   # server MAC
-docker container exec inquisitor-client-1     cat /sys/class/net/eth0/address   # client MAC
-docker container exec inquisitor-poison-1     cat /sys/class/net/eth0/address   # your own MAC
-```
-
-(`ip link show eth0` works too where `iproute2` is installed — the poison image
-has it; the Alpine boxes need `ip -o link` or the `/sys` path above.)
-
-Once the spoofer is functional, run it here and watch the plaintext FTP
-credentials cross the wire as the client authenticates.
 
 ## Resources
 - [PCAP++ documentation](https://pcapplusplus.github.io/api-docs/v25.05/index.html)

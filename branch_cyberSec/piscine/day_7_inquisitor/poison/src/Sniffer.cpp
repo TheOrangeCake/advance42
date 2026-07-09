@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 23:20:32 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/07/09 00:02:15 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/07/09 11:19:21 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,14 @@ void Sniffer::set_filters() {
 	this->device->setFilter(andFilter);
 }
 
-void Sniffer::run() {
-	if (!this->device->open())
-		throw std::runtime_error("Error: cannot open device " + device->getName());
-	
+void Sniffer::sniff() {
 	this->set_filters();
 
 	if (!this->device->startCapture(Sniffer::on_packet_arrives, NULL))
 		throw std::runtime_error("Error: cannot start capture on " + device->getName());
 	std::cout << std::endl << "Packet capturing started" << std::endl;
+}
+
+void Sniffer::end() {
+	this->device->stopCapture();
 }

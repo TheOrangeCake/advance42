@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 23:18:59 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/07/08 23:46:31 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/07/09 10:51:28 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ class Sniffer {
 		Sniffer(Victims &victims, Poisoner &poison, pcpp::PcapLiveDevice *device);
 		~Sniffer();
 		
-		void run();
-	
+		void sniff();
+		void end();
 };
 
 #endif
