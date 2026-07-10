@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/28 18:34:55 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/07/09 11:54:34 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/07/10 13:21:24 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ int main(int argc, char *argv[]) {
 	pcpp::ApplicationEventHandler::getInstance().onApplicationInterrupted(on_close, &poisoner);
 	int exit_code = 0;
 	try {
+		poisoner.setup();
 		sniffer.sniff();
 		poisoner.poison();
 	} catch (std::runtime_error &e) {

@@ -77,8 +77,7 @@ docker exec inquisitor-client-1     cat /sys/class/net/eth0/address   # client M
    poisoning silently.
 
 4. **Stop with Ctrl-C.** `inquisitor` sends the real MACs back (restore) and
-   exits. Re-checking `ip neigh` on a victim should show the correct MAC again
-   within a few seconds.
+   exits.
 
 ## Testing each detected FTP command
 

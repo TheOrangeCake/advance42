@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/07 23:15:39 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/07/09 11:28:30 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/07/10 13:18:03 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ class Poisoner {
 		Poisoner(Victims &victims, pcpp::PcapLiveDevice *device);
 		~Poisoner();
 
+		void setup();
 		void poison();
 		void stop_poison();
 		void restore();

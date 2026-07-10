@@ -7,6 +7,6 @@
   "type": "commonjs",
   "main": "vaccine.js",
   "scripts": {
-    "start": "node vaccine"
+    "start": "node src/vaccine"
   }
 }

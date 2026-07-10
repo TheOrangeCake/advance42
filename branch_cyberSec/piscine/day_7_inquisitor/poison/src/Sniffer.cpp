@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 23:20:32 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/07/09 11:19:21 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/07/10 15:37:52 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,26 @@ void Sniffer::on_packet_arrives(pcpp::RawPacket *packet, pcpp::PcapLiveDevice* d
 	if (ftp_req == NULL)
 		return;
 	
+	// auto tcp = parsed_packet.getLayerOfType<pcpp::TcpLayer>();
+	// if (tcp) {
+	// 	std::cout
+	// 		<< "TCP "
+	// 		<< tcp->getSrcPort()
+	// 		<< " -> "
+	// 		<< tcp->getDstPort()
+	// 		<< std::endl;
+	// 	auto payload = tcp->getLayerPayload();
+	// 	auto len = tcp->getLayerPayloadSize();
+	// 	std::cout << payload << " : " << len << std::endl;
+	// }
+	
+	// auto eth = parsed_packet.getLayerOfType<pcpp::EthLayer>();
+	// std::cout
+	// 	<< eth->getSourceMac()
+	// 	<< " -> "
+	// 	<< eth->getDestMac()
+	// 	<< std::endl;
+
 	pcpp::FtpRequestLayer::FtpCommand cmd = ftp_req->getCommand();
 	if (cmd == pcpp::FtpRequestLayer::FtpCommand::APPE ||
 		cmd == pcpp::FtpRequestLayer::FtpCommand::RETR ||
