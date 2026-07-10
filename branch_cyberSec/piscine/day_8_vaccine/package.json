@@ -4,9 +4,9 @@
   "description": "SQL injection exercice",
   "license": "ISC",
   "author": "hoannguy (Nguyen 42)",
-  "type": "commonjs",
+  "type": "module",
   "main": "vaccine.js",
   "scripts": {
-    "start": "node src/vaccine"
+    "vaccine": "node src/vaccine"
   }
 }
