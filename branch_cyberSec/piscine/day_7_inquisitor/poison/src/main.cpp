@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/28 18:34:55 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/07/10 13:21:24 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/07/10 16:28:17 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,10 @@ int main(int argc, char *argv[]) {
 	}
 	std::cout
 		<< "Interface info:" << std::endl
-		<< "   Interface name:        " << device->getName() << std::endl // get interface name
-		<< "   Interface description: " << device->getDesc() << std::endl // get interface description
-		<< "   MAC address:           " << device->getMacAddress() << std::endl // get interface MAC address
-		<< "   Default gateway:       " << device->getDefaultGateway() << std::endl; // get default gateway
+		<< "   Interface name:        " << device->getName() << std::endl
+		<< "   Interface description: " << device->getDesc() << std::endl
+		<< "   MAC address:           " << device->getMacAddress() << std::endl
+		<< "   Default gateway:       " << device->getDefaultGateway() << std::endl;
 	
 	Poisoner poisoner(victims, device);
 	Sniffer sniffer(victims, poisoner, device);
@@ -64,8 +64,6 @@ int main(int argc, char *argv[]) {
 		exit_code = 1;
 	}
 
-	// Always restore + clean up, even if poisoning failed, so the victims'
-	// ARP caches aren't left pointing at us.
 	try {
 		poisoner.restore();
 	} catch (std::runtime_error &e) {
