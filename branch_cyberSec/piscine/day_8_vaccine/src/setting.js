@@ -1,11 +1,12 @@
-import fs from "fs";
+import { db_init } from './database';
 
-const DEFAULT = "vaccine.sqlite";
+const DEFAULT = 'vaccine.sqlite';
 
 export class Setting {
 	x = "GET";
 	o = DEFAULT;
 	url = "";
+	db;
 }
 
 export function parse_av(av) {
@@ -30,7 +31,7 @@ export function parse_av(av) {
 						console.log(`[Error] Missing value for ${arg}`);
 						process.exit(1);
 				}
-				setting.o = parse_o(val_o.trim());
+				parse_o(val_o.trim(), setting);
 				continue;
 		}
 		if (arg.startsWith("http://")
@@ -52,7 +53,7 @@ export function parse_av(av) {
 	}
 
 	if (setting.o === DEFAULT)
-		setting.o = parse_o(DEFAULT);
+		parse_o(DEFAULT, setting);
 
 	return setting;
 }
@@ -66,14 +67,12 @@ function parse_x(x_opt) {
 	return x_opt_upper;
 }
 
-// TODO: Initialize db here
-function parse_o(o_opt) {
+function parse_o(o_opt, setting) {
 	try {
-		const fd = fs.openSync(o_opt, "w");
-		fs.closeSync(fd);	
+		setting.db = db_init(o_opt);
+		setting.o = o_opt;
 	} catch (err) {
 		console.log(`[Error] Cannot open output file '${o_opt}': ${err.code}`);
 		process.exit(1);
 	}
-	return o_opt;
 }
