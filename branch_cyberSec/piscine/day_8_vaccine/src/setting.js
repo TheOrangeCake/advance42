@@ -37,6 +37,9 @@ export function parse_av(av) {
 			|| arg.startsWith("https://")
 			|| arg.startsWith("www.")) {
 				setting.url = arg;
+				if (++i < av.length) {
+					console.log(`[INFO] All arguments after URL are ignored: ${av.slice(i)}`);
+				}
 				break;
 		}
 		console.log(`[Error] Unknow argument: ${av[i]}`);
@@ -72,6 +75,5 @@ function parse_o(o_opt) {
 		console.log(`[Error] Cannot open output file '${o_opt}': ${err.code}`);
 		process.exit(1);
 	}
-
 	return o_opt;
 }
