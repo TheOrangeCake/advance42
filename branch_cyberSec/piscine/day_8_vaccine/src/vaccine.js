@@ -1,18 +1,20 @@
-import { parse_av, Setting } from './setting.js';
+import { parseAv, Setting, urlParser } from './setting.js';
+import { sendRequest } from './http.js';
+import { print_fatal, print_info } from './logger.js';
+import { dbClose } from './database.js';
 
 console.log("Launching Vaccine...");
 
 const av = process.argv.slice(2);
 
 if (av.length < 1) {
-	console.log("[Error] Need an URL");
+	print_fatal("Need an URL");
 	process.exit(1);
 }
+const setting = parseAv(av);
+urlParser(setting);
 
-const setting = parse_av(av);
-
-console.log(`[Setting] x: ${setting.x} | o: ${setting.o} | url: ${setting.url}`);
-
+print_info(` x: ${setting.x} | o: ${setting.o} | domain: ${setting.urlBase} | query: ${setting.queryBase}`);
 
 // Code send GET (build query) and POST (build payload form-urlencoded)
 // Url parser to parse the params for base url and params list

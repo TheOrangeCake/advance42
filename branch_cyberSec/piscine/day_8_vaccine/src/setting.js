@@ -1,15 +1,20 @@
-import { db_init } from './database';
+import { dbInit } from './database.js';
+import { cleanUp } from './helper.js';
+import { print_info, print_error } from './logger.js';
 
 const DEFAULT = 'vaccine.sqlite';
 
 export class Setting {
 	x = "GET";
 	o = DEFAULT;
-	url = "";
+	urlRaw = "";
+	urlBase = "";
+	queryBase;
+	query;
 	db;
 }
 
-export function parse_av(av) {
+export function parseAv(av) {
 	const setting = new Setting();
 
 	for (let i = 0; i < av.length; i++) {
@@ -17,62 +22,71 @@ export function parse_av(av) {
 		switch (arg) {
 			case "-X":
 			case "-x":
-				const val_x = av[++i];
-				if (val_x === undefined) {
-						console.log(`[Error] Missing value for ${arg}`);
-						process.exit(1);
+				const valX = av[++i];
+				if (valX === undefined) {
+						cleanUp(setting.db, `Missing value for ${arg}`);
 				}
-				setting.x = parse_x(val_x.trim());
+				setting.x = parseX(valX.trim(), setting);
 				continue;
 			case "-O":
 			case "-o":
-				const val_o = av[++i];
-				if (val_o === undefined) {
-						console.log(`[Error] Missing value for ${arg}`);
-						process.exit(1);
+				const valO = av[++i];
+				if (valO === undefined) {
+						cleanUp(setting.db, `Missing value for ${arg}`);
 				}
-				parse_o(val_o.trim(), setting);
+				parseO(valO.trim(), setting);
 				continue;
 		}
-		if (arg.startsWith("http://")
-			|| arg.startsWith("https://")
-			|| arg.startsWith("www.")) {
-				setting.url = arg;
+		if (arg.startsWith("http://") || arg.startsWith("https://")) {
+				setting.urlRaw = arg;
 				if (++i < av.length) {
-					console.log(`[INFO] All arguments after URL are ignored: ${av.slice(i)}`);
+					print_error(`All arguments after URL are ignored: ${av.slice(i)}`);
 				}
 				break;
 		}
-		console.log(`[Error] Unknow argument: ${av[i]}`);
-		process.exit(1);
+		cleanUp(setting.db, `Unknow argument: ${av[i]}`);
 	}
 
-	if (setting.url === "") {
-		console.log(`[Error] Need an Url`);
-		process.exit(1);
+	if (setting.urlRaw === "") {
+		cleanUp(setting.db, `Need an Url`);
 	}
 
 	if (setting.o === DEFAULT)
-		parse_o(DEFAULT, setting);
+		parseO(DEFAULT, setting);
 
 	return setting;
 }
 
-function parse_x(x_opt) {
-	const x_opt_upper = x_opt.toUpperCase();
-	if (x_opt_upper !== "GET" && x_opt_upper !== "POST") {
-		console.log(`[Error] Unknow x option: ${x_opt}`);
-		process.exit(1);
+function parseX(xOpt, setting) {
+	const xOptUpper = xOpt.toUpperCase();
+	if (xOptUpper !== "GET" && xOptUpper !== "POST") {
+		cleanUp(setting.db, `Unknow x option: ${xOpt}`);
 	}
-	return x_opt_upper;
+	return xOptUpper;
 }
 
-function parse_o(o_opt, setting) {
+function parseO(oOpt, setting) {
 	try {
-		setting.db = db_init(o_opt);
-		setting.o = o_opt;
+		setting.db = dbInit(oOpt);
+		setting.o = oOpt;
 	} catch (err) {
-		console.log(`[Error] Cannot open output file '${o_opt}': ${err.code}`);
-		process.exit(1);
+		cleanUp(setting.db, `Cannot open output file '${oOpt}': ${err.message}`);
+	}
+}
+
+export function urlParser(setting) {
+	const urlString = setting.urlRaw;
+	const index = urlString.indexOf('?');
+	setting.urlBase  = index === -1 ? urlString : urlString.slice(0, index);
+	setting.queryBase = index === -1 ? undefined  : urlString.slice(index + 1);
+
+	if (setting.queryBase === undefined) {
+		cleanUp(setting.db, "URL need a query to attempt injection");
+	}
+
+	setting.query = new URLSearchParams(setting.queryBase);
+	print_info("Query parameters:");
+	for (let pair of setting.query.entries()) {
+		print_info(`${pair[0]} = ${pair[1]}`);
 	}
 }

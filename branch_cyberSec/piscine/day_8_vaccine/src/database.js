@@ -1,7 +1,7 @@
 import { DatabaseSync } from 'node:sqlite';
 
-export function db_init(o_opt) {
-	const db = new DatabaseSync(o_opt, {open: true});
+export function dbInit(oOpt) {
+	const db = new DatabaseSync(oOpt, {open: true});
 
 	db.exec(`pragma foreign_keys = on`);
 
@@ -71,61 +71,61 @@ export function db_init(o_opt) {
 	return db;
 }
 
-export function db_save_scan(db, url, method, db_engine) {
+export function dbSaveScan(db, url, method, dbEngine) {
 	const statement = db.prepare(
-		`INSERT INTO SCAN (url, method, db_engine) 
+		`INSERT INTO SCAN (url, method, db_engine)
 		VALUES (?, ?, ?)`
 	)
-	return statement.run(url, method, db_engine).lastInsertRowid;
+	return statement.run(url, method, dbEngine).lastInsertRowid;
 }
 
-export function db_save_vulnerability(db, scan_id, parameter, payload, technique) {
+export function dbSaveVulnerability(db, scanId, parameter, payload, technique) {
 	const statement = db.prepare(
 		`INSERT INTO VULNERABILITY (scan_id, parameter, payload, technique)
 		VALUES (?, ?, ?, ?)`
 	)
-	return statement.run(scan_id, parameter, payload, technique).lastInsertRowid;
+	return statement.run(scanId, parameter, payload, technique).lastInsertRowid;
 }
 
-export function db_save_db_name(db, scan_id, name) {
+export function dbSaveDbName(db, scanId, name) {
 	db.prepare(
 		`INSERT OR IGNORE INTO DB_NAME (scan_id, name)
 		VALUES (?, ?)`
-	).run(scan_id, name);
+	).run(scanId, name);
 	return db.prepare(
 			`SELECT id FROM DB_NAME WHERE scan_id = ? AND name = ?`
-	).get(scan_id, name).id;
+	).get(scanId, name).id;
 }
 
-export function db_save_tbl_name(db, db_id, name) {
+export function dbSaveTblName(db, dbId, name) {
 	db.prepare(
 		`INSERT OR IGNORE INTO TBL_NAME (db_id, name)
 		VALUES (?, ?)`
-	).run(db_id, name);
+	).run(dbId, name);
 	return db.prepare(
 			`SELECT id FROM TBL_NAME WHERE db_id = ? AND name = ?`
-	).get(db_id, name).id;
+	).get(dbId, name).id;
 }
 
-export function db_save_col_name(db, tbl_id, name, data_type) {
+export function dbSaveColName(db, tblId, name, dataType) {
 	db.prepare(
 		`INSERT OR IGNORE INTO COL_NAME (tbl_id, name, data_type)
 		VALUES (?, ?, ?)`
-	).run(tbl_id, name, data_type);
+	).run(tblId, name, dataType);
 	return db.prepare(
 			`SELECT id FROM COL_NAME WHERE tbl_id = ? AND name = ?`
-	).get(tbl_id, name).id;
+	).get(tblId, name).id;
 }
 
-export function db_save_row_dump(db, tbl_id, row_index, data) {
+export function dbSaveRowDump(db, tblId, rowIndex, data) {
 	const statement = db.prepare(
 		`INSERT INTO ROW_DUMP (tbl_id, row_index, data)
 		VALUES (?, ?, ?)`
 	)
-	return statement.run(tbl_id, row_index, data).lastInsertRowid;
+	return statement.run(tblId, rowIndex, data).lastInsertRowid;
 }
 
-export function db_close(db) {
+export function dbClose(db) {
 	if (db) {
 		db.close();
 	}
