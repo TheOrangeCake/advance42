@@ -1,3 +1,3 @@
-export function testSQL(setting) {
+export function testMySQL(setting) {
 
 }

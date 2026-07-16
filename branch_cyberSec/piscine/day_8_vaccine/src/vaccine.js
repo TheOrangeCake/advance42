@@ -4,7 +4,7 @@ import { detectFingerprint } from './fingerprint.js';
 import { injectable } from './injectable.js';
 import { cleanUpFatal } from './helper.js';
 import { testOracle } from './suiteOracle.js';
-import { testSQL } from './suiteSQL.js';
+import { testMySQL } from './suiteSQL.js';
 
 console.log("Launching Vaccine...");
 
@@ -26,7 +26,7 @@ const dbEngine = detectFingerprint(setting);
 if (dbEngine === "Oracle")
 	testOracle(setting);
 else if (dbEngine === "SQL")
-	testSQL(setting);
+	testMySQL(setting);
 else
 	cleanUpFatal(setting.db, "Database engine not recognized or uninjectable");
 
