@@ -1,6 +1,6 @@
 import { dbInit } from './database.js';
-import { cleanUp } from './helper.js';
-import { print_info, print_error } from './logger.js';
+import { cleanUpFatal } from './helper.js';
+import { printInfo, printError } from './logger.js';
 
 const DEFAULT = 'vaccine.sqlite';
 
@@ -23,7 +23,7 @@ export function parseAv(av) {
 			case "-x":
 				const valX = av[++i];
 				if (valX === undefined) {
-						cleanUp(setting.db, `Missing value for ${arg}`);
+						cleanUpFatal(setting.db, `Missing value for ${arg}`);
 				}
 				setting.x = parseX(valX.trim(), setting);
 				continue;
@@ -31,7 +31,7 @@ export function parseAv(av) {
 			case "-o":
 				const valO = av[++i];
 				if (valO === undefined) {
-						cleanUp(setting.db, `Missing value for ${arg}`);
+						cleanUpFatal(setting.db, `Missing value for ${arg}`);
 				}
 				parseO(valO.trim(), setting);
 				continue;
@@ -40,18 +40,18 @@ export function parseAv(av) {
 			try {
 				setting.urlRaw = new URL(arg);
 				if (++i < av.length) {
-					print_error(`All arguments after URL are ignored: ${av.slice(i)}`);
+					printError(`All arguments after URL are ignored: ${av.slice(i)}`);
 				}
 				break;
 			} catch(error) {
-				cleanUp(setting.db, `Invalid URL: ${arg}`);
+				cleanUpFatal(setting.db, `Invalid URL: ${arg}`);
 			}
 		}
-		cleanUp(setting.db, `Unknow argument: ${av[i]}`);
+		cleanUpFatal(setting.db, `Unknow argument: ${av[i]}`);
 	}
 
 	if (setting.urlRaw === undefined) {
-		cleanUp(setting.db, `Need an Url`);
+		cleanUpFatal(setting.db, `Need an Url`);
 	}
 
 	if (setting.o === DEFAULT)
@@ -63,7 +63,7 @@ export function parseAv(av) {
 function parseX(xOpt, setting) {
 	const xOptUpper = xOpt.toUpperCase();
 	if (xOptUpper !== "GET" && xOptUpper !== "POST") {
-		cleanUp(setting.db, `Unknow x option: ${xOpt}`);
+		cleanUpFatal(setting.db, `Unknow x option: ${xOpt}`);
 	}
 	return xOptUpper;
 }
@@ -73,7 +73,7 @@ function parseO(oOpt, setting) {
 		setting.db = dbInit(oOpt);
 		setting.o = oOpt;
 	} catch (err) {
-		cleanUp(setting.db, `Cannot open output file '${oOpt}': ${err.message}`);
+		cleanUpFatal(setting.db, `Cannot open output file '${oOpt}': ${err.message}`);
 	}
 }
 
@@ -82,11 +82,11 @@ export function urlParser(setting) {
 	setting.urlPath = url.origin + url.pathname;
 	setting.urlQuery = url.searchParams;
 	if (setting.urlQuery.size < 1) {
-		cleanUp(setting.db, "URL need a valid query to attempt injection");
+		cleanUpFatal(setting.db, "URL need a valid query to attempt injection");
 	}
 
-	print_info("Query parameters:");
+	printInfo("Query parameters:");
 	for (const [key, value] of setting.urlQuery.entries()) {
-		print_info(`${key} = ${value}`);
+		printInfo(`${key} = ${value}`);
 	}
 }

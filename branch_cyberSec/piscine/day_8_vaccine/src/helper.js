@@ -1,8 +1,16 @@
 import { dbClose } from "./database.js";
-import { print_fatal } from "./logger.js";
+import { printFatal, printError, printSuccess, printInfo } from "./logger.js";
 
-export function cleanUp(db, ...a) {
+export function cleanUpFatal(db, ...a) {
+	type.toUpperCase();
 	dbClose(db);
-	print_fatal(...a);
+	printFatal(...a);
+	process.exit(1);
+}
+
+export function cleanUpInfo(db, ...a) {
+	type.toUpperCase();
+	dbClose(db);
+	printInfo(...a);
 	process.exit(1);
 }

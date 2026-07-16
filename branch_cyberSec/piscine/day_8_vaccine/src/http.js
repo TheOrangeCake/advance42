@@ -1,5 +1,5 @@
-import { print_error, print_info } from "./logger.js";
-import { cleanUp } from "./helper.js";
+import { printError, printInfo } from "./logger.js";
+import { cleanUpFatal } from "./helper.js";
 
 export async function sendRequest(setting, params) {
 	const url = setting.urlPath;
@@ -9,7 +9,7 @@ export async function sendRequest(setting, params) {
 	else if (method === "POST")
 		return sendPost(url, params);
 	else
-		cleanUp(setting.db, `Invalid HTTP method ${method}`);
+		cleanUpFatal(setting.db, `Invalid HTTP method ${method}`);
 }
 
 async function sendGet(url, params) {
@@ -23,7 +23,7 @@ async function sendGet(url, params) {
 		const body = await response.text();
 		return { status: response.status, body, time: performance.now() - start };
 	} catch (err) {
-		print_error(`Fail to send request to ${url} with error: ${err.message}`);
+		printError(`Fail to send request to ${url} with error: ${err.message}`);
 		return null;
 	}
 }
@@ -39,7 +39,7 @@ async function sendPost(url, params) {
 		const body = await response.text();
 		return { status: response.status, body, time: performance.now() - start };
 	} catch (err) {
-		print_error(`Fail to send request to ${url} with error: ${err.message}`);
+		printError(`Fail to send request to ${url} with error: ${err.message}`);
 		return null;
 	}
 }

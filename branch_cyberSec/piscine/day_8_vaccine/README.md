@@ -56,3 +56,6 @@ erDiagram
 
 `ROW_DUMP.data` holds one dumped record per row as a JSON object
 (`{"id":"1","user":"admin",...}`).
+
+## Ressources
+- [Detect database fingerprint](https://www.sqlinjection.net/database-fingerprinting/)
