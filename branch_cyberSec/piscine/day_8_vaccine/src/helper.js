@@ -10,5 +10,5 @@ export function cleanUpFatal(db, ...a) {
 export function cleanUpInfo(db, ...a) {
 	dbClose(db);
 	printInfo(...a);
-	process.exit(1);
+	process.exit(0);
 }

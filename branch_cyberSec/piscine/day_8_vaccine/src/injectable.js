@@ -1,10 +1,8 @@
+import { cleanUpInfo } from "./helper.js";
 import { sendRequest } from "./http.js";
 
+// Boolean method
 export async function injectable(setting) {
-	// run with original query
-	// take the first query value, put ' AND '1'='1 or AND 1=1 at the end -> result should be the same
-	// still the first query value, put ' AND '1'='2 or AND 1=2 at the end -> result should be different
-	// if both tests are correct then it is injectable
 	let query = setting.urlQuery;
 	const firstParamsName = [...query.keys()][0];
 	const firstParamsValue = query.get(firstParamsName);
@@ -12,20 +10,16 @@ export async function injectable(setting) {
 
 
 	const resTrueString = await sendRequest(setting, mutateQuery(query, firstParamsName,  firstParamsValue + "' AND '1'='1"));
-	// then compare with original
+	const resFalseString = await sendRequest(setting, mutateQuery(query, firstParamsName, firstParamsValue + "' AND '1'='2"));
+	if (isSameRes(resOriginal, resTrueString) && !isSameRes(resOriginal, resFalseString))
+		return { injectable: true, context: "string" };
 
 	const resTrueNumber = await sendRequest(setting, mutateQuery(query, firstParamsName, firstParamsValue + " AND 1=1"));
-	// then compare with original
-
-
-	const resFalseString = await sendRequest(setting, mutateQuery(query, firstParamsName, firstParamsValue + "' AND '1'='2"));
-	// then compare with original
-
 	const resFalseNumber = await sendRequest(setting, mutateQuery(query, firstParamsName, firstParamsValue + " AND 1=2"));
-	// then compare with original
+	if (isSameRes(resOriginal, resTrueNumber) && !isSameRes(resOriginal, resFalseNumber))
+		return { injectable: true, context: "number" };
 
-	// return placeholder
-	return true;
+	cleanUpInfo(setting.db, 'URL not injectable');
 }
 
 function mutateQuery(query, name, value) {
@@ -34,6 +28,20 @@ function mutateQuery(query, name, value) {
 	return mutatedQuery;
 }
 
-function compareRes(original, mutated) {
+function isSameRes(original, mutated) {
+	if (!original || !mutated) 
+		return false;
+	if (original.status !== mutated.status)
+		return false;
+	if (original.body === mutated.body)
+		return true;
+	return similarity(original.body, mutated.body);
+}
 
+function similarity(original, mutated) {
+    if (original.length === 0 && mutated.length === 0)
+		return true;
+    const longer = Math.max(original.length, mutated.length);
+    const shorter = Math.min(original.length, mutated.length);
+    return (shorter / longer) >= 0.95;
 }
