@@ -12,11 +12,22 @@ export async function sendRequest(setting, params) {
 		cleanUp(setting.db, `Invalid HTTP method ${method}`);
 }
 
-function sendGet(url, params) {
-
+async function sendGet(url, params) {
+	const start = performance.now();
+	try {
+		const target = new URL(url);
+		target.search = new URLSearchParams(params).toString();
+		const response = await fetch(target, {
+			method: "GET",
+		});
+		const body = await response.text();
+		return { status: response.status, body, time: performance.now() - start };
+	} catch (err) {
+		print_error(`Fail to send request to ${url} with error: ${err.message}`);
+		return null;
+	}
 }
 
-// TODO: continue
 async function sendPost(url, params) {
 	const start = performance.now();
 	try {
@@ -26,9 +37,9 @@ async function sendPost(url, params) {
 			body: new URLSearchParams(params)
 		});
 		const body = await response.text();
-		return { status: response.status, body, time: performance.now() - start};
+		return { status: response.status, body, time: performance.now() - start };
 	} catch (err) {
-		print_error(`Fail to send request to ${url}`);
+		print_error(`Fail to send request to ${url} with error: ${err.message}`);
 		return null;
 	}
 }
