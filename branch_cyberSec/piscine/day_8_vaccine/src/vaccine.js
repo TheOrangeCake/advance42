@@ -19,11 +19,12 @@ urlParser(setting);
 
 printInfo(`Setting -> x: ${setting.x} | o: ${setting.o} | path: ${setting.urlPath} | query: ${setting.urlQuery.toString()}`);
 
-if (!injectable)
-	cleanUpFatal(setting.db, "URL is not INJECTABLE");
-printSuccess(`${setting.urlRaw} is injectable!`);
-const dbEngine = detectFingerprint(setting);
+const result = await injectable(setting);
+if (!result || !result.injectable)
+	cleanUpFatal(setting.db, "URL is not injectable");
+printSuccess(`${setting.urlRaw} is INJECTABLE!`);
 
+const dbEngine = detectFingerprint(setting);
 if (dbEngine === "Oracle")
 	testOracle(setting);
 else if (dbEngine === "SQL")

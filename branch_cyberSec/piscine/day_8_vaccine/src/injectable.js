@@ -1,4 +1,4 @@
-import { cleanUpInfo } from "./helper.js";
+import { cleanUpFatal, cleanUpInfo } from "./helper.js";
 import { sendRequest } from "./http.js";
 
 // Boolean method
@@ -19,7 +19,7 @@ export async function injectable(setting) {
 	if (isSameRes(resOriginal, resTrueNumber) && !isSameRes(resOriginal, resFalseNumber))
 		return { injectable: true, context: "number" };
 
-	cleanUpInfo(setting.db, 'URL not injectable');
+	cleanUpFatal(setting.db, 'URL is not injectable');
 }
 
 function mutateQuery(query, name, value) {
