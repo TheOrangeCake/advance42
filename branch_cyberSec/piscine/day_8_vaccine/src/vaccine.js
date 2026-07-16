@@ -14,7 +14,7 @@ if (av.length < 1) {
 const setting = parseAv(av);
 urlParser(setting);
 
-print_info(` x: ${setting.x} | o: ${setting.o} | domain: ${setting.urlBase} | query: ${setting.queryBase}`);
+print_info(`Setting -> x: ${setting.x} | o: ${setting.o} | path: ${setting.urlPath} | query: ${setting.urlQuery.toString()}`);
 
 // Code send GET (build query) and POST (build payload form-urlencoded)
 // Url parser to parse the params for base url and params list

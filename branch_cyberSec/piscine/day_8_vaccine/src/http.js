@@ -1,31 +1,32 @@
 import { print_error, print_info } from "./logger.js";
 import { cleanUp } from "./helper.js";
 
-export function sendRequest(setting, data) {
-	const url = setting.urlBase;
+export async function sendRequest(setting, params) {
+	const url = setting.urlPath;
 	const method = setting.x;
 	if (method === "GET")
-		return sendGet(url, data);
+		return sendGet(url, params);
 	else if (method === "POST")
-		return sendPost(url, data);
+		return sendPost(url, params);
 	else
 		cleanUp(setting.db, `Invalid HTTP method ${method}`);
 }
 
-function sendGet(url, data) {
+function sendGet(url, params) {
 
 }
 
 // TODO: continue
-async function sendPost(url, data) {
+async function sendPost(url, params) {
+	const start = performance.now();
 	try {
-		const response = fetch(url, {
+		const response = await fetch(url, {
 			method: "POST",
-			body: new URLSearchParams(data)
+			headers: { "Content-Type": "application/x-www-form-urlencoded" },
+			body: new URLSearchParams(params)
 		});
-
-		const result = (await response).text();
-
+		const body = await response.text();
+		return { status: response.status, body, time: performance.now() - start};
 	} catch (err) {
 		print_error(`Fail to send request to ${url}`);
 		return null;

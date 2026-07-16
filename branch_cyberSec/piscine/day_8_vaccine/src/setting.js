@@ -7,10 +7,9 @@ const DEFAULT = 'vaccine.sqlite';
 export class Setting {
 	x = "GET";
 	o = DEFAULT;
-	urlRaw = "";
-	urlBase = "";
-	queryBase;
-	query;
+	urlRaw;
+	urlPath;
+	urlQuery;
 	db;
 }
 
@@ -38,16 +37,20 @@ export function parseAv(av) {
 				continue;
 		}
 		if (arg.startsWith("http://") || arg.startsWith("https://")) {
-				setting.urlRaw = arg;
+			try {
+				setting.urlRaw = new URL(arg);
 				if (++i < av.length) {
 					print_error(`All arguments after URL are ignored: ${av.slice(i)}`);
 				}
 				break;
+			} catch(error) {
+				cleanUp(setting.db, `Invalid URL: ${arg}`);
+			}
 		}
 		cleanUp(setting.db, `Unknow argument: ${av[i]}`);
 	}
 
-	if (setting.urlRaw === "") {
+	if (setting.urlRaw === undefined) {
 		cleanUp(setting.db, `Need an Url`);
 	}
 
@@ -75,18 +78,15 @@ function parseO(oOpt, setting) {
 }
 
 export function urlParser(setting) {
-	const urlString = setting.urlRaw;
-	const index = urlString.indexOf('?');
-	setting.urlBase  = index === -1 ? urlString : urlString.slice(0, index);
-	setting.queryBase = index === -1 ? undefined  : urlString.slice(index + 1);
-
-	if (setting.queryBase === undefined) {
-		cleanUp(setting.db, "URL need a query to attempt injection");
+	const url = setting.urlRaw;
+	setting.urlPath = url.origin + url.pathname;
+	setting.urlQuery = url.searchParams;
+	if (setting.urlQuery.size < 1) {
+		cleanUp(setting.db, "URL need a valid query to attempt injection");
 	}
 
-	setting.query = new URLSearchParams(setting.queryBase);
 	print_info("Query parameters:");
-	for (let pair of setting.query.entries()) {
-		print_info(`${pair[0]} = ${pair[1]}`);
+	for (const [key, value] of setting.urlQuery.entries()) {
+		print_info(`${key} = ${value}`);
 	}
 }
