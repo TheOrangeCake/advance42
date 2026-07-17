@@ -4,7 +4,7 @@ import { detectFingerprint } from './fingerprint.js';
 import { injectable } from './injectable.js';
 import { cleanUpFatal } from './helper.js';
 import { testPostgresql } from './suitePostgresql.js';
-import { testMySQL } from './suiteSQL.js';
+import { testMySQL } from './suiteMySQL.js';
 
 console.log("Launching Vaccine...");
 
@@ -20,17 +20,17 @@ urlParser(setting);
 printInfo(`Setting -> x: ${setting.x} | o: ${setting.o} | path: ${setting.urlPath} | query: ${setting.urlQuery.toString()}`);
 
 const result = await injectable(setting);
-if (!result || !result.injectable)
+if (!result)
 	cleanUpFatal(setting.db, "URL is not injectable");
 printSuccess(`${setting.urlRaw} is INJECTABLE!`);
 
-const dbEngine = detectFingerprint(setting);
+const dbEngine = await detectFingerprint(setting);
 if (dbEngine === "POSTGRESQL")
 	testPostgresql(setting);
 else if (dbEngine === "SQL")
 	testMySQL(setting);
 else
-	cleanUpFatal(setting.db, "Unrecognized database engine");
+	cleanUpFatal(setting.db, `Unhandled database engine: ${dbEngine}`);
 
 // Code test suite for each engine, then run them for matching engine
 // Persist the data to db after successful test

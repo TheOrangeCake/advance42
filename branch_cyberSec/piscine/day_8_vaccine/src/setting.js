@@ -11,6 +11,7 @@ export class Setting {
 	urlPath;
 	urlQuery;
 	db;
+	contextChar;
 }
 
 export function parseAv(av) {
@@ -23,7 +24,7 @@ export function parseAv(av) {
 			case "-x":
 				const valX = av[++i];
 				if (valX === undefined) {
-						cleanUpFatal(setting.db, `Missing value for ${arg}`);
+					cleanUpFatal(setting.db, `Missing value for ${arg}`);
 				}
 				setting.x = parseX(valX.trim(), setting);
 				continue;
@@ -31,7 +32,7 @@ export function parseAv(av) {
 			case "-o":
 				const valO = av[++i];
 				if (valO === undefined) {
-						cleanUpFatal(setting.db, `Missing value for ${arg}`);
+					cleanUpFatal(setting.db, `Missing value for ${arg}`);
 				}
 				parseO(valO.trim(), setting);
 				continue;
@@ -54,8 +55,9 @@ export function parseAv(av) {
 		cleanUpFatal(setting.db, `Need an Url`);
 	}
 
-	if (setting.o === DEFAULT)
+	if (setting.o === DEFAULT) {
 		parseO(DEFAULT, setting);
+	}
 
 	return setting;
 }

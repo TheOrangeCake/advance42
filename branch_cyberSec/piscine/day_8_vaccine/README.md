@@ -2,7 +2,7 @@
 
 SQL injection exercise. Written in JavaScript (Node.js, `node:sqlite`).
 
-Test target: [vulnbank](https://vulnbank.org/) - [repo](https://github.com/Commando-X/vuln-bank)
+Test target: [VWAD entry](https://vwad.owasp.org/app/vulnbank/) - [vulnbank](https://vulnbank.org/) - [repo](https://github.com/Commando-X/vuln-bank)
 
 ## Database schema
 
