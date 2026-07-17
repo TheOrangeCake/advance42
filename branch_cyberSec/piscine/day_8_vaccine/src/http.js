@@ -35,8 +35,8 @@ async function sendPost(url, params) {
 	const start = performance.now();
 	const response = await fetch(url, {
 		method: "POST",
-		headers: { "Content-Type": "application/x-www-form-urlencoded" },
-		body: new URLSearchParams(params),
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(Object.fromEntries(params)),
 		signal: AbortSignal.timeout(TIMEOUT_MS),
 	});
 	const body = await response.text();

@@ -3,7 +3,7 @@ import { printFatal, printInfo, printSuccess } from './logger.js';
 import { detectFingerprint } from './fingerprint.js';
 import { injectable } from './injectable.js';
 import { cleanUpFatal } from './helper.js';
-import { testOracle } from './suiteOracle.js';
+import { testPostgresql } from './suitePostgresql.js';
 import { testMySQL } from './suiteSQL.js';
 
 console.log("Launching Vaccine...");
@@ -25,8 +25,8 @@ if (!result || !result.injectable)
 printSuccess(`${setting.urlRaw} is INJECTABLE!`);
 
 const dbEngine = detectFingerprint(setting);
-if (dbEngine === "Oracle")
-	testOracle(setting);
+if (dbEngine === "POSTGRESQL")
+	testPostgresql(setting);
 else if (dbEngine === "SQL")
 	testMySQL(setting);
 else

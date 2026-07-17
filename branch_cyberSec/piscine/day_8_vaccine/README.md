@@ -1,7 +1,8 @@
 # Vaccine
 
 SQL injection exercise. Written in JavaScript (Node.js, `node:sqlite`).
-Test target: http://testphp.vulnweb.com/listproducts.php?cat=1
+
+Test target: [vulnbank](https://vulnbank.org/) - [repo](https://github.com/Commando-X/vuln-bank)
 
 ## Database schema
 
