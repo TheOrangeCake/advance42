@@ -6,14 +6,14 @@ import { cleanUpFatal } from './helper.js';
 import { testPostgresql } from './suitePostgresql.js';
 import { testMySQL } from './suiteMySQL.js';
 
-console.log("Launching Vaccine...");
+printInfo("Launching Vaccine...");
 
 const av = process.argv.slice(2);
-
 if (av.length < 1) {
 	printFatal("Need an URL");
 	process.exit(1);
 }
+
 const setting = parseAv(av);
 urlParser(setting);
 

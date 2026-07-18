@@ -89,8 +89,8 @@ export function urlParser(setting) {
 		cleanUpFatal(setting.db, "URL need a valid query to attempt injection");
 	}
 
-	printInfo("Query parameters:");
-	for (const [key, value] of setting.urlQuery.entries()) {
-		printInfo(`${key} = ${value}`);
-	}
+	// printInfo("Query parameters:");
+	// for (const [key, value] of setting.urlQuery.entries()) {
+	// 	printInfo(`${key} = ${value}`);
+	// }
 }
