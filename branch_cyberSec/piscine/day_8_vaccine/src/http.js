@@ -1,4 +1,3 @@
-import { printError, printInfo } from "./logger.js";
 import { cleanUpFatal } from "./helper.js";
 
 const TIMEOUT_MS = 10000;

@@ -1,4 +1,4 @@
-import { parseAv, Setting, urlParser } from './setting.js';
+import { parseAv, urlParser } from './setting.js';
 import { printFatal, printInfo, printSuccess } from './logger.js';
 import { detectFingerprint } from './fingerprint.js';
 import { injectable } from './injectable.js';

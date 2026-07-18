@@ -1,2 +1,3 @@
 *.sqlite
 vulnerable-node
+node_modules

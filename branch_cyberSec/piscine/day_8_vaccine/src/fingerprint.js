@@ -1,4 +1,4 @@
-import { cleanUpFatal, cleanUpInfo, mutateQuery, isSameRes } from "./helper.js";
+import { mutateQuery, isSameRes } from "./helper.js";
 import { sendRequest } from "./http.js";
 import { printInfo, printSuccess } from "./logger.js";
 

@@ -1,5 +1,5 @@
 import { dbClose } from "./database.js";
-import { printFatal, printError, printSuccess, printInfo } from "./logger.js";
+import { printFatal, printInfo } from "./logger.js";
 
 export function cleanUpFatal(db, ...a) {
 	dbClose(db);

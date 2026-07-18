@@ -21,21 +21,23 @@ export function parseAv(av) {
 		let arg = av[i].trim();
 		switch (arg) {
 			case "-X":
-			case "-x":
+			case "-x": {
 				const valX = av[++i];
 				if (valX === undefined) {
 					cleanUpFatal(setting.db, `Missing value for ${arg}`);
 				}
 				setting.x = parseX(valX.trim(), setting);
 				continue;
+			}
 			case "-O":
-			case "-o":
+			case "-o": {
 				const valO = av[++i];
 				if (valO === undefined) {
 					cleanUpFatal(setting.db, `Missing value for ${arg}`);
 				}
 				parseO(valO.trim(), setting);
 				continue;
+			}
 		}
 		if (arg.startsWith("http://") || arg.startsWith("https://")) {
 			try {
@@ -45,7 +47,7 @@ export function parseAv(av) {
 				}
 				break;
 			} catch(error) {
-				cleanUpFatal(setting.db, `Invalid URL: ${arg}`);
+				cleanUpFatal(setting.db, `Invalid URL: ${error.message}`);
 			}
 		}
 		cleanUpFatal(setting.db, `Unknow argument: ${av[i]}`);
