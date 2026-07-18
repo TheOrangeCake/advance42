@@ -8,8 +8,9 @@ export async function injectable(setting) {
 	const resOriginal = await sendRequest(setting, query);
 
 	const tests = [
-		{ name: "singleQuote", first: "''", second: "'", char: "'"}, // error method: compare if an error is different
-		{ name: "string", first: '" AND "1"="1', second: '" AND "1"="2', char: '"'}, // boolean method: compare true and false results
+		{ name: "singleQuote", first: "''", second: "'", char: "'"},
+		{ name: "endQuote", first: "''", second: "';", char: "'"},
+		{ name: "string", first: '" AND "1"="1', second: '" AND "1"="2', char: '"'},
 		{ name: "number", first: " AND 1=1", second: " AND 1=2", char: ""}
 	]
 

@@ -1,6 +1,6 @@
 import { dbInit } from './database.js';
 import { cleanUpFatal } from './helper.js';
-import { printInfo, printError } from './logger.js';
+import { printError } from './logger.js';
 
 const DEFAULT = 'vaccine.sqlite';
 
@@ -88,9 +88,4 @@ export function urlParser(setting) {
 	if (setting.urlQuery.size < 1) {
 		cleanUpFatal(setting.db, "URL need a valid query to attempt injection");
 	}
-
-	// printInfo("Query parameters:");
-	// for (const [key, value] of setting.urlQuery.entries()) {
-	// 	printInfo(`${key} = ${value}`);
-	// }
 }

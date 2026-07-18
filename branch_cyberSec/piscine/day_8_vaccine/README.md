@@ -2,7 +2,9 @@
 
 SQL injection exercise. Written in JavaScript (Node.js, `node:sqlite`).
 
-Test target: [VWAD entry](https://vwad.owasp.org/app/vulnbank/) - [vulnbank](https://vulnbank.org/) - [repo](https://github.com/Commando-X/vuln-bank)
+Test target:
+- Postgresql: [VWAD entry](https://vwad.owasp.org/app/vulnbank/) - [vulnbank](https://vulnbank.org/) - [repo](https://github.com/Commando-X/vuln-bank)
+- Sqlite: [VWAD entry](https://vwad.owasp.org/app/owasp-juice-shop/) - [OWASP Juice Shop](https://juice-shop.herokuapp.com) - [repo](https://github.com/juice-shop/juice-shop)
 
 ## Database schema
 
@@ -61,3 +63,5 @@ erDiagram
 
 ## Ressources
 - [Detect database fingerprint](https://www.sqlinjection.net/database-fingerprinting/)
+- [Postgresql tests](https://swisskyrepo.github.io/PayloadsAllTheThings/SQL%20Injection/PostgreSQL%20Injection/)
+- [Juice Shop Guide](https://pwning.owasp-juice.shop/companion-guide/latest/)
