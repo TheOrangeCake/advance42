@@ -107,11 +107,11 @@ export function dbSaveTblName(db, dbId, name) {
 	).get(dbId, name).id;
 }
 
-export function dbSaveColName(db, tblId, name, dataType) {
+export function dbSaveColName(db, tblId, name) {
 	db.prepare(
-		`INSERT OR IGNORE INTO COL_NAME (tbl_id, name, data_type)
-		VALUES (?, ?, ?)`
-	).run(tblId, name, dataType);
+		`INSERT OR IGNORE INTO COL_NAME (tbl_id, name)
+		VALUES (?, ?)`
+	).run(tblId, name);
 	return db.prepare(
 			`SELECT id FROM COL_NAME WHERE tbl_id = ? AND name = ?`
 	).get(tblId, name).id;
