@@ -29,6 +29,10 @@ npm run vaccine -- -X POST "http://localhost:5000/login?username=test&password=t
 ```
 
 ### Spinning up the PostgreSQL target (vuln-bank)
+Install Vuln-bank:
+```bash
+./test_env.sh
+```
 
 A `Makefile` wraps the bundled `vuln-bank` docker-compose stack:
 

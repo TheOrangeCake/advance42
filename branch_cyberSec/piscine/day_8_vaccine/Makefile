@@ -1,30 +1,23 @@
-COMPOSE = docker compose -f vuln-bank/docker-compose.yml
+POSTGRESQL_COMPOSE = docker compose -f vuln-bank/docker-compose.yml
 
-.PHONY: rebuild up down restart logs ps build clean re
+.PHONY: postgresql-run postgresql-up postgresql-down build postgresql-clean postgresql-re
 
-rebuild:
-	$(COMPOSE) up -d --build
+run:
+	$(POSTGRESQL_COMPOSE) up -d --build
+
+postgresql-run:
+	$(POSTGRESQL_COMPOSE) up -d --build
 	
-up:
-	$(COMPOSE) up -d
+postgresql-up:
+	$(POSTGRESQL_COMPOSE) up -d
 
-down:
-	$(COMPOSE) down
+postgresql-down:
+	$(POSTGRESQL_COMPOSE) down
 
-restart:
-	$(COMPOSE) down
-	$(COMPOSE) up -d --build
+postgresql-build:
+	$(POSTGRESQL_COMPOSE) build
 
-logs:
-	$(COMPOSE) logs -f --tail=200
+postgresql-clean:
+	$(POSTGRESQL_COMPOSE) down -v
 
-ps:
-	$(COMPOSE) ps
-
-build:
-	$(COMPOSE) build
-
-clean:
-	$(COMPOSE) down -v
-
-re: clean rebuild
+postgresql-re: postgresql-clean postgresql-run

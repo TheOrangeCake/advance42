@@ -29,9 +29,7 @@ const dbEngine = await detectFingerprint(setting);
 if (dbEngine === "POSTGRESQL")
 	await testPostgresql(setting);
 else if (dbEngine === "SQL")
-	testSqlite(setting);
+	await testSqlite(setting);
 else
 	cleanUpFatal(setting.db, `Unhandled database engine: ${dbEngine}`);
 dbClose(setting.db);
-// Code test suite for each engine, then run them for matching engine
-// Persist the data to db after successful test
