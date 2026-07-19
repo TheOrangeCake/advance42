@@ -10,8 +10,9 @@ export class Setting {
 	urlRaw;
 	urlPath;
 	urlQuery;
-	db;
 	contextChar;
+	db;
+	scanId;
 }
 
 export function parseAv(av) {

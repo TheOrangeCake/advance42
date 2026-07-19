@@ -1,3 +1,4 @@
+import { dbSaveScan, dbSaveVulnerability } from "./database.js";
 import { mutateQuery, isSameRes } from "./helper.js";
 import { sendRequest } from "./http.js";
 import { printInfo, printSuccess } from "./logger.js";
@@ -20,9 +21,20 @@ export async function detectFingerprint(setting) {
 
 	for (const { name, expr } of probes) {
 		printInfo(`Testing for engine: ${name}`);
-		const res = await sendRequest(setting, mutateQuery(query, firstParamsName, `${firstParamsValue}${c} OR ${expr}-- 42`));
+
+		const payload = `${firstParamsValue}${c} OR ${expr}-- 42`;
+		const params = mutateQuery(query, firstParamsName, payload);
+
+		const res = await sendRequest(setting, params);
 		if (isSameRes(truePage, res)) {
 			printSuccess(`Engine Detected: ${name}`);
+
+			const method = setting.x;
+			let url = setting.urlPath.concat("?", params.toString());
+			const id = dbSaveScan(setting.db, url, method, name);1
+			setting.scanId = id;
+			dbSaveVulnerability(setting.db, id, firstParamsName, payload, "boolean");
+
 			return name;
 		}
 	}
