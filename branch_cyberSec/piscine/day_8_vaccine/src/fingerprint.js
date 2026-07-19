@@ -31,7 +31,7 @@ export async function detectFingerprint(setting) {
 
 			const method = setting.x;
 			let url = setting.urlPath.concat("?", params.toString());
-			const id = dbSaveScan(setting.db, url, method, name);1
+			const id = dbSaveScan(setting.db, url, method, name);
 			setting.scanId = id;
 			dbSaveVulnerability(setting.db, id, firstParamsName, payload, "boolean");
 

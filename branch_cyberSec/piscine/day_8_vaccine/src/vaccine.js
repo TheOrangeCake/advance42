@@ -5,6 +5,7 @@ import { injectable } from './injectable.js';
 import { cleanUpFatal } from './helper.js';
 import { testPostgresql } from './suitePostgresql.js';
 import { testSqlite } from './suiteSqlite.js';
+import { dbClose } from './database.js';
 
 printInfo("Launching Vaccine...");
 
@@ -26,11 +27,11 @@ printSuccess(`${setting.urlRaw} is INJECTABLE!`);
 
 const dbEngine = await detectFingerprint(setting);
 if (dbEngine === "POSTGRESQL")
-	testPostgresql(setting);
+	await testPostgresql(setting);
 else if (dbEngine === "SQL")
 	testSqlite(setting);
 else
 	cleanUpFatal(setting.db, `Unhandled database engine: ${dbEngine}`);
-
+dbClose(setting.db);
 // Code test suite for each engine, then run them for matching engine
 // Persist the data to db after successful test
