@@ -63,6 +63,7 @@ func main() {
 	echoInstance.Use(middleware.RequestID())
 
 	echoInstance.GET("/", handlers.PageLogin)
+	echoInstance.GET("/login", handlers.Login)
 	echoInstance.POST("/login", handlers.Login)
 	echoInstance.POST("/register", handlers.Register)
 	echoInstance.GET("/healthcheck", handlers.HealthCheck)

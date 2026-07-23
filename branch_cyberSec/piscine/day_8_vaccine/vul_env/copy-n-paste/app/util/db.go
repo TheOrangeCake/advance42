@@ -132,7 +132,7 @@ func InitDatabase() error {
 
 	defer dbConn.Close()
 
-	queryCreate := fmt.Sprint("CREATE TABLE Users (ID int NOT NULL AUTO_INCREMENT, Username varchar(20), Password varchar(80), PRIMARY KEY (ID))")
+	queryCreate := fmt.Sprint("CREATE TABLE IF NOT EXISTS Users (ID int NOT NULL AUTO_INCREMENT, Username varchar(20), Password varchar(80), PRIMARY KEY (ID))")
 	_, err = dbConn.Exec(queryCreate)
 	if err != nil {
 		errInitDB := fmt.Sprintf("InitDatabase error: %s", err)

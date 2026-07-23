@@ -1,4 +1,5 @@
 import { cleanUpFatal } from "./helper.js";
+// import { printInfo } from "./logger.js";
 
 const TIMEOUT_MS = 10000;
 
@@ -22,6 +23,7 @@ async function sendGet(url, params) {
 	const start = performance.now();
 	const target = new URL(url);
 	target.search = new URLSearchParams(params).toString();
+	// printInfo(`GET ${target.toString()}`);
 	const response = await fetch(target, {
 		method: "GET",
 		signal: AbortSignal.timeout(TIMEOUT_MS),
@@ -32,10 +34,12 @@ async function sendGet(url, params) {
 
 async function sendPost(url, params) {
 	const start = performance.now();
+	const payload = JSON.stringify(Object.fromEntries(params));
+	// printInfo(`POST ${url} ${payload}`);
 	const response = await fetch(url, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify(Object.fromEntries(params)),
+		body: payload,
 		signal: AbortSignal.timeout(TIMEOUT_MS),
 	});
 	const body = await response.text();

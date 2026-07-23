@@ -28,8 +28,9 @@ printSuccess(`${setting.urlRaw} is INJECTABLE!`);
 const dbEngine = await detectFingerprint(setting);
 if (dbEngine === "POSTGRESQL")
 	await testPostgresql(setting);
-else if (dbEngine === "SQL")
+else if (dbEngine === "MYSQL")
 	await testMySql(setting);
 else
 	cleanUpFatal(setting.db, `Unhandled database engine: ${dbEngine}`);
 dbClose(setting.db);
+printSuccess("All done! Bye!")

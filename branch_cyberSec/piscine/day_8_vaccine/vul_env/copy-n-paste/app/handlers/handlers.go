@@ -27,7 +27,7 @@ func Login(c echo.Context) error {
 	validUser, err := util.AuthenticateUser(loginAttempt.User, loginAttempt.Pass)
 	if err != nil {
 		msgUser := err.Error()
-		return c.JSON(http.StatusBadRequest, msgUser)
+		return c.String(http.StatusBadRequest, msgUser)
 	}
 
 	if validUser {

