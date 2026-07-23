@@ -51,7 +51,7 @@ export function parseAv(av) {
 				cleanUpFatal(setting.db, `Invalid URL: ${error.message}`);
 			}
 		}
-		cleanUpFatal(setting.db, `Unknow argument: ${av[i]}`);
+		cleanUpFatal(setting.db, `Unknown argument: ${av[i]}`);
 	}
 
 	if (setting.urlRaw === undefined) {
@@ -68,7 +68,7 @@ export function parseAv(av) {
 function parseX(xOpt, setting) {
 	const xOptUpper = xOpt.toUpperCase();
 	if (xOptUpper !== "GET" && xOptUpper !== "POST") {
-		cleanUpFatal(setting.db, `Unknow x option: ${xOpt}`);
+		cleanUpFatal(setting.db, `Unknown x option: ${xOpt}`);
 	}
 	return xOptUpper;
 }

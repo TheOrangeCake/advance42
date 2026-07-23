@@ -20,9 +20,7 @@ urlParser(setting);
 
 printInfo(`Setting -> x: ${setting.x} | o: ${setting.o} | path: ${setting.urlPath} | query: ${setting.urlQuery.toString()}`);
 
-const result = await injectable(setting);
-if (!result)
-	cleanUpFatal(setting.db, "URL is not injectable");
+await injectable(setting);
 printSuccess(`${setting.urlRaw} is INJECTABLE!`);
 
 const dbEngine = await detectFingerprint(setting);

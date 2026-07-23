@@ -12,8 +12,12 @@ Test targets:
 ## Usage
 
 ```
-node src/vaccine [-X GET|POST] [-o FILE] URL
+./vaccine [-X GET|POST] [-o FILE] URL
 ```
+
+`./vaccine` is an executable wrapper (`#!/usr/bin/env node`) that runs
+`src/vaccine.js`. Requires Node.js (uses the built-in `node:sqlite` module,
+Node ≥ 22).
 
 | Option | Meaning | Default |
 | --- | --- | --- |
@@ -24,9 +28,17 @@ node src/vaccine [-X GET|POST] [-o FILE] URL
 The **first** query parameter is the one attacked. For `POST`, the query
 parameters are serialized into a JSON request body.
 
+Three interchangeable ways to invoke it:
+
 ```bash
-npm run vaccine -- -X POST "http://localhost:5000/login?username=test&password=test"
+# executable wrapper
+./vaccine -X POST "http://localhost:5000/login?username=test&password=test"
+
+# npm script
 npm run vaccine -- -X POST "http://localhost:10001/login?user=test&pass=test"
+
+# node directly
+node src/vaccine.js -X POST "http://localhost:5000/login?username=test&password=test"
 ```
 
 ### Spinning up the targets
@@ -292,10 +304,75 @@ erDiagram
 `ROW_DUMP.data` holds one dumped record per row as a JSON object
 (`{"id":"1","username":"admin",...}`).
 
+## Verifying the stored data
+
+After a run, open the store with the `sqlite3` CLI (`sqlite3 vaccine.sqlite`, or
+whatever you passed to `-o`) and inspect what was persisted.
+
+```bash
+sqlite3 vaccine.sqlite          # open the store
+# inside the prompt:
+.tables                         # list the 6 tables
+.headers on                     # show column names in results
+.mode column                    # aligned output
+```
+
+**Scans** — every URL that was confirmed injectable:
+```sql
+SELECT id, url, method, db_engine, created_at FROM SCAN;
+```
+
+**Vulnerabilities** — the injectable parameter, payload, and technique per scan:
+```sql
+SELECT scan_id, parameter, technique, payload FROM VULNERABILITY;
+```
+
+**Enumerated schema** — database → tables → columns for the latest scan:
+```sql
+-- database name(s)
+SELECT name FROM DB_NAME WHERE scan_id = (SELECT max(id) FROM SCAN);
+
+-- tables of that database
+SELECT t.name AS "table"
+FROM TBL_NAME t
+JOIN DB_NAME d ON d.id = t.db_id
+WHERE d.scan_id = (SELECT max(id) FROM SCAN);
+
+-- columns grouped by table
+SELECT t.name AS "table", c.name AS "column"
+FROM COL_NAME c
+JOIN TBL_NAME t ON t.id = c.tbl_id
+ORDER BY t.name;
+```
+
+**Dumped rows** — the actual leaked data (one JSON object per row):
+```sql
+SELECT t.name AS "table", r.row_index, r.data
+FROM ROW_DUMP r
+JOIN TBL_NAME t ON t.id = r.tbl_id
+ORDER BY t.name, r.row_index;
+```
+
+Full picture in a single query — every finding joined together:
+```sql
+SELECT s.db_engine, d.name AS db, t.name AS "table", r.row_index, r.data
+FROM SCAN s
+JOIN DB_NAME  d ON d.scan_id = s.id
+JOIN TBL_NAME t ON t.db_id  = d.id
+JOIN ROW_DUMP r ON r.tbl_id = t.id
+ORDER BY s.id, t.name, r.row_index;
+```
+
+One-liner from the shell (no interactive prompt):
+```bash
+sqlite3 -header -column vaccine.sqlite "SELECT scan_id, parameter, technique FROM VULNERABILITY;"
+```
+
 ## Project layout
 
 | File | Role |
 | --- | --- |
+| `vaccine` | Executable wrapper (`#!/usr/bin/env node`) → `src/vaccine.js` |
 | `src/vaccine.js` | Entry point — orchestrates the pipeline |
 | `src/setting.js` | Argument / URL parsing, `Setting` object |
 | `src/injectable.js` | Injectability detection + escape context |

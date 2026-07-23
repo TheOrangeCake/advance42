@@ -34,7 +34,6 @@ export async function detectFingerprint(setting) {
 		printInfo(`Testing for engine: ${name}`);
 
 		const payload = `${firstParamsValue}${c} OR ${expr}-- 42`;
-		console.log(payload)
 		const params = mutateQuery(query, firstParamsName, payload);
 
 		const res = await sendRequest(setting, params);
