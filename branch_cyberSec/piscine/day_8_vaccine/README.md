@@ -6,7 +6,7 @@ enumerates and dumps the backend. Written in JavaScript.
 
 Test targets:
 - PostgreSQL: [VWAD entry](https://vwad.owasp.org/app/vulnbank/) · [vulnbank](https://vulnbank.org/) · [repo](https://github.com/Commando-X/vuln-bank)
-- SQLite: [VWAD entry](https://vwad.owasp.org/app/owasp-juice-shop/) · [OWASP Juice Shop](https://juice-shop.herokuapp.com) · [repo](https://github.com/juice-shop/juice-shop)
+- MySQL: [VWAD entry](https://vwad.owasp.org/app/secdevlabs/) · [repo](https://github.com/globocom/secDevLabs/tree/master/owasp-top10-2021-apps/a3/copy-n-paste)
 
 
 ## Usage

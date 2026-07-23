@@ -1,8 +1,18 @@
-POSTGRESQL_COMPOSE = docker compose -f vuln-bank/docker-compose.yml
+POSTGRESQL_COMPOSE = docker compose -f vul_env/vuln-bank/docker-compose.yml
 
-.PHONY: postgresql-run postgresql-up postgresql-down build postgresql-clean postgresql-re
+.PHONY: clean mysql postgresql mysql-down postgresql postgresql-up postgresql-down build postgresql-clean postgresql-re
 
-run:
+all: mysql postgresql
+
+clean: mysql-down postgresql-clean
+
+mysql:
+	cd ./vul_env/copy-n-paste && make install
+
+mysql-down:
+	cd ./vul_env/copy-n-paste && make compose-down
+
+postgresql:
 	$(POSTGRESQL_COMPOSE) up -d --build
 
 postgresql-run:
@@ -20,4 +30,4 @@ postgresql-build:
 postgresql-clean:
 	$(POSTGRESQL_COMPOSE) down -v
 
-postgresql-re: postgresql-clean postgresql-run
+postgresql-re: postgresql-clean postgresql
