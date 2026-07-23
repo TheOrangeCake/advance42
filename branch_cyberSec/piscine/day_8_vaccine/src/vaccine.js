@@ -4,7 +4,7 @@ import { detectFingerprint } from './fingerprint.js';
 import { injectable } from './injectable.js';
 import { cleanUpFatal } from './helper.js';
 import { testPostgresql } from './suitePostgresql.js';
-import { testSqlite } from './suiteSqlite.js';
+import { testMySql } from './suiteMySql.js';
 import { dbClose } from './database.js';
 
 printInfo("Launching Vaccine...");
@@ -29,7 +29,7 @@ const dbEngine = await detectFingerprint(setting);
 if (dbEngine === "POSTGRESQL")
 	await testPostgresql(setting);
 else if (dbEngine === "SQL")
-	await testSqlite(setting);
+	await testMySql(setting);
 else
 	cleanUpFatal(setting.db, `Unhandled database engine: ${dbEngine}`);
 dbClose(setting.db);

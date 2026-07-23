@@ -26,6 +26,7 @@ parameters are serialized into a JSON request body.
 
 ```bash
 npm run vaccine -- -X POST "http://localhost:5000/login?username=test&password=test"
+npm run vaccine -- -X POST "http://localhost:10001/login?user=test&pass=test"
 ```
 
 ### Spinning up the PostgreSQL target (vuln-bank)
