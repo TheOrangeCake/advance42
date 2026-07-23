@@ -388,4 +388,3 @@ sqlite3 -header -column vaccine.sqlite "SELECT scan_id, parameter, technique FRO
 - [Detect database fingerprint](https://www.sqlinjection.net/database-fingerprinting/)
 - [PostgreSQL injection payloads](https://swisskyrepo.github.io/PayloadsAllTheThings/SQL%20Injection/PostgreSQL%20Injection/)
 - [MySQL injection payloads](https://swisskyrepo.github.io/PayloadsAllTheThings/SQL%20Injection/MySQL%20Injection/)
-- [Juice Shop companion guide](https://pwning.owasp-juice.shop/companion-guide/latest/)
