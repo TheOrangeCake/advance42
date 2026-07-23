@@ -1,6 +1,6 @@
-import { printFatal, printInfo, printSuccess } from "./logger.js";
+import { printInfo, printSuccess } from "./logger.js";
 import { sendRequest } from "./http.js";
-import { mutateQuery } from "./helper.js";
+import { cleanUpFatal, mutateQuery } from "./helper.js";
 import { dbSaveColName, dbSaveDbName, dbSaveTblName, dbSaveVulnerability, dbSaveRowDump } from "./database.js";
 
 export async function testPostgresql(setting) {
@@ -24,7 +24,7 @@ async function getDatabaseName(setting, query, name, valueBase, c) {
 	const res = await sendRequest(setting, params);
 	const nameList = parseBody(res.body);
 	if (nameList.length === 0) {
-		printFatal(`Fail to get database name`);
+		cleanUpFatal(`Fail to get database name`);
 	}
 	printSuccess(`Database name: ${nameList}`);
 
@@ -42,7 +42,7 @@ async function getTblName(setting, query, name, valueBase, c, dbNameId) {
 	const tblNames = parseBody(res.body);
 	printSuccess(`Database tables: ${tblNames}`);
 	if (tblNames.length === 0) {
-		printFatal(`Fail to get table list`);
+		cleanUpFatal(`Fail to get table list`);
 	}
 	
 	dbSaveVulnerability(setting.db, setting.scanId, name, payload, "error");
@@ -64,7 +64,7 @@ async function getColumnName(setting, query, name, valueBase, c, tblList) {
 		const colNames = parseBody(res.body);
 		printSuccess(`Table ${table.tblName} columns: ${colNames}`);
 		if (colNames.length === 0) {
-			printFatal(`Fail to get column list`);
+			cleanUpFatal(`Fail to get column list`);
 		}
 
 		dbSaveVulnerability(setting.db, setting.scanId, name, payload, "error");

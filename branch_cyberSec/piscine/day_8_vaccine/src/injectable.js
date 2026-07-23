@@ -25,4 +25,3 @@ export async function injectable(setting) {
 
 	cleanUpFatal(setting.db, 'URL is not injectable');
 }
-// -1' UNION select 1,2,sleep(5) -- '
