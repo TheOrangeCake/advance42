@@ -20,7 +20,7 @@ export async function testMySql(setting) {
 async function getDatabaseName(setting, query, name, valueBase, c) {
 	const { value, payload } = await extractString(setting, query, name, valueBase, c, "SELECT database()");
 	if (value === null || value.length === 0) {
-		cleanUpFatal(`Fail to get database name`);
+		cleanUpFatal(setting.db, `Fail to get database name`);
 	}
 	printSuccess(`Database name: ${value}`);
 
@@ -34,7 +34,7 @@ async function getTblName(setting, query, name, valueBase, c, dbNameId) {
 	const subquery = "SELECT group_concat(table_name) FROM information_schema.tables WHERE table_schema=database()";
 	const { value, payload } = await extractString(setting, query, name, valueBase, c, subquery);
 	if (value === null || value.length === 0) {
-		cleanUpFatal(`Fail to get table list`);
+		cleanUpFatal(setting.db, `Fail to get table list`);
 	}
 	const tblNames = value.split(",");
 	printSuccess(`Database tables: ${tblNames}`);
@@ -54,7 +54,7 @@ async function getColumnName(setting, query, name, valueBase, c, tblList) {
 		const subquery = `SELECT group_concat(column_name) FROM information_schema.columns WHERE table_schema=database() AND table_name='${table.tblName}'`;
 		const { value, payload } = await extractString(setting, query, name, valueBase, c, subquery);
 		if (value === null || value.length === 0) {
-			cleanUpFatal(`Fail to get column list`);
+			cleanUpFatal(setting.db, `Fail to get column list`);
 		}
 		const colNames = value.split(",");
 		printSuccess(`Table ${table.tblName} columns: ${colNames}`);
