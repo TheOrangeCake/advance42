@@ -1,4 +1,5 @@
 My path to RNCP 7
+**Those that have link to repo are done** 
 
 RNCP 6:
 * Développement applicatif:
@@ -37,7 +38,7 @@ RNCP 7:
           
 Extra:
 * Cyber Security:
-    - **WORKING ON:** cybersecurity piscine (9'450)
+    - Cybersecurity piscine (9'450 DONE)
         - [Arachnida](./branch_cyberSec/piscine/day_1_arachnida) (Java. Concept: Web crawler, image metadata, Jpg, Png, Gif, Bmp metadata structure. Exp: 1'350)
         - [Ft_otp](./branch_cyberSec/piscine/day_2_ft_otp) (Python. Concept: TOTP, HOTP, encryption, hash, symetric key. Exp: 1'350)
         - [Ft_onion](./branch_cyberSec/piscine/day_3_ft_onion) (Concept: Tor network, Tor hidden service. Exp: 1'350)
