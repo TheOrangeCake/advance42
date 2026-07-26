@@ -11,9 +11,9 @@ let ft_power x y =
 	)
 
 
-let () =
+(* let () =
 	print_endline(string_of_int(ft_power 2 4));
 	print_endline(string_of_int(ft_power 3 0));
 	print_endline(string_of_int(ft_power 0 5));
 	(try print_endline (string_of_int (ft_power 0 0))
-		with Invalid_input -> print_endline "Invalid_input")
+		with Invalid_input -> print_endline "Invalid_input") *)
