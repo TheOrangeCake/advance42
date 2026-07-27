@@ -1,4 +1,17 @@
-exception Invalid_input
+let ft_power x y =
+	let rec power n =
+		if n = 0
+		then 1
+		else x * power (n - 1)
+	in power y
+
+(* let () =
+	print_endline(string_of_int(ft_power 2 4));
+	print_endline(string_of_int(ft_power 3 0));
+	print_endline(string_of_int(ft_power 0 5)); *)
+
+
+(* exception Invalid_input
 let ft_power x y =
 	if (x = 0 && y = 0) || x < 0 || y < 0
 	then raise Invalid_input
@@ -11,7 +24,7 @@ let ft_power x y =
 	)
 
 
-(* let () =
+let () =
 	print_endline(string_of_int(ft_power 2 4));
 	print_endline(string_of_int(ft_power 3 0));
 	print_endline(string_of_int(ft_power 0 5));
