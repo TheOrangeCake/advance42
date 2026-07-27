@@ -10,10 +10,7 @@ let ft_print_rev str =
   print_char '\n'
 
 (* let () =
-  try
-    ft_print_rev "Hello world !";
-    ft_print_rev "Evaluation";
-    ft_print_rev "From 42 Lausanne";
-    ft_print_rev ""
-  with
-    Invalid_argument msg -> print_endline ("Exception thrown: " ^ msg) *)
+  ft_print_rev "Hello world !";
+  ft_print_rev "Evaluation";
+  ft_print_rev "From 42 Lausanne";
+  ft_print_rev "" *)
