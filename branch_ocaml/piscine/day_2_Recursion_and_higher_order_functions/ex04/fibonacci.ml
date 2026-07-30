@@ -1,10 +1,16 @@
 let rec fibonacci n =
   if n < 0
     then -1
-  else if n = 0 || n = 1
-    then n
   else
-    fibonacci (n - 2) + fibonacci (n - 1)
+    let rec fibo n prev1 prev2 =
+      if n = 0 
+        then prev1
+      else if n = 1
+        then prev2
+      else
+        fibo (n - 1) prev2 (prev1 + prev2)
+      in fibo n 0 1
+      
 
 let () =
     assert (fibonacci (-42) = -1);
