@@ -6,16 +6,9 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/07/31 15:09:12 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/07/31 16:46:58 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/07/31 17:03:55 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
-
-let f i =
-  let sign =
-    if i mod 2 = 0
-      then 1.0
-      else -1.0
-  in sign /. float_of_int (2 * i + 1)
 
 let leibniz_pi delta =
   if delta < 0.
@@ -32,30 +25,42 @@ let leibniz_pi delta =
       in if gap <= delta
         then i
       else
-        leibniz (i + 1) (acc +. f i)
+        let f i =
+          let sign =
+            if i mod 2 = 0
+              then 1.0
+              else -1.0
+          in sign /. float_of_int (2 * i + 1)
+        in leibniz (i + 1) (acc +. f i)
     in leibniz 0 acc
 
-(* let approx n =
-  let acc = 0. in
-  let rec go i acc =
-    if i >= n
-      then 4. *. acc
-    else
-      go (i + 1) (acc +. f i)
-  in go 0 acc
-
-let dist n =
-  let d = approx n -. (4. *. atan 1.) in
-  if d < 0.
-    then -. d
-  else d
-
-let check delta =
-  let step = leibniz_pi delta in
-  assert (dist step <= delta);
-  assert (step = 0 || dist (step - 1) > delta)
-
-let () =
+(* let () =
+  let f i =
+    let sign =
+      if i mod 2 = 0
+        then 1.0
+        else -1.0
+    in sign /. float_of_int (2 * i + 1)
+  in
+  let approx n =
+    let rec go i acc =
+      if i >= n
+        then 4. *. acc
+      else
+        go (i + 1) (acc +. f i)
+    in go 0 0.
+  in
+  let dist n =
+    let d = approx n -. (4. *. atan 1.) in
+    if d < 0.
+      then -. d
+    else d
+  in
+  let check delta =
+    let step = leibniz_pi delta in
+    assert (dist step <= delta);
+    assert (step = 0 || dist (step - 1) > delta)
+  in
   assert (leibniz_pi (-1.) = -1);
   assert (leibniz_pi (-0.0001) = -1);
   assert (leibniz_pi 4. = 0);
