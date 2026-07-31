@@ -1,26 +1,28 @@
 (* ************************************************************************** *)
 (*                                                                            *)
 (*                                                        :::      ::::::::   *)
-(*   ft_print_alphabet.ml                               :+:      :+:    :+:   *)
+(*   iter.ml                                            :+:      :+:    :+:   *)
 (*                                                    +:+ +:+         +:+     *)
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
-(*   Created: 2026/07/31 12:54:15 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/07/31 12:54:16 by hoannguy         ###   ########.fr       *)
+(*   Created: 2026/07/31 12:52:17 by hoannguy          #+#    #+#             *)
+(*   Updated: 2026/07/31 12:52:27 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
-let ft_print_alphabet () =
-  let first = int_of_char 'a' in
-  let last = int_of_char 'z' in
-  let rec alphabet current =
-    if current <> last + 1
-    then (
-      print_char(char_of_int current);
-      alphabet (current + 1)
-    ) in
-    alphabet first;
-    print_char '\n'
+let rec iter f x n =
+  if n < 0
+    then -1
+  else if n = 0
+    then x
+  else
+    iter f (f x) (n - 1)
+
+let multi = fun x -> x * x
+let multi2 = fun x -> x * 2
 
 (* let () =
-  ft_print_alphabet() *)
+    assert (iter multi 2 4 = 65536);
+    assert (iter multi2 2 4 = 32);
+    assert (iter multi 2 (-10) = -1);
+    assert (iter multi 2 0 = 2); *)
