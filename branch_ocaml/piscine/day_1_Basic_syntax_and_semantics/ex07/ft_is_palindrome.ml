@@ -26,7 +26,7 @@ let ft_is_palindrome str =
             false
   in palindrome 0 (len - 1)
 
-(* let () =
+let () =
   if ft_is_palindrome "radar"
     then
       print_endline "Ok"
@@ -46,4 +46,4 @@ let ft_is_palindrome str =
     then
       print_endline "Ok"
     else
-      print_endline "Nope" *)
+      print_endline "Nope"

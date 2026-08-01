@@ -24,9 +24,9 @@ let fibonacci n =
       in fibo n 0 1
       
 
-(* let () =
+let () =
     assert (fibonacci (-42) = -1);
     assert (fibonacci 0 = 0);
     assert (fibonacci 1 = 1);
     assert (fibonacci 3 = 2);
-    assert (fibonacci 6 = 8); *)
+    assert (fibonacci 6 = 8);

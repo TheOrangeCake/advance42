@@ -17,10 +17,10 @@ let ft_power x y =
 		else x * power (n - 1)
 	in power y
 
-(* let () =
+let () =
 	print_endline(string_of_int(ft_power 2 4));
 	print_endline(string_of_int(ft_power 3 0));
-	print_endline(string_of_int(ft_power 0 5)); *)
+	print_endline(string_of_int(ft_power 0 5));
 
 
 (* exception Invalid_input

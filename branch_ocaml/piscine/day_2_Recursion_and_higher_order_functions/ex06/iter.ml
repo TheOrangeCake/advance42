@@ -18,10 +18,10 @@ let rec iter f x n =
   else
     iter f (f x) (n - 1)
 
-(* let () =
+let () =
     let multi = fun x -> x * x in
     let multi2 = fun x -> x * 2 in
     assert (iter multi 2 4 = 65536);
     assert (iter multi2 2 4 = 32);
     assert (iter multi 2 (-10) = -1);
-    assert (iter multi 2 0 = 2); *)
+    assert (iter multi 2 0 = 2);

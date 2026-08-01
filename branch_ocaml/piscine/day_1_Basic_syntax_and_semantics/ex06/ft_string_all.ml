@@ -25,7 +25,7 @@ let ft_string_all f str =
         true
   in apply (len - 1)
 
-(* let is_digit c =
+let is_digit c =
   c >= '0' && c <= '9'
 
 let () =
@@ -38,4 +38,4 @@ let () =
     then
       print_endline "Ok"
     else
-      print_endline "Nope" *)
+      print_endline "Nope"

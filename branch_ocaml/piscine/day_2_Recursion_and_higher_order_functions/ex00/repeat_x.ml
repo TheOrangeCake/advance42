@@ -23,10 +23,9 @@ let repeat_x n =
           repeat (x - 1) (acc ^ "x")
       in repeat n ""
 
-(* let () =
+let () =
   assert (repeat_x (-1) = "Error");
   assert (repeat_x 0 = "");
   assert (repeat_x 1 = "x");
   assert (repeat_x 2 = "xx");
   assert (repeat_x 5 = "xxxxx");
-  assert (repeat_x 2 = "xxx"); *)

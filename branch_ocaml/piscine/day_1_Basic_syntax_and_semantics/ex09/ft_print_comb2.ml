@@ -41,5 +41,5 @@ let ft_print_comb2 () =
         in loop_b (a + 1)
   in loop_a 0
 
-(* let () =
-  ft_print_comb2 () *)
+let () =
+  ft_print_comb2 ()

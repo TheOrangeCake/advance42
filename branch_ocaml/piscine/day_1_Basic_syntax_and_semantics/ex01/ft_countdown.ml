@@ -21,9 +21,9 @@ let rec ft_countdown x =
 		ft_countdown(x - 1)
 	)
 
-(* let () =
+let () =
 	ft_countdown 5;
 	print_char '\n';
 	ft_countdown 0;
 	print_char '\n';
-	ft_countdown (-10) *)
+	ft_countdown (-10)

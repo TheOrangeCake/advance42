@@ -21,7 +21,7 @@ let rec converges f x n =
       converges f result (n - 1)
 
 
-(* let () =
+let () =
     let div = fun x -> x / 2 in
     let double = fun x -> ( * ) 2 x in
     let concat = fun str -> str ^ "42" in
@@ -30,4 +30,4 @@ let rec converges f x n =
     assert (converges div 2 2 = true);
     assert (converges div 8 2 = false);
     assert (converges div 2 (-2) = false);
-    assert (converges concat "test" 2 = false) *)
+    assert (converges concat "test" 2 = false)

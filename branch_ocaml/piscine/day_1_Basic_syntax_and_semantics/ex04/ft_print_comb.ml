@@ -44,6 +44,5 @@ let ft_print_comb () =
       in increase_b (a + 1)
     )
     in increase_a 0
-(* 
 let () =
-  ft_print_comb() *)
+  ft_print_comb()

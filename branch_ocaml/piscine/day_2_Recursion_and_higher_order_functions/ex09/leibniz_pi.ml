@@ -34,7 +34,7 @@ let leibniz_pi delta =
         in leibniz (i + 1) (acc +. f i)
     in leibniz 0 acc
 
-(* let () =
+let () =
   let f i =
     let sign =
       if i mod 2 = 0
@@ -68,4 +68,4 @@ let leibniz_pi delta =
   check 0.5;
   check 0.1;
   check 0.01;
-  check 0.001 *)
+  check 0.001

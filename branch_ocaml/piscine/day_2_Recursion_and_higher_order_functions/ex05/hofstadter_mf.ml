@@ -25,8 +25,8 @@ and hfs_m n =
   else
     n - hfs_f (hfs_m (n - 1))
 
-(* let () =
+let () =
     assert (hfs_m 0 = 0);
     assert (hfs_f 0 = 1);
     assert (hfs_m 4 = 2);
-    assert (hfs_f 4 = 3); *)
+    assert (hfs_f 4 = 3);

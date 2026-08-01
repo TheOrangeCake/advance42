@@ -23,8 +23,8 @@ let ft_sum f lower upper =
         sum (low + 1) result
     in sum lower acc
 
-(* let () =
+let () =
     let squr i = float_of_int (i * i) in
     assert (Float.is_nan (ft_sum squr 2 1));
-    assert (ft_sum squr 1 10 = 385.) *)
+    assert (ft_sum squr 1 10 = 385.)
   

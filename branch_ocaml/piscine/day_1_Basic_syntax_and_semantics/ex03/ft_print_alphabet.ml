@@ -22,5 +22,5 @@ let ft_print_alphabet () =
     alphabet first;
     print_char '\n'
 
-(* let () =
-  ft_print_alphabet() *)
+let () =
+  ft_print_alphabet()
