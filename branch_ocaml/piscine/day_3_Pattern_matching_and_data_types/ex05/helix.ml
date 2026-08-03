@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/08/02 23:20:11 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/08/03 14:45:51 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/08/03 16:13:28 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -34,7 +34,7 @@ let rec rev acc lst =
 
 type helix = nucleotide list
 
-let generate_helix n : helix=
+let generate_helix n : helix =
   Random.self_init ();
   let rec generate lst count =
     if count >= n
@@ -49,5 +49,41 @@ let generate_helix n : helix=
       in generate ((generate_nucleotide c) :: lst) (count + 1)
     in rev [] (generate [] 0)
 
+let string_of_nucleobase = function
+    | A -> "A"
+    | T -> "T"
+    | C -> "C"
+    | G -> "G"
+    | None -> "None"
 
-        
+let helix_to_string (h: helix) : string =
+  let rec convert = function
+    | [] -> ""
+    | (_, _, b) :: t -> (string_of_nucleobase b) ^ (convert t)
+  in convert h
+
+let rec complementary_helix (h: helix) :helix =
+  match h with
+  | [] -> []
+  | (p, d, b) :: rest -> 
+      let base = match b with
+      | A -> T
+      | T -> A
+      | C -> G
+      | G -> C
+      | None -> None
+      in (p, d, base) :: complementary_helix rest
+
+let () =
+  let h = [generate_nucleotide 'A'; generate_nucleotide 'T';
+            generate_nucleotide 'C'; generate_nucleotide 'G'] in
+  assert (helix_to_string h = "ATCG");
+  assert (helix_to_string (complementary_helix h) = "TAGC");
+  assert (generate_helix 0 = []);
+  assert (helix_to_string [] = "");
+  assert (String.length (helix_to_string (generate_helix 30)) = 30);
+  let helix = generate_helix 6
+  in let complement = complementary_helix helix
+  in 
+  print_endline (helix_to_string helix);
+  print_endline (helix_to_string complement)
