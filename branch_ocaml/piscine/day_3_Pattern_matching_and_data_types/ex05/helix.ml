@@ -74,6 +74,10 @@ let rec complementary_helix (h: helix) :helix =
       | None -> None
       in (p, d, base) :: complementary_helix rest
 
+let rec length = function
+  | [] -> 0
+  | _ :: t -> 1 + length t
+
 let () =
   let h = [generate_nucleotide 'A'; generate_nucleotide 'T';
             generate_nucleotide 'C'; generate_nucleotide 'G'] in
@@ -81,7 +85,7 @@ let () =
   assert (helix_to_string (complementary_helix h) = "TAGC");
   assert (generate_helix 0 = []);
   assert (helix_to_string [] = "");
-  assert (String.length (helix_to_string (generate_helix 30)) = 30);
+  assert (length (generate_helix 30) = 30);
   let helix = generate_helix 6
   in let complement = complementary_helix helix
   in 

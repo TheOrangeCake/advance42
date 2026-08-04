@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/08/02 23:20:11 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/08/04 23:55:48 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/08/05 00:03:14 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -177,10 +177,12 @@ let print_triplets t =
   in print t
 
 (* ex08 *)
-let life s =
+let life (s: string) =
   let helix = generate_helix 16 in
     let rna = generate_rna helix in
     let protein = decode_arn rna in
+    print_string "Sample:            ";
+    print_endline s;
     print_string "Generated helix:   ";
     print_endline (helix_to_string helix);
     print_string "Generated rna:     ";
@@ -189,10 +191,10 @@ let life s =
     print_endline (string_of_protein protein)
 
 let () =
-  life();
+  life "Sample A";
   print_char '\n';
-  life();
+  life "Sample B";
   print_char '\n';
-  life();
+  life "Sample C";
   print_char '\n';
-  life()
+  life "Sample D"

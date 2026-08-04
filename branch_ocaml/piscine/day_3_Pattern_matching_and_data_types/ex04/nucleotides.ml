@@ -27,6 +27,24 @@ let generate_nucleotide (c: char) : nucleotide =
 
   in ("phosphate", "deoxyribose", base)
 
+let print_nucleotide ((p, d, b): nucleotide) =
+  let base = match b with
+    | A -> "A"
+    | T -> "T"
+    | C -> "C"
+    | G -> "G"
+    | None -> "None"
+
+  in print_string "("; print_string p; print_string ", ";
+     print_string d; print_string ", "; print_string base;
+     print_endline ")"
+
+let print_test c =
+  print_string "generate_nucleotide '";
+  print_char c;
+  print_string "' = ";
+  print_nucleotide (generate_nucleotide c)
+
 let () =
   assert (generate_nucleotide 'A' = ("phosphate", "deoxyribose", A));
   assert (generate_nucleotide 'T' = ("phosphate", "deoxyribose", T));
@@ -34,4 +52,12 @@ let () =
   assert (generate_nucleotide 'G' = ("phosphate", "deoxyribose", G));
   assert (generate_nucleotide 'a' = ("phosphate", "deoxyribose", A));
   assert (generate_nucleotide 'x' = ("phosphate", "deoxyribose", None));
-  assert (generate_nucleotide ' ' = ("phosphate", "deoxyribose", None))
+  assert (generate_nucleotide ' ' = ("phosphate", "deoxyribose", None));
+
+  print_test 'A';
+  print_test 'T';
+  print_test 'C';
+  print_test 'G';
+  print_test 'a';
+  print_test 'x';
+  print_test ' '

@@ -51,6 +51,13 @@ let sequence n =
         
       in to_string (loop 1 [1]) ""
 
+let print_sequence n =
+  print_string "sequence ";
+  print_int n;
+  print_string " = \"";
+  print_string (sequence n);
+  print_endline "\""
+
 let () =
     assert (sequence 1 = "1");
     assert (sequence 2 = "11");
@@ -61,4 +68,15 @@ let () =
     assert (sequence 7 = "13112221");
     assert (sequence 8 = "1113213211");
     assert (sequence 0 = "");
-    assert (sequence (-1) = "")
+    assert (sequence (-1) = "");
+
+    print_sequence 1;
+    print_sequence 2;
+    print_sequence 3;
+    print_sequence 4;
+    print_sequence 5;
+    print_sequence 6;
+    print_sequence 7;
+    print_sequence 8;
+    print_sequence 0;
+    print_sequence (-1)
