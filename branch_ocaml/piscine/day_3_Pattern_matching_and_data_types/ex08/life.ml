@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/08/02 23:20:11 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/08/04 23:17:08 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/08/04 23:55:48 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -87,6 +87,12 @@ let generate_rna (h: helix) : rna =
     | (_, _, b) :: rest ->
         (if b = T then U else b) :: (generate rest)
   in generate complement
+
+let print_rna (r: rna) : unit =
+  let rec print = function
+    | [] -> print_newline ()
+    | b :: t -> print_string (string_of_nucleobase b); print t
+  in print r
 
 (* ex07 *)
 let rec generate_bases_triplets (r: rna) : (nucleobase * nucleobase * nucleobase) list =
@@ -171,3 +177,22 @@ let print_triplets t =
   in print t
 
 (* ex08 *)
+let life s =
+  let helix = generate_helix 16 in
+    let rna = generate_rna helix in
+    let protein = decode_arn rna in
+    print_string "Generated helix:   ";
+    print_endline (helix_to_string helix);
+    print_string "Generated rna:     ";
+    print_rna rna;
+    print_string "Generated protein: ";
+    print_endline (string_of_protein protein)
+
+let () =
+  life();
+  print_char '\n';
+  life();
+  print_char '\n';
+  life();
+  print_char '\n';
+  life()
