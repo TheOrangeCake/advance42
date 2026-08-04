@@ -1,12 +1,12 @@
 (* ************************************************************************** *)
 (*                                                                            *)
 (*                                                        :::      ::::::::   *)
-(*   ribosome.ml                                        :+:      :+:    :+:   *)
+(*   life.ml                                            :+:      :+:    :+:   *)
 (*                                                    +:+ +:+         +:+     *)
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/08/02 23:20:11 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/08/04 23:08:14 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/08/04 23:08:39 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -112,12 +112,4 @@ let print_triplets t =
         print rest
   in print t
 
-let () =
-  print_triplets (generate_bases_triplets [A; U; C; G; A; C]);
-  print_triplets (generate_bases_triplets [A; U; C; G; A; C; G; G]);
-  let p1 = decode_arn [A; U; G; U; U; U; G; G; G]
-  in let p2 = decode_arn [A; U; G; U; U; U; U; A; A; A; U; G; C; A; U]
-  in print_endline (string_of_protein p1);
-  print_endline (string_of_protein p2);
-  assert (p1 = [Met; Phe; Gly]);
-  assert (p2 = [Met; Phe])
+(* ex08 *)
