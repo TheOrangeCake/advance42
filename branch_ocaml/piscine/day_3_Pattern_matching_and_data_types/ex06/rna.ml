@@ -57,11 +57,14 @@ let string_of_nucleobase = function
     | U -> "U"
     | None -> ""
 
+let helix_to_string (h: helix) : string =
+  let rec convert = function
+    | [] -> ""
+    | (_, _, b) :: t -> (string_of_nucleobase b) ^ (convert t)
+  in convert h
+
 let print_helix (h: helix) : unit =
-  let rec print = function
-    | [] -> print_newline ()
-    | (_, _, b) :: t -> print_string (string_of_nucleobase b); print t
-  in print h
+  print_endline (helix_to_string h)
 
 let rec complementary_helix (h: helix) :helix =
   match h with

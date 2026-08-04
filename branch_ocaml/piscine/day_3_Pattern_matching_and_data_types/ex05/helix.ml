@@ -54,7 +54,7 @@ let string_of_nucleobase = function
     | T -> "T"
     | C -> "C"
     | G -> "G"
-    | None -> "None"
+    | None -> ""
 
 let helix_to_string (h: helix) : string =
   let rec convert = function
