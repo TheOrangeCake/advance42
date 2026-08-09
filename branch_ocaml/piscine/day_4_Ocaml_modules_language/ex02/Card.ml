@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/08/07 23:20:15 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/08/08 14:06:03 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/08/09 15:30:32 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -117,16 +117,25 @@ type t = Value.t * Color.t
 let newCard (v : Value.t) (c: Color.t) : t =
   (v, c)
 
-let allSpades : t list =
-  [(Value.T2, Color.Spade); (Value.T3, Color.Spade); (Value.T4, Color.Spade);
-   (Value.T5, Color.Spade); (Value.T6, Color.Spade); (Value.T7, Color.Spade);
-   (Value.T8, Color.Spade); (Value.T9, Color.Spade); (Value.T10, Color.Spade);
-   (Value.Jack, Color.Spade); (Value.Queen, Color.Spade); (Value.King, Color.Spade);
-   (Value.As, Color.Spade)]
+let allSpades : t list = List.map (fun v -> newCard v Color.Spade) Value.all
+let allHearts : t list = List.map (fun v -> newCard v Color.Heart) Value.all
+let allDiamonds : t list = List.map (fun v -> newCard v Color.Diamond) Value.all
+let allClubs : t list = List.map (fun v -> newCard v Color.Club) Value.all
+let all : t list = allSpades @ allHearts @ allDiamonds @ allClubs
 
-let allHearts : t list =
-  [(Value.T2, Color.Heart); (Value.T3, Color.Heart); (Value.T4, Color.Heart);
-   (Value.T5, Color.Heart); (Value.T6, Color.Heart); (Value.T7, Color.Heart);
-   (Value.T8, Color.Heart); (Value.T9, Color.Heart); (Value.T10, Color.Heart);
-   (Value.Jack, Color.Heart); (Value.Queen, Color.Heart); (Value.King, Color.Heart);
-   (Value.As, Color.Heart)]
+let getValue (t : t) = match t with (v , _) -> v
+let getColor (t : t) = match t with (_, c) -> c
+
+let toString (t : t) =
+  match t with
+  | (v, c) -> Value.toString v ^ Color.toString c
+
+let toStringVerbose (t : t) =
+  match t with
+  | (v, c) -> "Card("
+    ^ Value.toStringVerbose v
+    ^ ", "
+    ^ Color.toStringVerbose c
+    ^ ")"
+
+(* let compare (card1: t) (card2: t) = *)
