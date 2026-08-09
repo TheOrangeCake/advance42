@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/08/07 23:20:15 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/08/09 15:30:32 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/08/09 16:13:18 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -138,4 +138,15 @@ let toStringVerbose (t : t) =
     ^ Color.toStringVerbose c
     ^ ")"
 
-(* let compare (card1: t) (card2: t) = *)
+let compare (card1: t) (card2: t) =
+  match card1 with
+  | (v1, _) ->
+    match card2 with
+    | (v2, _) ->
+      let v1i = Value.toInt v1 in
+      let v2i = Value.toInt v2 in
+      if v1i = v2i then 0
+      else if v1i < v2i then -1
+      else 1
+
+
