@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/08/07 23:20:15 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/08/09 16:13:18 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/08/10 00:07:21 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -149,4 +149,38 @@ let compare (card1: t) (card2: t) =
       else if v1i < v2i then -1
       else 1
 
+let max (card1: t) (card2: t) =
+  match card1 with
+  | (v1, _) ->
+    let v1i = Value.toInt v1 in
+    match card2 with
+    | (v2, _) ->
+      let v2i = Value.toInt v2 in
+      if v1i >= v2i then card1
+      else card2
 
+let min (card1: t) (card2: t) =
+  if max card1 card2 = card1 then card2
+  else card1
+
+let best (lst: t list) =
+  match lst with
+  | [] -> invalid_arg "Empty list"
+  | card :: [] -> card
+  | card :: _ -> List.fold_left max card lst
+
+let isOf (card: t) (color: Color.t) =
+  match card with
+  | (_, c) -> c = color
+let isSpade (card: t) =
+  match card with
+  | (_, c) -> c = Color.Spade
+let isHeart (card: t) =
+  match card with
+  | (_, c) -> c = Color.Heart
+let isDiamond (card: t) =
+  match card with
+  | (_, c) -> c = Color.Diamond
+let isClub (card: t) =
+  match card with
+  | (_, c) -> c = Color.Club
