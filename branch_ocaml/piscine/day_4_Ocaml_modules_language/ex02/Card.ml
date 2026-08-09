@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/08/07 23:20:15 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/08/10 00:07:21 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/08/10 00:28:21 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -123,64 +123,46 @@ let allDiamonds : t list = List.map (fun v -> newCard v Color.Diamond) Value.all
 let allClubs : t list = List.map (fun v -> newCard v Color.Club) Value.all
 let all : t list = allSpades @ allHearts @ allDiamonds @ allClubs
 
-let getValue (t : t) = match t with (v , _) -> v
-let getColor (t : t) = match t with (_, c) -> c
+let getValue : t -> Value.t = function (v , _) -> v
+let getColor : t -> Color.t = function (_, c) -> c
 
-let toString (t : t) =
-  match t with
-  | (v, c) -> Value.toString v ^ Color.toString c
+let toString t =
+  Value.toString (getValue t) ^ Color.toString (getColor t)
 
-let toStringVerbose (t : t) =
-  match t with
-  | (v, c) -> "Card("
-    ^ Value.toStringVerbose v
+let toStringVerbose t =
+  "Card("
+    ^ Value.toStringVerbose (getValue t)
     ^ ", "
-    ^ Color.toStringVerbose c
+    ^ Color.toStringVerbose (getColor t)
     ^ ")"
 
-let compare (card1: t) (card2: t) =
-  match card1 with
-  | (v1, _) ->
-    match card2 with
-    | (v2, _) ->
-      let v1i = Value.toInt v1 in
-      let v2i = Value.toInt v2 in
-      if v1i = v2i then 0
-      else if v1i < v2i then -1
-      else 1
+let compare card1 card2 =
+  let v1i = Value.toInt (getValue card1) in
+  let v2i = Value.toInt (getValue card2) in
+  if v1i = v2i then 0
+  else if v1i < v2i then -1
+  else 1
 
-let max (card1: t) (card2: t) =
-  match card1 with
-  | (v1, _) ->
-    let v1i = Value.toInt v1 in
-    match card2 with
-    | (v2, _) ->
-      let v2i = Value.toInt v2 in
-      if v1i >= v2i then card1
-      else card2
+let max card1 card2 =
+  if Value.toInt (getValue card1) >= Value.toInt (getValue card2) then card1
+  else card2
 
-let min (card1: t) (card2: t) =
-  if max card1 card2 = card1 then card2
-  else card1
+let min card1 card2 =
+  if Value.toInt (getValue card1) <= Value.toInt (getValue card2) then card1
+  else card2
 
-let best (lst: t list) =
+let best lst =
   match lst with
   | [] -> invalid_arg "Empty list"
-  | card :: [] -> card
-  | card :: _ -> List.fold_left max card lst
+  | card :: rest -> List.fold_left max card rest
 
-let isOf (card: t) (color: Color.t) =
-  match card with
-  | (_, c) -> c = color
-let isSpade (card: t) =
-  match card with
-  | (_, c) -> c = Color.Spade
-let isHeart (card: t) =
-  match card with
-  | (_, c) -> c = Color.Heart
-let isDiamond (card: t) =
-  match card with
-  | (_, c) -> c = Color.Diamond
-let isClub (card: t) =
-  match card with
-  | (_, c) -> c = Color.Club
+let isOf card color =
+  getColor card = color
+let isSpade card =
+  getColor card = Color.Spade
+let isHeart card =
+  getColor card = Color.Heart
+let isDiamond card =
+  getColor card = Color.Diamond
+let isClub card =
+  getColor card = Color.Club
