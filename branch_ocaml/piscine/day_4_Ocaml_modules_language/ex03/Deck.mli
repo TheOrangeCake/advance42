@@ -39,7 +39,7 @@ module Card : sig
 end
 
 type t
-val newDeck : t
+val newDeck : unit -> t
 val toStringList : t -> string list
 val toStringListVerbose : t -> string list
 val drawCard : t -> Card.card * t

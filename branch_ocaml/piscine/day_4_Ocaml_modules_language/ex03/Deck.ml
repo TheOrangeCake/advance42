@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/08/12 15:02:48 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/08/16 20:24:51 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/08/16 20:36:55 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -164,3 +164,7 @@ module Card = struct
 end
 
 type t = Card.card list
+
+let newDeck () =
+	Random.init;;
+	
