@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/08/12 15:02:48 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/08/16 20:36:55 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/08/16 23:03:56 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -163,8 +163,23 @@ module Card = struct
 	let isClub card = getColor card = Color.Club
 end
 
+let () = Random.self_init ()
+
 type t = Card.card list
 
 let newDeck () =
-	Random.init;;
-	
+	Card.all
+	|> List.map (fun c -> (Random.bits () , c))
+	|> List.sort (fun (a, _) (b, _) -> compare a b)
+	|> List.map snd
+
+let toStringList (deck: t) =
+	deck |> List.map Card.toString
+
+let toStringListVerbose (deck: t) =
+	deck |> List.map Card.toStringVerbose
+
+let drawCard (deck: t) =
+	match deck with
+	| [] -> failwith "deck is empty"
+	| h :: t -> (h, t)
