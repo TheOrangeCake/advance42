@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/08/12 15:02:48 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/08/16 23:03:56 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/08/19 17:49:39 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -181,5 +181,5 @@ let toStringListVerbose (deck: t) =
 
 let drawCard (deck: t) =
 	match deck with
-	| [] -> failwith "deck is empty"
+	| [] -> raise (Failure "deck is empty")
 	| h :: t -> (h, t)
