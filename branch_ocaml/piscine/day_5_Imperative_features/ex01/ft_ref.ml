@@ -6,11 +6,11 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/08/19 23:36:06 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/08/21 00:29:20 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/08/21 00:34:11 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
-type 'a ft_ref = { mutable value: 'a}
+type 'a ft_ref = { mutable contents: 'a}
 
 module type REF = sig
   val return : 'a -> 'a ft_ref
@@ -21,9 +21,9 @@ end
 
 (* Resource: http://dev.realworldocaml.org/imperative-programming.html *)
 module Ref : REF = struct
-  let return (v : 'a) : 'a ft_ref = { value = v }
-  let get (v_ref : 'a ft_ref) = v_ref.value
-  let set (v_ref : 'a ft_ref) (v : 'a) = v_ref.value <- v
+  let return (v : 'a) : 'a ft_ref = { contents = v }
+  let get (v_ref : 'a ft_ref) = v_ref.contents
+  let set (v_ref : 'a ft_ref) (v : 'a) = v_ref.contents <- v
   let bind (v_ref : 'a ft_ref) (f : ('a -> 'b ft_ref)) = get v_ref |> f
 end
 
