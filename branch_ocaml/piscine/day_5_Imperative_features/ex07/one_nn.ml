@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/08/25 22:28:22 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/08/26 16:01:02 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/08/26 17:13:03 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -91,11 +91,10 @@ let title (s: string) : unit =
   print_newline ();
   print_endline ("--- " ^ s ^ " ---")
 
-(* is this vector part of the training set? *)
 let is_known (train: radar list) (v: float array) : bool =
   List.exists (fun (tv, _) -> tv = v) train
 
-(* runs one_nn on every radar of [set] and reports how many labels it got right *)
+(* Runs one_nn on every radar of [set] and reports how many labels it got right *)
 let accuracy (name: string) (train: radar list) (set: radar list) : unit =
   let total = ref 0 in
   let correct = ref 0 in
