@@ -1,4 +1,4 @@
-NAME = ex01
+NAME = ex02
 
 SRCS = people.ml doctor.ml dalek.ml main.ml
 OBJS = $(SRCS:.ml=.cmx)
