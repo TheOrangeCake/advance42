@@ -12,6 +12,7 @@ SRCS = atom.ml \
 	water.ml \
 	carbon_dioxide.ml \
 	reaction.ml \
+	alkane_combustion.ml \
 	main.ml
 OBJS = $(SRCS:.ml=.cmx)
 
@@ -38,6 +39,7 @@ methane.cmx: alkane.cmx
 ethane.cmx: alkane.cmx
 octane.cmx: alkane.cmx
 reaction.cmx: molecule.cmx
+alkane_combustion: reaction.cmx
 main.cmx: atom.cmx \
 	carbon.cmx \
 	hydrogen.cmx \
@@ -49,7 +51,8 @@ main.cmx: atom.cmx \
 	octane.cmx \
 	water.cmx \
 	carbon_dioxide.cmx \
-	reaction.cmx
+	reaction.cmx \
+	alkane_combustion.cmx
 
 %.cmx: %.ml
 	@ocamlopt -c $<

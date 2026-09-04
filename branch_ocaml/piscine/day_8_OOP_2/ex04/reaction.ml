@@ -6,13 +6,13 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/09/03 23:07:39 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/09/03 23:35:44 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/09/04 16:16:26 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
 class virtual reaction
-  (start: (Molecule.molecule * int) list) 
-  (result: (Molecule.molecule * int) list) =
+  (start: Molecule.molecule list)
+  (result: Molecule.molecule list) =
   object (self)
     val start = start
     val result = result
