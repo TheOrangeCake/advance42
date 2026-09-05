@@ -6,7 +6,9 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/09/02 16:41:42 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/09/03 23:45:15 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/09/04 19:13:33 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
+let () =
+  ignore(new Alkane_combustion.alkane_combustion [(new Octane.octane)])

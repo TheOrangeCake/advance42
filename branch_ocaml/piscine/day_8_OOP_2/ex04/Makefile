@@ -11,6 +11,7 @@ SRCS = atom.ml \
 	octane.ml \
 	water.ml \
 	carbon_dioxide.ml \
+	dioxygen.ml \
 	reaction.ml \
 	alkane_combustion.ml \
 	main.ml
@@ -32,6 +33,8 @@ water.cmx: molecule.cmx \
 carbon_dioxide.cmx: molecule.cmx \
 	carbon.cmx \
 	oxygen.cmx
+dioxygen.cmx: molecule.cmx \
+	oxygen.cmx
 alkane.cmx: molecule.cmx \
 	carbon.cmx \
 	hydrogen.cmx
@@ -51,6 +54,7 @@ main.cmx: atom.cmx \
 	octane.cmx \
 	water.cmx \
 	carbon_dioxide.cmx \
+	dioxygen.cmx \
 	reaction.cmx \
 	alkane_combustion.cmx
 
