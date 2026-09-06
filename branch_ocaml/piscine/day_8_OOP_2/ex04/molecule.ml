@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/09/02 22:36:43 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/09/06 18:08:25 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/09/06 18:32:00 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -14,7 +14,7 @@ class virtual molecule (name: string) (lst: Atom.atom list) =
   object (self)
     method name = name
 
-    method atom =
+    method atoms =
       let sorted = List.sort (fun a b -> String.compare a#symbol b#symbol) lst
       in
       let rec loop atom_lst count acc =
@@ -32,9 +32,9 @@ class virtual molecule (name: string) (lst: Atom.atom list) =
         | "H" -> 1
         | _ -> 2
       in
-      let atom_parsed = self#atom in
+      let atom_parsed = self#atoms in
       let sorted2 = List.map (fun (a, b) -> (assign_index a, a, b)) atom_parsed in
-      let sorted3 = List.sort (fun (a1, _, _) (a2, _, _) -> compare a1 a2) sorted2 in
+      let sorted3 = List.sort compare sorted2 in
       String.concat "" (List.map (fun (_, b, c) -> if c = 1 then b else b ^ string_of_int c) sorted3)
 
     method to_string = "Name: " ^ self#name ^ " | Formula: " ^ self#formula
