@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/09/03 23:07:39 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/09/05 22:17:24 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/09/06 17:44:38 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -16,7 +16,7 @@ class virtual reaction
   (l_in: Molecule.molecule list)
   (l_out: Molecule.molecule list) =
   let tally molecule_lst =
-    let sorted = List.sort (fun a b -> compare a#formula b#formula) molecule_lst
+    let sorted = List.sort (fun a b -> String.compare a#formula b#formula) molecule_lst
     in
     let rec loop sorted_lst count acc =
       match sorted_lst with
