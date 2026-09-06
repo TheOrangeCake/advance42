@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/09/04 15:59:10 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/09/06 19:56:34 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/09/06 23:37:05 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -28,10 +28,7 @@ class alkane_combustion (lst: Alkane.alkane list) =
       if self#is_balanced then result
       else raise (Reaction.Unbalanced "Error: Unbalanced reaction")
 
-    method balance = (self :> Reaction.reaction) (* Placeholder *)
-
-    method is_balanced =
-      let cal (mol_lst: (Molecule.molecule * int) list) =
+    method private cal_atom (mol_lst: (Molecule.molecule * int) list) : (string * int) list =
         let expanded = List.concat_map (
             fun x -> let atom = (fst x)#atoms in
             List.map (fun (name, count) -> (name, count * snd x)) atom
@@ -45,8 +42,41 @@ class alkane_combustion (lst: Alkane.alkane list) =
               if name1 = name2 then merge t (sum + count1) acc
               else merge t 0 ((name1, sum + count1) :: acc)
         in merge sorted 0 []
+
+    (* a alkane + b O2 = c CO2 + d H2O *)
+    method private balanced =
+      let in_side = self#cal_atom start in
+      let sumC = match List.assoc_opt "C" in_side with
+      | Some count -> count
+      | None -> failwith "Invalid alkane"
       in
-      let in_side = cal start in
-      let out_side = cal result in
+      let sumH = match List.assoc_opt "H" in_side with 
+      | Some count -> count
+      | None -> failwith "Invalid alkane"
+      in
+      let coeff = if (sumH / 2) mod 2 = 1 then 2 else 1 in
+      let a = coeff * 1 in
+      let c = coeff * sumC in
+      let d = coeff * sumH / 2 in
+      let b = (c * 2 + d) / 2 in
+      let good_start =
+        List.map (fun (m, _) ->
+          if m#formula = "O2" then (m, b)
+          else (m, a)) start
+      in
+      let good_result =
+        List.map (fun (m, _) ->
+          if m#formula = "CO2" then (m, c)
+          else if m#formula = "H2O" then (m, d)
+          else failwith "Equation wasn't initialized correctly)"
+          ) result
+      in
+      {< start = good_start; result = good_result >}
+
+    method balance = (self#balanced :> Reaction.reaction)
+
+    method is_balanced =
+      let in_side = self#cal_atom start in
+      let out_side = self#cal_atom result in
       in_side = out_side
 end
