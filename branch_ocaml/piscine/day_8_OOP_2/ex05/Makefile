@@ -1,4 +1,4 @@
-NAME = ex04
+NAME = ex05
 
 SRCS = atom.ml \
 	carbon.ml \
@@ -8,9 +8,12 @@ SRCS = atom.ml \
 	alkane.ml \
 	methane.ml \
 	ethane.ml \
+	propane.ml \
 	octane.ml \
 	water.ml \
 	carbon_dioxide.ml \
+	carbon_monoxide.ml \
+	soot.ml \
 	dioxygen.ml \
 	reaction.ml \
 	alkane_combustion.ml \
@@ -33,6 +36,11 @@ water.cmx: molecule.cmx \
 carbon_dioxide.cmx: molecule.cmx \
 	carbon.cmx \
 	oxygen.cmx
+carbon_monoxide.cmx: molecule.cmx \
+	carbon.cmx \
+	oxygen.cmx
+soot.cmx: molecule.cmx \
+	carbon.cmx
 dioxygen.cmx: molecule.cmx \
 	oxygen.cmx
 alkane.cmx: molecule.cmx \
@@ -40,6 +48,7 @@ alkane.cmx: molecule.cmx \
 	hydrogen.cmx
 methane.cmx: alkane.cmx
 ethane.cmx: alkane.cmx
+propane.cmx: alkane.cmx
 octane.cmx: alkane.cmx
 reaction.cmx: molecule.cmx
 alkane_combustion.cmx: reaction.cmx \
@@ -47,6 +56,8 @@ alkane_combustion.cmx: reaction.cmx \
 	alkane.cmx \
 	water.cmx \
 	carbon_dioxide.cmx \
+	carbon_monoxide.cmx \
+	soot.cmx \
 	dioxygen.cmx
 main.cmx: atom.cmx \
 	carbon.cmx \
@@ -56,9 +67,12 @@ main.cmx: atom.cmx \
 	alkane.cmx \
 	methane.cmx \
 	ethane.cmx \
+	propane.cmx \
 	octane.cmx \
 	water.cmx \
 	carbon_dioxide.cmx \
+	carbon_monoxide.cmx \
+	soot.cmx \
 	dioxygen.cmx \
 	reaction.cmx \
 	alkane_combustion.cmx

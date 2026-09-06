@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/09/03 22:01:50 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/09/03 22:57:54 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/09/07 00:05:40 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -43,7 +43,9 @@ class virtual alkane (n: int) =
     | 0 -> []
     | x -> (new Hydrogen.hydrogen :> Atom.atom) :: loopH (x - 1)
   in
-  let lst = loopC n @ loopH (2 * n + 2)
+  let lst =  if n >= 0
+    then loopC n @ loopH (2 * n + 2)
+    else invalid_arg "Error: Negative n"
   in
   object (self)
     inherit Molecule.molecule (get_name n) lst
