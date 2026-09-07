@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/09/04 15:59:10 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/09/07 00:01:45 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/09/07 23:07:57 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -76,6 +76,48 @@ class alkane_combustion (lst: Alkane.alkane list) =
         {< start = good_start; result = good_result >}
 
     method balance = (self#balanced :> Reaction.reaction)
+
+    (* alkane + b O2 = c CO2 + e CO + f C + d H2O *)
+    method get_incomplete_results : (int * (Molecule.molecule * int) list) list =
+      let in_side = self#cal_atom start in                             
+      let get sym = match List.assoc_opt sym in_side with
+      | Some count -> count
+      | None -> failwith "Invalid alkane"
+      in
+      let sumC = get "C" in
+      let d = get "H" / 2 in
+      let b_min = (d + 1) / 2 in (* min b = required to make H2O *)
+      let b_max = (2 * sumC + d - 1) / 2 in (* max b = complete combustion *)
+      let rec range lo hi =
+        if lo > hi then []
+        else lo :: range (lo + 1) hi
+      in
+      let splits b =
+        let budget = 2 * b - d in (* Oxygen left after used for H2O *)
+        let rec loop c acc =
+          if c > sumC then List.rev acc (* if run out of Carbon *)
+          else
+            let e = budget - 2 * c in (* cal CO: Oxygen used to create CO2 *)
+            let f = sumC - c - e in (* soot C: unused C so total C - C used in CO2 - C used in CO *)
+            if e >= 0 && f >= 0 then loop (c + 1) ((c, e, f) :: acc)
+              (* if e < 0 then created too much CO2 *)
+              (* if f < 0 then used too much C *)
+            else loop (c + 1) acc
+        in loop 0 []
+      in
+      let build (c, e, f) : (Molecule.molecule * int) list =
+        let add mol count lst = if count = 0 then lst else (mol, count) :: lst in
+        let products =
+          add (new Carbon_dioxide.carbon_dioxide) c
+            (add (new Carbon_monoxide.carbon_monoxide) e
+              (add (new Soot.soot) f
+                (add (new Water.water) d [])))
+        in
+        List.sort (fun a b -> String.compare (fst a)#formula (fst b)#formula) products
+      in
+      List.concat_map
+        (fun b -> List.map (fun s -> (b, build s)) (splits b)) (* b is nb of Oxygen *)
+        (range b_min b_max) (* list of nb of Oxygen *)
 
     method is_balanced =
       let in_side = self#cal_atom start in
