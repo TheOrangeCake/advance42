@@ -6,10 +6,20 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/09/08 08:18:39 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/09/08 20:42:44 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/09/08 21:00:04 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
+(*  Lesson note:
+    What is a monoid?
+    * There are 3 elements bundled together:
+      - a type t for a set of values
+      - a function t -> t -> t, so return same type to allow chaining
+      - an identity element zero
+    * There are 2 laws:
+      - Associativity: grouping order doesn't matter f (f a b) c = f a (f b c)
+      - Identity: f zero a = a and f a zero = a
+*)
 let check (label: string) (expected: Watchtower.hour) (f: unit -> Watchtower.hour) =
   try
     let got = f () in
