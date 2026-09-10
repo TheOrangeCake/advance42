@@ -1,6 +1,6 @@
 NAME = ex01
 
-SRCS = watchtower.ml \
+SRCS = app.ml \
 	main.ml
 OBJS = $(SRCS:.ml=.cmx)
 
@@ -10,7 +10,7 @@ $(NAME): $(OBJS)
 	@ocamlopt $(OBJS) -o $(NAME)
 	@echo "Built $(NAME)"
 
-main.cmx: watchtower.cmx
+main.cmx: app.cmx
 
 %.cmx: %.ml
 	@ocamlopt -c $<
