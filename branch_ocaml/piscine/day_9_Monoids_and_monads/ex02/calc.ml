@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/09/10 22:15:05 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/09/10 23:04:56 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/09/14 23:58:27 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -50,7 +50,7 @@ module Calc = functor (M: MONOID) -> struct
   let div (a: M.element) (b: M.element) = M.div a b
 
   let power (x: M.element) (b: int) =
-    if b <= 0 then invalid_arg "Error: Second parameter is not positive"
+    if b < 0 then invalid_arg "Error: Second parameter is negative"
     else
       let rec loop i =
         if i <= 0 then M.zero2
@@ -58,7 +58,7 @@ module Calc = functor (M: MONOID) -> struct
       in loop b
 
   let fact (n: M.element) =
-    if n < M.zero1 then invalid_arg "Error: Argument is not positive"
+    if n < M.zero1 then invalid_arg "Error: Argument is negative"
     else
       let rec loop i =
         if i <= M.zero2 then M.zero2
@@ -101,6 +101,5 @@ let () =
   show_float "fact 0." (Calc_float.fact 0.0);
   show_float "fact 5." (Calc_float.fact 5.0);
   print_endline "--- errors ---";
-  show_error "power 3 0" (fun () -> Calc_int.power 3 0);
   show_error "power 3 (-2)" (fun () -> Calc_int.power 3 (-2));
   show_error "fact (-5)" (fun () -> Calc_int.fact (-5))

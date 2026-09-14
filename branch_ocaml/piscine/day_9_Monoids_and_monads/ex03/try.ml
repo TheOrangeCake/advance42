@@ -6,7 +6,7 @@
 (*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2026/09/12 22:17:23 by hoannguy          #+#    #+#             *)
-(*   Updated: 2026/09/13 17:04:07 by hoannguy         ###   ########.fr       *)
+(*   Updated: 2026/09/14 23:55:12 by hoannguy         ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -25,7 +25,10 @@ let bind (x: 'a t) (f: ('a -> 'b t)) =
 let recover (x: 'a t) (f: (exn -> 'a t)) =
   match x with
   | Success _ -> x
-  | Failure y -> f y
+  | Failure y -> begin
+      try f y
+      with e -> Failure e
+    end
 
 let filter (x: 'a t) (f: ('a -> bool)) =
   match x with
