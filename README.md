@@ -1,50 +1,87 @@
-My path to RNCP 7
-**Those that have link to repo are done** 
+# RNCP 6: Développement applicatif
+### Branch: OOP
+Mininum 10'000 exp - 2 projects - DONE
+|Name                                           |Language|Concept                                                                         |Exp   |Status|
+|:----------------------------------------------|:------:|:-------------------------------------------------------------------------------|-----:|:----:|
+|[avaj-launcher](./branch_java/avaj-launcher)   |Java    |UML diagram, GoF pattern                                                        |4'200 |DONE  |
+|[swingy](./branch_java/swingy)                 |Java    |MVC architecture, Event driven programming, SWING Framework, GoF pattern        |9'450 |DONE  |
+|[fix-me](./branch_java/fix-me)                 |Java    |Multi module Maven build, FIX message, TCP server/client, threading, GoF pattern|15'750|DONE  |
+</br>
 
-RNCP 6:
-* Développement applicatif:
-    - Option: OOP (min 10'000 DONE)
-|Name   |Language   |Concept   |Exp   |
-|---|---|---|---|
-|[avaj-launcher](./branch_java/avaj-launcher)  |Java   |UML diagram, GoF pattern   |4'200   |
-|[swingy](./branch_java/swingy)   |Java   |MVC architecture, Event driven programming, SWING Framework, GoF pattern   |9'450   |
-|[fix-me](./branch_java/fix-me)   |Java   |Multi module Maven build, FIX message, TCP server/client, threading, GoF pattern   |15'750   |
-    - Option: Imperative programming (min 10'000)
-        - snow-crash (9'450)
-        - rainfall (25'200)
-    - Option: Functional programming (min 10'000)
-        - [Piscine OCaml](./branch_ocaml/piscine) ​​(Basic of Ocaml. Exp: 9'450)
-        - ft_turing (9'450)
-    - Suite (choice):
-        - Inception-of-Things (Devops & Network 25'450)
+### Branch: Imperative programming
+Mininum 10'000 exp - 2 projects - NOPE
+|Name                                           |Language|Concept|Exp   |Status|
+|:----------------------------------------------|:------:|:------|-----:|:----:|
+|snow-crash                                     |        |       |9'450 |NOPE  |
+|rainfall                                       |        |       |25'200|NOPE  |
+</br>
 
- 
-RNCP 7:
-* Système d’information et réseaux
-    - Option: Security (min 50'000)
-        - Cybersecurity piscine (9'450 DONE)
-            - [Arachnida](./branch_cyberSec/piscine/day_1_arachnida) (Java. Concept: Web crawler, image metadata, Jpg, Png, Gif, Bmp metadata structure. Exp: 1'350)
-            - [Ft_otp](./branch_cyberSec/piscine/day_2_ft_otp) (Python. Concept: TOTP, HOTP, encryption, hash, symetric key. Exp: 1'350)
-            - [Ft_onion](./branch_cyberSec/piscine/day_3_ft_onion) (Concept: Tor network, Tor hidden service. Exp: 1'350)
-            - [Reverse me](./branch_cyberSec/piscine/day_4_reverse_me) (Concept: Reverse engineering, GDB, assembly/assembler. Exp: 1'350)
-            - [Stockholm](./branch_cyberSec/piscine/day_5_stockholm) (C. Concept: File encryption, decryption, ransom ware. Exp: 1'350)
-            - [Inquisitor](./branch_cyberSec/piscine/day_7_inquisitor) (C++. Concept: FTP protocol, ARP poisoning. Exp: 1'350)
-            - [Vaccine](./branch_cyberSec/piscine/day_8_vaccine) (JavaScript. Concept: SQL injection, POSTGRESQL, MYSQL. Exp: 1'350)
-        - snow-crash (9'450)
-        - rainfall (25'200)
-        - ft_malcolm (6'000)
-    - Option: System administration (min 50'000)
-        - Inception of context (Devops & Network 19'800)
-        - Inception of wisdom (Devops & Network 21'600)
-        - Inception-of-Things (Devops & Network 25'450)
-    - Option: UNIX (min 30'000)
-        - taskmaster (System & Kernel 9'450)
-        - matt-daemon (System & Kernel 9'450)
-        - malloc (System & Kernel 9'450)
-    - Suite (choice):
-        - Inception-of-Things (Devops & Network 25'450)
-          
-Extra:
-* Data Science:
-    - [ft_linear_regression](./branch_ai/ft_linear_regression) (Python. Concept: Linear Regression, model trainning. Exp: 4'200)
-    - dslr (data science 6'000)
+### Branch: Functional programming
+Mininum 10'000 exp - 2 projects - NOPE
+|Name                                           |Language|Concept                                  |Exp  |Status|
+|:----------------------------------------------|:------:|:----------------------------------------|----:|:----:|
+|[Piscine OCaml](./branch_ocaml/piscine)        |Ocaml   |Basic of Ocaml and functional programming|9'450|DONE  |
+|ft_turing                                      |Ocaml   |                                         |9'450|NOPE  |
+</br>
+
+### Suite (choice):
+|Name                                           |Language|Concept                                  |Exp   |Status|
+|:----------------------------------------------|:------:|:----------------------------------------|-----:|:----:|
+|Inception-of-Things                            |        |                                         |25'450|NOPE  |
+</br>
+
+</br>
+</br>
+
+# RNCP 7: Système d’information et réseaux
+### Branch: Security
+Minimum 50'000 exp - 3 projects - NOPE
+|Name                                                       |Language  |Concept                                                           |Exp   |Status|
+|:----------------------------------------------------------|:--------:|:-----------------------------------------------------------------|-----:|:----:|
+|cybersecurity piscine                                      |          |                                                                  |9'450 |DONE  |
+|-> [Arachnida](./branch_cyberSec/piscine/day_1_arachnida)  |Java      |Web crawler, image metadata, Jpg, Png, Gif, Bmp metadata structure|      |DONE  |
+|-> [Ft_otp](./branch_cyberSec/piscine/day_2_ft_otp)        |Python    |TOTP, HOTP, encryption, hash, symetric key                        |      |DONE  |
+|-> [Ft_onion](./branch_cyberSec/piscine/day_3_ft_onion)    |          |Tor network, Tor hidden service                                   |      |DONE  |
+|-> [Reverse me](./branch_cyberSec/piscine/day_4_reverse_me)|          |Reverse engineering, GDB, assembly/assembler                      |      |DONE  |
+|-> [Stockholm](./branch_cyberSec/piscine/day_5_stockholm)  |C         |File encryption, decryption, ransom ware                          |      |DONE  |
+|-> [Inquisitor](./branch_cyberSec/piscine/day_7_inquisitor)|C++       |FTP protocol, ARP poisoning                                       |      |DONE  |
+|-> [Vaccine](./branch_cyberSec/piscine/day_8_vaccine)      |JavaScript|SQL injection, POSTGRESQL, MYSQL                                  |      |DONE  |
+|snow-crash                                                 |          |                                                                  |9'450 |NOPE  |
+|rainfall                                                   |          |                                                                  |25'200|NOPE  |
+|ft_malcolm                                                 |          |                                                                  |6'000 |NOPE  |
+</br>
+
+### Branch: System administration
+Mininum 50'000 exp - 3 projects - NOPE
+|Name                                           |Language|Concept                                  |Exp   |Status|
+|:----------------------------------------------|:------:|:----------------------------------------|-----:|:----:|
+|Inception of context                           |        |                                         |19'800|NOPE  |
+|Inception of wisdom                            |        |                                         |21'600|NOPE  |
+|Inception-of-Things                            |        |                                         |25'450|NOPE  |
+</br>
+
+### Branch: UNIX
+Mininum 30'000 exp - 3 projects - NOPE
+|Name                                           |Language|Concept                                  |Exp  |Status|
+|:----------------------------------------------|:------:|:----------------------------------------|----:|:----:|
+|taskmaster                                     |        |                                         |9'450|NOPE  |
+|matt-daemon                                    |        |                                         |9'450|NOPE  |
+|malloc                                         |        |                                         |9'450|NOPE  |
+</br>
+
+### Suite (choice):
+|Name                                           |Language|Concept                                  |Exp   |Status|
+|:----------------------------------------------|:------:|:----------------------------------------|-----:|:----:|
+|Inception-of-Things                            |        |                                         |25'450|NOPE  |
+</br>
+
+</br>
+</br>
+
+# Extra
+### Data Science:
+|Name                                                    |Language|Concept                                  |Exp  |Status|
+|:-------------------------------------------------------|:------:|:----------------------------------------|----:|:----:|
+|[ft_linear_regression](./branch_ai/ft_linear_regression)|Python  |Linear Regression, data visualization, model trainning  |4'200|DONE  |
+|dslr                                                    |Python  |Logistic Regression, data visualization, model trainning|6'000|NOPE  |
+</br>
