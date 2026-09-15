@@ -4,14 +4,17 @@
 |Name | Tech |
 |:---------|:-------------------------|
 |Webserver |Nginx                     |
-|Container |Docker                    |
+|Container |Docker Compose            |
 |Frontend  |HTML, Tailwind, Typescript|
 |Backend   |TBD                       |
 |DB        |Postgresql                |
 |ORM       |TBD (raw query to learn?) |
 |Email     |TBD                       |
 |Auth      |JWT                       |
+</br>
 
+</br>
+</br>
 
 # Features
 - User
@@ -52,3 +55,41 @@
         - Final picture creation server side
     - History
         - Thumbnails of previous taken
+
+</br>
+</br>
+</br>
+
+# Step overview
+<ol>
+    <li>Scaffolding
+        <ul>
+            <li>Scaffolding HTML</li>
+            <li>Scaffolding Nginx</li>
+            <li>Scaffolding Dockerfile + Docker Compose</li>
+            <li>Makefile</li>
+        </ul>
+    </li>
+    <li>Quick layout design</li>
+    <li>Implement User feature
+        <ol>
+            <li>Sign up</li>
+            <li>Sign in</li>
+            <li>Sign out</li>
+        </ol>
+    </li>
+    <li>Implement Editing feature
+        <ol>
+            <li>Preview</li>
+            <li>Superposable</li>
+            <li>History</li>
+        </ol>
+    </li>
+    <li>Implement Gallery feature
+        <ol>
+            <li>Public directory</li>
+            <li>Interactive</li>
+        </ol>
+    </li>
+    <li>Security</li>
+</ol>
