@@ -3,9 +3,9 @@
 Mininum 10'000 exp - 2 projects - DONE
 |Name                                           |Language|Concept                                                                         |Exp   |Status|
 |:----------------------------------------------|:------:|:-------------------------------------------------------------------------------|-----:|:----:|
-|[avaj-launcher](./branch_java/avaj-launcher)   |Java    |UML diagram, GoF pattern                                                        |4'200 |DONE  |
-|[swingy](./branch_java/swingy)                 |Java    |MVC architecture, Event driven programming, SWING Framework, GoF pattern        |9'450 |DONE  |
-|[fix-me](./branch_java/fix-me)                 |Java    |Multi module Maven build, FIX message, TCP server/client, threading, GoF pattern|15'750|DONE  |
+|[avaj-launcher](./Java/avaj-launcher)   |Java    |UML diagram, GoF pattern                                                        |4'200 |DONE  |
+|[swingy](./Java/swingy)                 |Java    |MVC architecture, Event driven programming, SWING Framework, GoF pattern        |9'450 |DONE  |
+|[fix-me](./Java/fix-me)                 |Java    |Multi module Maven build, FIX message, TCP server/client, threading, GoF pattern|15'750|DONE  |
 </br>
 
 ### Branch: Imperative programming
@@ -20,7 +20,7 @@ Mininum 10'000 exp - 2 projects - NOPE
 Mininum 10'000 exp - 2 projects - NOPE
 |Name                                           |Language|Concept                                  |Exp  |Status|
 |:----------------------------------------------|:------:|:----------------------------------------|----:|:----:|
-|[Piscine OCaml](./branch_ocaml/piscine)        |Ocaml   |Basic of Ocaml and functional programming|9'450|DONE  |
+|[Piscine OCaml](./Ocaml/piscine)        |Ocaml   |Basic of Ocaml and functional programming|9'450|DONE  |
 |ft_turing                                      |Ocaml   |                                         |9'450|NOPE  |
 </br>
 
@@ -39,13 +39,13 @@ Minimum 50'000 exp - 3 projects - NOPE
 |Name                                                       |Language  |Concept                                                           |Exp   |Status|
 |:----------------------------------------------------------|:--------:|:-----------------------------------------------------------------|-----:|:----:|
 |cybersecurity piscine                                      |          |                                                                  |9'450 |DONE  |
-|-> [Arachnida](./branch_cyberSec/piscine/day_1_arachnida)  |Java      |Web crawler, image metadata, Jpg, Png, Gif, Bmp metadata structure|      |DONE  |
-|-> [Ft_otp](./branch_cyberSec/piscine/day_2_ft_otp)        |Python    |TOTP, HOTP, encryption, hash, symetric key                        |      |DONE  |
-|-> [Ft_onion](./branch_cyberSec/piscine/day_3_ft_onion)    |          |Tor network, Tor hidden service                                   |      |DONE  |
-|-> [Reverse me](./branch_cyberSec/piscine/day_4_reverse_me)|          |Reverse engineering, GDB, assembly/assembler                      |      |DONE  |
-|-> [Stockholm](./branch_cyberSec/piscine/day_5_stockholm)  |C         |File encryption, decryption, ransom ware                          |      |DONE  |
-|-> [Inquisitor](./branch_cyberSec/piscine/day_7_inquisitor)|C++       |FTP protocol, ARP poisoning                                       |      |DONE  |
-|-> [Vaccine](./branch_cyberSec/piscine/day_8_vaccine)      |JavaScript|SQL injection, POSTGRESQL, MYSQL                                  |      |DONE  |
+|-> [Arachnida](./CyberSec/piscine/day_1_arachnida)  |Java      |Web crawler, image metadata, Jpg, Png, Gif, Bmp metadata structure|      |DONE  |
+|-> [Ft_otp](./CyberSec/piscine/day_2_ft_otp)        |Python    |TOTP, HOTP, encryption, hash, symetric key                        |      |DONE  |
+|-> [Ft_onion](./CyberSec/piscine/day_3_ft_onion)    |          |Tor network, Tor hidden service                                   |      |DONE  |
+|-> [Reverse me](./CyberSec/piscine/day_4_reverse_me)|          |Reverse engineering, GDB, assembly/assembler                      |      |DONE  |
+|-> [Stockholm](./CyberSec/piscine/day_5_stockholm)  |C         |File encryption, decryption, ransom ware                          |      |DONE  |
+|-> [Inquisitor](./CyberSec/piscine/day_7_inquisitor)|C++       |FTP protocol, ARP poisoning                                       |      |DONE  |
+|-> [Vaccine](./CyberSec/piscine/day_8_vaccine)      |JavaScript|SQL injection, POSTGRESQL, MYSQL                                  |      |DONE  |
 |snow-crash                                                 |          |                                                                  |9'450 |NOPE  |
 |rainfall                                                   |          |                                                                  |25'200|NOPE  |
 |ft_malcolm                                                 |          |                                                                  |6'000 |NOPE  |
@@ -82,6 +82,12 @@ Mininum 30'000 exp - 3 projects - NOPE
 ### Data Science:
 |Name                                                    |Language|Concept                                  |Exp  |Status|
 |:-------------------------------------------------------|:------:|:----------------------------------------|----:|:----:|
-|[ft_linear_regression](./branch_ai/ft_linear_regression)|Python  |Linear Regression, data visualization, model trainning  |4'200|DONE  |
+|[ft_linear_regression](./Ai/ft_linear_regression)|Python  |Linear Regression, data visualization, model trainning  |4'200|DONE  |
 |dslr                                                    |Python  |Logistic Regression, data visualization, model trainning|6'000|NOPE  |
+</br>
+
+### Web:
+|Name   |Language  |Concept|Exp  |Status|
+|:------|:--------:|:------|----:|:----:|
+|camagru|JavaScript|       |4'200|NOPE  |
 </br>
