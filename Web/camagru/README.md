@@ -2,15 +2,15 @@
 
 ## Base architecture
 |Name | Tech |
-|:---------|:-------------------------|
-|Webserver |Nginx                     |
-|Container |Docker Compose            |
-|Frontend  |HTML, Tailwind, Typescript|
-|Backend   |TBD                       |
-|DB        |Postgresql                |
-|ORM       |TBD (raw query to learn?) |
-|Email     |TBD                       |
-|Auth      |JWT                       |
+|:---------|:--------------------|
+|Webserver |Nginx                |
+|Container |Docker Compose       |
+|Frontend  |HTML, CSS, JavaScript|
+|Backend   |Node.js              |
+|DB        |Postgres             |
+|ORM       |Prepared raw queries |
+|Email     |TBD                  |
+|Auth      |Session cookie       |
 </br>
 
 </br>
