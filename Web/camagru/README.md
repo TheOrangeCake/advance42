@@ -65,9 +65,9 @@
     <li>Scaffolding
         <ul>
             <li>Scaffolding HTML</li>
-            <li>Scaffolding Nginx</li>
+            <li>OK - Scaffolding Nginx</li>
             <li>Scaffolding Dockerfile + Docker Compose</li>
-            <li>Makefile</li>
+            <li>OK - Makefile</li>
         </ul>
     </li>
     <li>Quick layout design</li>
