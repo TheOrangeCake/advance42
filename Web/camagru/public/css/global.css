@@ -1,0 +1,68 @@
+:root {
+  --font-ubuntu: "Ubuntu", sans-serif;
+  --fw-light: 300;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-bold: 700;
+
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 2rem;
+
+  --cl-primary: #8E5572;
+  --cl-accent: #558e71;
+  --cl-black: #222222;
+}
+
+* {
+	padding: 0;
+	margin: 0;
+  font-family: var(--font-ubuntu);
+  color: var(--cl-black);
+}
+
+#nav {
+	margin: auto;
+	padding: 1rem 4rem;
+  max-width: 1024px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.logo {
+  text-decoration: none;
+}
+
+.nav-items {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+}
+
+.nav-items * {
+  text-decoration: none;
+}
+
+#slogan {
+  font-weight: var(--fw-regular);
+}
+
+.button {
+	background-color: var(--cl-primary);
+	border: none;
+  border-radius: 8px;
+	color: white;
+	padding: 0.5rem 2rem;
+	text-align: center;
+	cursor: pointer;
+  font-family: var(--font-ubuntu);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
+}
+
+.button:hover {
+  background-color: var(--cl-accent);
+}

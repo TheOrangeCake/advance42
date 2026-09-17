@@ -64,9 +64,9 @@
 <ol>
     <li>Scaffolding
         <ul>
-            <li>Scaffolding HTML</li>
+            <li>OK - Scaffolding HTML</li>
             <li>OK - Scaffolding Nginx</li>
-            <li>Scaffolding Dockerfile + Docker Compose</li>
+            <li>OK - Scaffolding Dockerfile + Docker Compose</li>
             <li>OK - Makefile</li>
         </ul>
     </li>
