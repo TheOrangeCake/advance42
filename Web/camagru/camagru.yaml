@@ -6,7 +6,32 @@ services:
       context: .
       dockerfile: ./nginx/Dockerfile
     ports:
-      - "80:80"
+      - "${HTTP_PORT}:80"
+    volumes:
+      - ./public:/public:ro
+      - camagru-uploads:/uploads:ro
+    depends_on:
+      - node
+    networks:
+      - app_net
+
+  node:
+    build:
+      context: .
+      dockerfile: ./node/Dockerfile
+    environment:
+      PORT: ${NODE_PORT}
+      PGHOST: camagru-postgresql
+      PGPORT: ${PG_PORT}
+      PGUSER: ${POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB}
+    volumes:
+      - ./src:/app/src
+      - camagru-uploads:/app/uploads
+    depends_on:
+      camagru-postgresql:
+        condition: service_healthy
     networks:
       - app_net
 
@@ -18,11 +43,19 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - camagru-pg:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     networks:
       - app_net
 
 volumes:
   camagru-pg:
+  camagru-uploads:
 
 networks:
   app_net:
