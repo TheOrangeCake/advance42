@@ -13,6 +13,7 @@
   --cl-primary: #8E5572;
   --cl-accent: #558e71;
   --cl-black: #222222;
+  --cl-white: white;
 }
 
 * {
@@ -60,7 +61,7 @@
 	background-color: var(--cl-primary);
 	border: none;
   border-radius: 8px;
-	color: white;
+	color: var(--cl-white);
 	padding: 0.5rem 2rem;
 	text-align: center;
 	cursor: pointer;
@@ -95,6 +96,93 @@
 }
 
 .foot p {
-  color: white;
+  color: var(--cl-white);
   font-weight: var(--fw-regular);
+}
+
+#auth-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 2rem 4rem;
+  border: none;
+}
+
+#auth-modal-close {
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: var(--cl-white);
+  padding: 0.5rem 1rem;
+}
+
+#auth-modal-close:hover {
+  background-color: var(--cl-accent);
+  color: var(--cl-white);
+}
+
+#auth-back {
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: var(--cl-white);
+  padding: 0.5rem 1rem;
+}
+
+#auth-back:hover {
+  background-color: var(--cl-accent);
+  color: var(--cl-white);
+}
+
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 3rem;
+}
+
+#signin-form-wrapper {
+  display: flex;
+}
+
+#signup-form-wrapper {
+  display: none;
+}
+
+#forgot-pass-form-wrapper {
+  display: none;
+}
+
+#auth-back {
+  display: none;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.link-button-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: start;
+}
+
+.link-button {
+  border: none;
+  background-color: var(--cl-white);
+}
+
+.link-button:hover {
+  text-decoration: underline;
+  color: var(--cl-primary);
 }

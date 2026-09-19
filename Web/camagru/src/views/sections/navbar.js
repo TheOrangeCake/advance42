@@ -10,6 +10,7 @@ export function navbar() {
 				<a href="/">Create picture</a>
 			</div>
 			<button type="button" class="button" id="signin-btn">Sign in</button>
+			<button type="button" class="button" id="signout-btn">Sign out</button>
 		</nav>`
 	)
 }

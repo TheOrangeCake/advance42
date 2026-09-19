@@ -7,7 +7,7 @@ const port = process.env.PORT || 3000;
 const server = createServer((req, res) => {
 	res.statusCode = 200;
 	res.setHeader('Content-type', 'text/html; charset=utf-8');
-	res.end(layout());
+	res.end(layout("Camaru | Gallery", "/css/gallery.css", "/js/app.js"));
 })
 
 server.listen(port, hostname, () => {

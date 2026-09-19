@@ -18,7 +18,7 @@ rebuild:
 down:
 	$(COMPOSE) down --remove-orphans
 
-re: down up
+re: down rebuild up
 
 ps:
 	$(COMPOSE) ps
@@ -36,7 +36,7 @@ help:
 	@echo "Camagru targets:"
 	@echo "  up        start all services in the background"
 	@echo "  down      stop and remove containers"
-	@echo "  re        down + up"
+	@echo "  re        down + rebuild + up"
 	@echo "  build     build images"
 	@echo "  ps        list services"
 	@echo "  logs      follow logs"
