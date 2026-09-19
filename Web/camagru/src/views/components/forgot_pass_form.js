@@ -3,7 +3,7 @@ export function forgotPassForm() {
 		<div class="form-wrapper" id="forgot-pass-form-wrapper">
 			<h1>Forgot password</h1>
 			<p>You will receive an email to reset password</p>
-			<form class="form" id="forgot-pass-form" action="/api/forgot" method="post" autocomplete="off">
+			<form class="form" id="forgot-pass-form" action="/api/forgot" method="post">
 				<div>
 					<label for="forgot-pass-email">Email</label><br>
 					<input type="email" id="forgot-pass-email" name="email" required><br>

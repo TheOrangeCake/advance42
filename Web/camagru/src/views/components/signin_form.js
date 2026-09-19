@@ -2,10 +2,10 @@ export function signinForm() {
 	return `
 		<div class="form-wrapper" id="signin-form-wrapper">
 			<h1>Sign in</h1>
-			<form class="form" id="signin-form" action="/api/signin" method="post" autocomplete="on">
+			<form class="form" id="signin-form" action="/api/signin" method="post">
 				<div>
 					<label for="signin-username">Username</label><br>
-					<input type="text" id="signin-username" name="user" required><br>
+					<input type="text" id="signin-username" name="user" required autofocus><br>
 				</div>
 				<div>
 					<label for="signin-password">Password</label><br>

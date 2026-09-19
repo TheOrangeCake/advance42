@@ -2,7 +2,7 @@ export function signupForm() {
 	return `
 		<div class="form-wrapper" id="signup-form-wrapper">
 			<h1>Sign up</h1>
-			<form class="form" id="signup-form" action="/api/signup" method="post" autocomplete="off">
+			<form class="form" id="signup-form" action="/api/signup" method="post">
 				<div>
 					<label for="signup-username">Username</label><br>
 					<input type="text" id="signup-username" name="user" required><br>
