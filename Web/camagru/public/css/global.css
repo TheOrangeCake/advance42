@@ -126,6 +126,7 @@
 }
 
 #auth-back {
+  display: none;
   position: absolute;
   top: 5%;
   left: 5%;
@@ -157,10 +158,6 @@
 }
 
 #forgot-pass-form-wrapper {
-  display: none;
-}
-
-#auth-back {
   display: none;
 }
 

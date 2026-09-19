@@ -6,7 +6,7 @@ export function forgotPassForm() {
 			<form class="form" id="forgot-pass-form" action="/api/forgot" method="post" autocomplete="off">
 				<div>
 					<label for="forgot-pass-email">Email</label><br>
-					<input type="email" id="forgot-pass-email" name="email" required autofocus><br>
+					<input type="email" id="forgot-pass-email" name="email" required><br>
 				</div>
 			</form>
 			<input type="submit" value="Reset" class="button" form="forgot-pass-form">

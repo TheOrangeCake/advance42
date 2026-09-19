@@ -5,7 +5,7 @@ export function signinForm() {
 			<form class="form" id="signin-form" action="/api/signin" method="post" autocomplete="on">
 				<div>
 					<label for="signin-username">Username</label><br>
-					<input type="text" id="signin-username" name="user" required autofocus><br>
+					<input type="text" id="signin-username" name="user" required><br>
 				</div>
 				<div>
 					<label for="signin-password">Password</label><br>

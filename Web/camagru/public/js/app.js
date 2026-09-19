@@ -32,6 +32,7 @@ backBtn.addEventListener("click", () => {
 
 signinBtn.addEventListener("click", () => {
 	modal.showModal();
+	displayForm("signin");
 })
 
 closeBtn.addEventListener("click", () => {

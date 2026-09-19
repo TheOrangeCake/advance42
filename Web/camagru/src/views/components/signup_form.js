@@ -5,11 +5,11 @@ export function signupForm() {
 			<form class="form" id="signup-form" action="/api/signup" method="post" autocomplete="off">
 				<div>
 					<label for="signup-username">Username</label><br>
-					<input type="text" id="signin-username" name="user" required autofocus><br>
+					<input type="text" id="signup-username" name="user" required><br>
 				</div>
 				<div>
 					<label for="signup-email">Email</label><br>
-					<input type="email" id="signup-email" name="email" required autofocus><br>
+					<input type="email" id="signup-email" name="email" required><br>
 				</div>
 				<div>
 					<label for="signup-password">Password</label><br>
