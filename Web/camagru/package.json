@@ -6,5 +6,8 @@
   "scripts": {
     "dev": "node --env-file=.env ./src/server.js"
   },
-  "author": "Nguyen"
+  "author": "Nguyen",
+  "dependencies": {
+    "pg": "^8.23.0"
+  }
 }

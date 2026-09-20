@@ -2,6 +2,7 @@ name: camagru
 
 services:
   nginx:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./nginx/Dockerfile
@@ -16,6 +17,7 @@ services:
       - app_net
 
   node:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./node/Dockerfile
@@ -36,6 +38,7 @@ services:
       - app_net
 
   camagru-postgresql:
+    restart: unless-stopped
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER}

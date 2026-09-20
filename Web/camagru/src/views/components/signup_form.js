@@ -17,7 +17,7 @@ export function signupForm() {
 				</div>
 				<div>
 					<label for="signup-password-confirm">Confirm Password</label><br>
-					<input type="password" id="signup-password-confirm" name="pass-conf" required><br>
+					<input type="password" id="signup-password-confirm" name="passConfirm" required><br>
 				</div>
 			</form>
 			<input type="submit" value="Sign up" class="button" form="signup-form">
