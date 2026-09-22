@@ -1,3 +1,5 @@
+import { formError } from "./form_error.js"
+
 export function forgotPassForm() {
 	return `
 		<div class="form-wrapper" id="forgot-pass-form-wrapper">
@@ -6,9 +8,10 @@ export function forgotPassForm() {
 			<form class="form" id="forgot-pass-form" action="/api/forgot" method="post">
 				<div>
 					<label for="forgot-pass-email">Email</label><br>
-					<input type="email" id="forgot-pass-email" name="email" required><br>
+					<input type="email" class="form-input" id="forgot-pass-email" name="email" required><br>
 				</div>
 			</form>
+			${formError("forgot-error")}
 			<input type="submit" value="Reset" class="button" form="forgot-pass-form">
 		</div>
 	`
