@@ -69,8 +69,13 @@
   font-weight: var(--fw-bold);
 }
 
-.button:hover {
+.button:hover:not(:disabled) {
   background-color: var(--cl-accent);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 #body-wrapper {
@@ -162,6 +167,10 @@
   display: none;
 }
 
+#success-form-wrapper {
+  display: none;
+}
+
 .form {
   display: flex;
   flex-direction: column;
@@ -202,5 +211,18 @@
 
 .form-error {
   color: red;
+  overflow-wrap: break-word;
+}
+
+.form-loading {
+  color: var(--cl-primary);
+  font-size: var(--fs-sm);
+  overflow-wrap: break-word;
+}
+
+.success-form {
+  margin-top: 3rem;
+  color: var(--cl-accent);
+  font-weight: var(--fw-medium);
   overflow-wrap: break-word;
 }

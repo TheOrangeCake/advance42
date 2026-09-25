@@ -1,4 +1,5 @@
 import { formError } from "./form_error.js"
+import { formLoading } from "./form_loading.js"
 
 export function forgotPassForm() {
 	return `
@@ -12,7 +13,8 @@ export function forgotPassForm() {
 				</div>
 			</form>
 			${formError("forgot-error")}
-			<input type="submit" value="Reset" class="button" form="forgot-pass-form">
+			${formLoading("forgot-loading")}
+			<input type="submit" value="Reset" class="button" id="forgot-submit-btn" form="forgot-pass-form">
 		</div>
 	`
 }

@@ -23,8 +23,7 @@ export async function signupHandler(req, res) {
 		return;
 	}
 
-	// place holder 
-	res.statusCode = 200;
-	res.setHeader('Content-type', 'text/html; charset=utf-8');
-	res.end(`<p>User: ${user}<br>Email: ${email}<br>Password: ${pass}<br>Confirm: ${passConfirm}</p>`);
+
+
+	
 }

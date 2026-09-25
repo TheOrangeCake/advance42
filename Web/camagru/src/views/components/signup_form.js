@@ -1,10 +1,11 @@
 import { formError } from "./form_error.js"
+import { formLoading } from "./form_loading.js"
 
 export function signupForm() {
 	return `
 		<div class="form-wrapper" id="signup-form-wrapper">
 			<h1>Sign up</h1>
-			<form class="form" id="signup-form" action="">
+			<form class="form" id="signup-form" action="/api/signup" method="post">
 				<div>
 					<label for="signup-username">Username</label><br>
 					<input type="text" class="form-input" id="signup-username" name="user" required><br>
@@ -23,7 +24,8 @@ export function signupForm() {
 				</div>
 			</form>
 			${formError("signup-error")}
-			<input type="submit" value="Sign up" class="button" id="auth-signup-btn" form="signup-form">
+			${formLoading("signup-loading")}
+			<input type="submit" value="Sign up" class="button" id="signup-submit-btn" form="signup-form">
 		</div>
 	`
 }
