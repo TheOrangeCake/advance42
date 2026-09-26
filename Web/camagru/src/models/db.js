@@ -8,6 +8,7 @@ const pool = new Pool({
 	password: process.env.PGPASSWORD,
 	max: 10,
 	idleTimeoutMillis: 10000,
+	connectionTimeoutMillis: 10000,
 })
 
 pool.on("error", (err) => {
@@ -19,7 +20,7 @@ export async function dbQuery(query, params) {
 	const queryObject = {text: query, values: params}
 	try {
 		return await client.query(queryObject);
-	} catch (e) {
-		client.release(e);
+	} finally{
+		client.release();
 	}
 }

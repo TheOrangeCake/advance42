@@ -107,7 +107,7 @@ signupForm.addEventListener("submit", async (e) => {
 function validateInput(username, email, pass, passConfirm) {
 	const USERNAME_REGEX = /^[\w ]{3,20}$/;
 	const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-	const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
+	const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,72}$/;
 
 	if (!username || !email || !pass || !passConfirm) {
 		throw new Error("Empty field(s)");
@@ -119,7 +119,7 @@ function validateInput(username, email, pass, passConfirm) {
 		throw new Error("Invalid email address");
 	}
 	if (!PASSWORD_REGEX.test(pass)) {
-		throw new Error("Password must be mininum 8 characters, 1 lower case, 1 upper case and 1 special character");
+		throw new Error("Password must be between 8 - 72 characters, with 1 lower case, 1 upper case and 1 special character");
 	}
 	if (passConfirm !== pass) {
 		throw new Error("Password confirmation doesn't match");
