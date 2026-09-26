@@ -98,3 +98,4 @@
 # External package
 - bcrypt: https://www.npmjs.com/package/bcrypt
 - postgres: https://www.npmjs.com/package/pg
+- nodemailer: https://nodemailer.com/

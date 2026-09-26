@@ -3,6 +3,7 @@ import { returnError } from "./utils.js";
 import bcrypt from "bcrypt";
 import crypto from "node:crypto";
 import { dbQuery } from "../models/db.js";
+import { sendEmail } from "../models/mail.js";
 
 export async function signupHandler(req, res) {
 	const url = req.url
@@ -56,8 +57,21 @@ export async function signupHandler(req, res) {
 	}
 
 	// send email
-
+	try {
+		const port = process.env.HTTP_PORT;
+		const subject = "Activation Link for Camagru";
+		const content = `Activate here: http://localhost:${port}/verify?token=${token}`
+		await sendEmail(email, subject, content);
+	} catch (e) {
+		console.error("Error while sending email:", e);
+		returnError(res, 500, "Something went wrong in the server");
+		return;
+	}
+	
 	// return result
+	res.statusCode = 200;
+	res.setHeader('Content-type', 'text/plain; charset=utf-8');
+	res.end("OK, please check email for activation link");
 }
 
 function validateInput(username, email, pass, passConfirm) {
