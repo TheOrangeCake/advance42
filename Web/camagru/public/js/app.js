@@ -18,10 +18,6 @@ const signinSubmitBtn = document.querySelector("#signin-submit-btn");
 const signupSubmitBtn = document.querySelector("#signup-submit-btn");
 const forgotSubmitBtn = document.querySelector("#forgot-submit-btn");
 
-const USERNAME_REGEX = /^[\w ]{3,20}$/;
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
-
 /* modal display */
 function displayForm(form) {
 	const hide = "none";
@@ -87,15 +83,10 @@ signupForm.addEventListener("submit", async (e) => {
 	const signupFormData = new FormData(signupForm, signupSubmitBtn);
 	try {
 		const username = signupFormData.get("user").trim();
-		validateUsername(username);
 		const email = signupFormData.get("email").trim();
-		validateEmail(email);
 		const pass = signupFormData.get("pass");
-		validatePass(pass);
 		const passConfirm = signupFormData.get("passConfirm");
-		if (passConfirm !== pass) {
-			throw new Error("Password confirmation doesn't match");
-		}
+		validateInput(username, email, pass, passConfirm);
 		
 		displayStatus("signup", "loading", "Signing you up ...");
 		const response = await fetch("/api/signup", {
@@ -113,20 +104,25 @@ signupForm.addEventListener("submit", async (e) => {
 	}
 })
 
-function validateUsername(username) {
+function validateInput(username, email, pass, passConfirm) {
+	const USERNAME_REGEX = /^[\w ]{3,20}$/;
+	const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
+
+	if (!username || !email || !pass || !passConfirm) {
+		throw new Error("Empty field(s)");
+	}
 	if (!USERNAME_REGEX.test(username)) {
-		throw new Error("Username must be between 3 - 20 characters, only alphanumeric and _ characters")
+		throw new Error("Username must be between 3 - 20 characters, only alphanumeric and _ characters");
 	}
-}
-
-function validateEmail(email) {
 	if (!EMAIL_REGEX.test(email)) {
-		throw new Error("Invalid email address")
+		throw new Error("Invalid email address");
+	}
+	if (!PASSWORD_REGEX.test(pass)) {
+		throw new Error("Password must be mininum 8 characters, 1 lower case, 1 upper case and 1 special character");
+	}
+	if (passConfirm !== pass) {
+		throw new Error("Password confirmation doesn't match");
 	}
 }
 
-function validatePass(pass) {
-	if (!PASSWORD_REGEX.test(pass)) {
-		throw new Error("Password must be mininum 8 characters, 1 lower case, 1 upper case and 1 special character")
-	}
-}
