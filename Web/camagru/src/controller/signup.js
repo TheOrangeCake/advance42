@@ -1,6 +1,8 @@
 import { text } from "node:stream/consumers";
 import { returnError } from "./utils.js";
 import bcrypt from "bcrypt";
+import crypto from "node:crypto";
+import { dbQuery } from "../models/db.js";
 
 export async function signupHandler(req, res) {
 	const url = req.url
@@ -38,11 +40,24 @@ export async function signupHandler(req, res) {
 	}
 
 	// generate token
-
+	const token = crypto.randomBytes(32).toString("hex");
 
 	// store in db
+	try {
+		await insertUser(user, email, hashedPass, token);
+	} catch (e) {
+		if (e.status === 409) {
+			returnError(res, 409, e.message);
+			return;
+		}
+		console.error(e.message);
+		returnError(res, 500, "Something went wrong in the server");
+		return;
+	}
+
+	// send email
+
 	// return result
-	
 }
 
 function validateInput(username, email, pass, passConfirm) {
@@ -70,4 +85,40 @@ function validateInput(username, email, pass, passConfirm) {
 async function hashPassword(pass) {
 	const saltRounds = 12;
 	return bcrypt.hash(pass, saltRounds);
+}
+
+async function insertUser(username, email, hashedPass, token) {
+	const query = `
+		INSERT INTO users (username, email, password, mail_token, mail_token_exp)
+		VALUES ($1, $2, $3, $4, now() + interval '5 minutes')
+		ON CONFLICT (email) DO UPDATE
+			SET username = EXCLUDED.username,
+				password = EXCLUDED.password,
+				mail_token = EXCLUDED.mail_token,
+				mail_token_exp = EXCLUDED.mail_token_exp,
+				created_at = now()
+			WHERE users.active = FALSE
+		RETURNING id`;
+
+	let result;
+	try {
+		result = await dbQuery(query, [username, email, hashedPass, token]);
+	} catch (e) {
+		// 23505 is UNIQUE constraint violation
+		if (e.code === "23505" && e.constraint === "users_username_key") {
+			throw conflict("Username already taken");
+		}
+		throw e;
+	}
+
+	if (result.rowCount === 0) {
+		throw conflict("Email already registered");
+	}
+	return result.rows[0].id;
+}
+
+function conflict(message) {
+	const err = new Error(message);
+	err.status = 409;
+	return err;
 }
