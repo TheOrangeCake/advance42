@@ -68,7 +68,7 @@ export async function signupHandler(req, res) {
 		return;
 	}
 	
-	// return result
+	// return OK
 	res.statusCode = 200;
 	res.setHeader('Content-type', 'text/plain; charset=utf-8');
 	res.end("OK, please check email for activation link");

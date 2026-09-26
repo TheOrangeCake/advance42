@@ -8,8 +8,7 @@
 |Frontend  |HTML, CSS, JavaScript|
 |Backend   |Node.js              |
 |DB        |Postgres             |
-|ORM       |Prepared raw queries |
-|Email     |TBD                  |
+|Email     |Nodemailer           |
 |Auth      |Session cookie       |
 </br>
 
@@ -73,7 +72,7 @@
     <li>OK - Quick layout design</li>
     <li>Implement User feature
         <ol>
-            <li>Sign up</li>
+            <li>PARTIAL (/verify endpoint) - Sign up</li>
             <li>Sign in</li>
             <li>Sign out</li>
         </ol>
