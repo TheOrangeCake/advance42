@@ -70,7 +70,7 @@
             <li>OK - Makefile</li>
         </ul>
     </li>
-    <li>Quick layout design</li>
+    <li>OK - Quick layout design</li>
     <li>Implement User feature
         <ol>
             <li>Sign up</li>
@@ -93,3 +93,8 @@
     </li>
     <li>Security</li>
 </ol>
+
+
+# External package
+- bcrypt: https://www.npmjs.com/package/bcrypt
+- postgres: https://www.npmjs.com/package/pg

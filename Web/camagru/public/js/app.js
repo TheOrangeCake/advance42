@@ -113,7 +113,7 @@ function validateInput(username, email, pass, passConfirm) {
 		throw new Error("Empty field(s)");
 	}
 	if (!USERNAME_REGEX.test(username)) {
-		throw new Error("Username must be between 3 - 20 characters, only alphanumeric and _ characters");
+		throw new Error("Username must be between 3 - 20 characters, only alphanumeric, space and _ characters");
 	}
 	if (!EMAIL_REGEX.test(email)) {
 		throw new Error("Invalid email address");
