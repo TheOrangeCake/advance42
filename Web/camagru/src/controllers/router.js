@@ -1,6 +1,7 @@
 import { layout } from "../views/layout.js";
 import { parseUrl } from "./utils.js";
 import { signupHandler } from "./signup.js";
+import { signinHandler } from "./signin.js";
 import { verifyHandler } from "./verify.js";
 import { gallery } from "../views/sections/gallery.js";
 
@@ -13,6 +14,8 @@ export async function handleRequest(req, res) {
 		await signupHandler(req, res);
 	} else if (url.pathname === "/api/verify") {
 		await verifyHandler(req, res);
+	} else if (url.pathname === "/api/signin") {
+		await signinHandler(req, res);
 	} else if (url.pathname === "/") {
 		res.statusCode = 200;
 		res.setHeader('Content-type', 'text/html; charset=utf-8');

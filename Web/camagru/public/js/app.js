@@ -18,6 +18,10 @@ const signinSubmitBtn = document.querySelector("#signin-submit-btn");
 const signupSubmitBtn = document.querySelector("#signup-submit-btn");
 const forgotSubmitBtn = document.querySelector("#forgot-submit-btn");
 
+const USERNAME_REGEX = /^[\w ]{3,20}$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,72}$/;
+
 /* modal display */
 function displayForm(form) {
 	const hide = "none";
@@ -82,11 +86,11 @@ signupForm.addEventListener("submit", async (e) => {
 
 	const signupFormData = new FormData(signupForm, signupSubmitBtn);
 	try {
-		const username = signupFormData.get("user").trim();
-		const email = signupFormData.get("email").trim();
+		const username = signupFormData.get("user")?.trim();
+		const email = signupFormData.get("email")?.trim();
 		const pass = signupFormData.get("pass");
 		const passConfirm = signupFormData.get("passConfirm");
-		validateInput(username, email, pass, passConfirm);
+		validateSignupInput(username, email, pass, passConfirm);
 		
 		displayStatus("signup", "loading", "Signing you up ...");
 		const response = await fetch("/api/signup", {
@@ -104,11 +108,7 @@ signupForm.addEventListener("submit", async (e) => {
 	}
 })
 
-function validateInput(username, email, pass, passConfirm) {
-	const USERNAME_REGEX = /^[\w ]{3,20}$/;
-	const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-	const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,72}$/;
-
+function validateSignupInput(username, email, pass, passConfirm) {
 	if (!username || !email || !pass || !passConfirm) {
 		throw new Error("Empty field(s)");
 	}
@@ -126,3 +126,47 @@ function validateInput(username, email, pass, passConfirm) {
 	}
 }
 
+
+/* signin */
+const signinForm = document.querySelector("#signin-form");
+
+signinForm.addEventListener("submit", async (e) => {
+	e.preventDefault();
+
+	const signinFormData = new FormData(signinForm, signinSubmitBtn);
+	try {
+		const username = signinFormData.get("user")?.trim();
+		const pass = signinFormData.get("pass");
+		validateSigninInput(username, pass);
+		
+		displayStatus("signin", "loading", "Signing in ...");
+		const response = await fetch("/api/signin", {
+			method: "POST",
+			body: new URLSearchParams(signinFormData),
+		})
+		if (!response.ok) {
+			throw new Error(await response.text());
+		}
+		displayStatus(null);
+
+		// TODO: switch navbar sign in button to sign out
+		// store session cookie in browser?
+		// placeholder
+		displayForm("success");
+
+	} catch (err) {
+		displayStatus("signin", "error", err.message);
+	}
+})
+
+function validateSigninInput(username, pass) {
+	if (!username || !pass) {
+		throw new Error("Empty field(s)");
+	}
+	if (!USERNAME_REGEX.test(username)) {
+		throw new Error("Invalid username");
+	}
+	if (!PASSWORD_REGEX.test(pass)) {
+		throw new Error("Invalid password");
+	}
+}

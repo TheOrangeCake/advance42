@@ -3,6 +3,7 @@ import { dbQuery } from "../services/db.js";
 import { conflict } from "../controllers/utils.js";
 import crypto from "node:crypto";
 
+// signup
 export async function hashPassword(pass) {
 	const saltRounds = 12;
 	return bcrypt.hash(pass, saltRounds);
@@ -42,6 +43,7 @@ export async function createUser(username, email, hashedPass, token) {
 	return result.rows[0].id;
 }
 
+// sign up verification
 export async function verifyUser(id, token) {
 	// check if user exist
 	const lookupQuery = `
@@ -87,6 +89,7 @@ function tokenMatches(stored, given) {
 	return crypto.timingSafeEqual(a, b);
 }
 
+// cleanup
 export async function deleteExpiredUnverified() {
 	const query = `
 		DELETE FROM users
@@ -94,4 +97,31 @@ export async function deleteExpiredUnverified() {
 			AND mail_token_exp < now()`;
 
 	await dbQuery(query, []);
+}
+
+
+//sign in
+const DUMMY_HASH = "$2b$12$ZAR3MZQLwoOKlFNfv5yrpOm6x3xN4Cb9nn6DdMBSgBq8wWT7WefXK";
+
+export async function authenticateUser(username, pass) {
+	const query = `
+		SELECT id, username, password, active
+		FROM users
+		WHERE username = $1`;
+
+	const found = await dbQuery(query, [username]);
+	if (found.rowCount === 0) {
+		await bcrypt.compare(pass, DUMMY_HASH);
+		return { status: "invalid" };
+	}
+
+	const { id, password, active } = found.rows[0];
+	if (!await bcrypt.compare(pass, password)) {
+		return { status: "invalid" };
+	}
+	if (!active) {
+		return { status: "inactive" };
+	}
+
+	return { status: "ok", user: { id, username: found.rows[0].username } };
 }
