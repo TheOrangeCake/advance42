@@ -99,10 +99,7 @@ export async function deleteExpiredUnverified() {
 	await dbQuery(query, []);
 }
 
-
 //sign in
-const DUMMY_HASH = "$2b$12$ZAR3MZQLwoOKlFNfv5yrpOm6x3xN4Cb9nn6DdMBSgBq8wWT7WefXK";
-
 export async function authenticateUser(username, pass) {
 	const query = `
 		SELECT id, username, password, active
@@ -111,7 +108,6 @@ export async function authenticateUser(username, pass) {
 
 	const found = await dbQuery(query, [username]);
 	if (found.rowCount === 0) {
-		await bcrypt.compare(pass, DUMMY_HASH);
 		return { status: "invalid" };
 	}
 
