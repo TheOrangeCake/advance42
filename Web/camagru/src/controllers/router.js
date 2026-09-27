@@ -1,10 +1,11 @@
 import { layout } from "../views/layout.js";
+import { parseUrl } from "./utils.js";
 import { signupHandler } from "./signup.js";
 import { verifyHandler } from "./verify.js";
 import { gallery } from "../views/sections/gallery.js";
 
 export async function handleRequest(req, res) {
-	const url = new URL(req.url, "http://localhost");
+	const url = parseUrl(req);
 	
 	console.log(`${req.method} ${url.pathname}`);
 
