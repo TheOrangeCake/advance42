@@ -1,6 +1,6 @@
 import { createServer } from 'node:http';
-import { handleRequest } from './controller/router.js';
-import { returnError } from './controller/utils.js';
+import { handleRequest } from './controllers/router.js';
+import { returnError } from './controllers/utils.js';
 
 const hostname = '0.0.0.0';
 const port = process.env.PORT || 3000;

@@ -1,17 +1,12 @@
 import { text } from "node:stream/consumers";
 import { returnError } from "./utils.js";
-import bcrypt from "bcrypt";
-import crypto from "node:crypto";
-import { dbQuery } from "../models/db.js";
-import { sendEmail } from "../models/mail.js";
+import { sendEmail } from "../services/mail.js";
+import { hashPassword, createUser, generateToken } from "../models/user.js";
 
 export async function signupHandler(req, res) {
-	const url = req.url
 	const method = req.method;
-	console.log(`${method} ${url}`)
-
 	if (method.toLowerCase() !== "post") {
-		res.setHeader('Allow', 'POST')
+		res.setHeader('Allow', 'POST');
 		returnError(res, 405, "Only accept POST method");
 		return;
 	}
@@ -41,11 +36,12 @@ export async function signupHandler(req, res) {
 	}
 
 	// generate token
-	const token = crypto.randomBytes(32).toString("hex");
+	const token = generateToken();
 
 	// store in db
+	let userID;
 	try {
-		await insertUser(user, email, hashedPass, token);
+		userID = await createUser(user, email, hashedPass, token);
 	} catch (e) {
 		if (e.status === 409) {
 			returnError(res, 409, e.message);
@@ -60,7 +56,7 @@ export async function signupHandler(req, res) {
 	try {
 		const port = process.env.HTTP_PORT;
 		const subject = "Activation Link for Camagru";
-		const content = `Activate here: http://localhost:${port}/verify?token=${token}`
+		const content = `Activate here: http://localhost:${port}/api/verify?id=${userID}&token=${token}`
 		await sendEmail(email, subject, content);
 	} catch (e) {
 		console.error("Error while sending email:", e);
@@ -94,45 +90,4 @@ function validateInput(username, email, pass, passConfirm) {
 	if (passConfirm !== pass) {
 		throw new Error("Password confirmation doesn't match");
 	}
-}
-
-async function hashPassword(pass) {
-	const saltRounds = 12;
-	return bcrypt.hash(pass, saltRounds);
-}
-
-async function insertUser(username, email, hashedPass, token) {
-	const query = `
-		INSERT INTO users (username, email, password, mail_token, mail_token_exp)
-		VALUES ($1, $2, $3, $4, now() + interval '5 minutes')
-		ON CONFLICT (email) DO UPDATE
-			SET username = EXCLUDED.username,
-				password = EXCLUDED.password,
-				mail_token = EXCLUDED.mail_token,
-				mail_token_exp = EXCLUDED.mail_token_exp,
-				created_at = now()
-			WHERE users.active = FALSE
-		RETURNING id`;
-
-	let result;
-	try {
-		result = await dbQuery(query, [username, email, hashedPass, token]);
-	} catch (e) {
-		// 23505 is UNIQUE constraint violation
-		if (e.code === "23505" && e.constraint === "users_username_key") {
-			throw conflict("Username already taken");
-		}
-		throw e;
-	}
-
-	if (result.rowCount === 0) {
-		throw conflict("Email already registered");
-	}
-	return result.rows[0].id;
-}
-
-function conflict(message) {
-	const err = new Error(message);
-	err.status = 409;
-	return err;
 }

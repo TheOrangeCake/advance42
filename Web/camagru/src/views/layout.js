@@ -1,13 +1,11 @@
 import { modal } from "./components/modal.js"
 import { navbar } from "./sections/navbar.js"
 import { footer } from "./sections/footer.js"
-import { gallery } from "./sections/gallery.js"
 
-export function layout(title, css, js) {
+export function layout(title, css, js, body) {
 	const html_modal = modal();
 	const html_nav =  navbar();
 	const html_footer = footer();
-	const html_gallery = gallery();
 	return (
 		`<!DOCTYPE html>
 		<html lang="en">
@@ -26,7 +24,7 @@ export function layout(title, css, js) {
 			<body>
 				${html_nav}
 				${html_modal}
-				${html_gallery}
+				${body}
 				${html_footer}
 			</body>
 		</html>
