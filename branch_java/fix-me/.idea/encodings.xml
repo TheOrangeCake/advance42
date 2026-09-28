@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/broker_module/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/broker_module/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/broker_module/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/colors_module/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/colors_module/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/database_module/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fix_parser_module/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fix_parser_module/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/helper_module/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/helper_module/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/market_module/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/market_module/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/message_module/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/message_module/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

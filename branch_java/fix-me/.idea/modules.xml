@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/broker_module/broker.iml" filepath="$PROJECT_DIR$/broker_module/broker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/database_module/database.iml" filepath="$PROJECT_DIR$/database_module/database.iml" />
+      <module fileurl="file://$PROJECT_DIR$/market_module/market.iml" filepath="$PROJECT_DIR$/market_module/market.iml" />
+      <module fileurl="file://$PROJECT_DIR$/message_module/message.iml" filepath="$PROJECT_DIR$/message_module/message.iml" />
+    </modules>
+  </component>
+</project>
