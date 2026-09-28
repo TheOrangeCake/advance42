@@ -1,0 +1,9 @@
+Index,Hogwarts House,First Name,Last Name,Birthday,Best Hand,Arithmancy,Astronomy,Herbology,Defense Against the Dark Arts,Divination,Muggle Studies,Ancient Runes,History of Magic
+0,Gryffindor,,Aaa,2000-01-01,Left,10,,10,10,10,10,10,10
+1,Slytherin,Bbb,Bbb,2000-01-02,Right,20,20,20,20,20,20,,20
+2,Ravenclaw,Ccc,Ccc,2000-01-03,Left,30,30,30,30,30,30,30,30
+3,Hufflepuff,Ddd,Ddd,2000-01-04,Right,40,40,40,40,40,40,40,40
+4,Gryffindor,Eee,Eee,2000-01-05,Left,50,50,50,50,50,50,50,50
+4,Gryffindor,Fff,Fff,2000-01-05,Left,50,50,50,50,50,85,50,50
+4,Gryffindor,Fff,Fff,2000-01-05,Left,50,50,50,50,50,50,50,50
+4,Gryffindor,Fff,Fff,2000-01-05,Left,50,50,50,50,50,50,74,50
