@@ -1,7 +1,7 @@
 import { text } from "node:stream/consumers";
-import { returnError } from "./utils.js";
-import { sendEmail } from "../services/mail.js";
-import { hashPassword, createUser, generateToken, deleteExpiredUnverified } from "../models/user.js";
+import { returnError } from "../utils.js";
+import { sendEmail } from "../../services/mail.js";
+import { hashPassword, createUser, generateToken, deleteExpiredUnverified } from "../../models/user.js";
 
 export async function signupHandler(req, res) {
 	const method = req.method;

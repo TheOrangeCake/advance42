@@ -1,12 +1,13 @@
 import { parseUrl, parseCookie } from "./controllers/utils.js";
 import { getSession } from "./services/session.js";
-import { signupHandler } from "./controllers/signup.js";
-import { signinHandler } from "./controllers/signin.js";
-import { verifyHandler } from "./controllers/verify.js";
+import { signupHandler } from "./controllers/auth/signup.js";
+import { signinHandler } from "./controllers/auth/signin.js";
+import { verifyHandler } from "./controllers/auth/verify.js";
 import { galleryHandler } from "./controllers/gallery.js";
-import { signoutHandler } from "./controllers/signout.js";
-import { forgotHandler } from "./controllers/forgot.js";
-import { resetPageHandler, resetHandler } from "./controllers/reset.js";
+import { signoutHandler } from "./controllers/auth/signout.js";
+import { forgotHandler } from "./controllers/auth/forgot.js";
+import { resetPageHandler, resetHandler } from "./controllers/auth/reset.js";
+import { profilePageHandler, modifyProfileHandler } from "./controllers/profile.js";
 
 export async function handleRequest(req, res) {
 	const url = parseUrl(req);
@@ -30,6 +31,10 @@ export async function handleRequest(req, res) {
 		await resetHandler(req, res);
 	} else if (url.pathname === "/reset") {
 		await resetPageHandler(req, res);
+	} else if (url.pathname === "/profile") {
+		profilePageHandler(req, res);
+	} else if (url.pathname === "/api/profile") {
+		await modifyProfileHandler(req, res);
 	} else if (url.pathname === "/" || url.pathname === "/gallery") {
 		await galleryHandler(req, res);
 	} else {

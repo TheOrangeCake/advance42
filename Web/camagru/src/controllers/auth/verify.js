@@ -1,5 +1,5 @@
-import { returnError, parseUrl } from "./utils.js";
-import { verifyUser } from "../models/user.js";
+import { returnError, parseUrl } from "../utils.js";
+import { verifyUser } from "../../models/user.js";
 
 export async function verifyHandler(req, res) {
 	const method = req.method;

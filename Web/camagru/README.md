@@ -94,6 +94,11 @@
     <li>Security</li>
 </ol>
 
+Print the users table to the terminal (from the project root, containers running):
+```sh
+docker compose -f camagru.yaml exec camagru-postgresql sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT id, username, email, active, mail_token_exp, created_at FROM users ORDER BY id;"'
+```
+
 
 # External package
 - bcrypt: https://www.npmjs.com/package/bcrypt

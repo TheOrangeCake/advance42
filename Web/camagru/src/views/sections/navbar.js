@@ -1,3 +1,5 @@
+import { escapeHtml } from "../../controllers/utils.js";
+
 export function navbar(user) {
 	const username = user?.username;
 	return (
@@ -11,7 +13,7 @@ export function navbar(user) {
 				${
 					username ?
 					`<a href="/">Create picture</a>
-					<a href="/">${ username }</a>` :
+					<a href="/profile">${ escapeHtml(username) }</a>` :
 					``
 				}
 			</div>

@@ -1,6 +1,6 @@
-import { authenticateUser } from "../models/user.js";
-import { returnError } from "./utils.js";
-import { createSession, destroySession } from "../services/session.js";
+import { authenticateUser } from "../../models/user.js";
+import { returnError } from "../utils.js";
+import { createSession, destroySession } from "../../services/session.js";
 import { text } from "node:stream/consumers";
 
 const COOKIE_EXPIRE= 7 * 24 * 60 * 60;  // 7 days
@@ -40,7 +40,7 @@ export async function signinHandler(req, res) {
 		return;
 	}
 	if (result.status === "inactive") {
-		returnError(res, 403, "Active your account or sign up again");
+		returnError(res, 403, "Activate your account or sign up again");
 		return;
 	}
 	

@@ -5,8 +5,8 @@ const sessionTable = new Map();
 
 export function createSession(user) {
 	const token = generateToken();
-	const { id , username } = user;
-	sessionTable.set(token, {id, username, expireAt: Date.now() + SESSION_EXPIRE});
+	const { id , username, email } = user;
+	sessionTable.set(token, {id, username, email, expireAt: Date.now() + SESSION_EXPIRE});
 	return token;
 }
 
@@ -26,10 +26,20 @@ export function destroySession(sessionId) {
 	return sessionTable.delete(sessionId);
 }
 
-export function destroyUserSessions(userId) {
+// sign out all sessions except current one
+export function destroyUserSessions(userId, exceptSessionId) {
 	for (const [sessionId, session] of sessionTable) {
-		if (session.id === userId) {
+		if (session.id === userId && sessionId !== exceptSessionId) {
 			sessionTable.delete(sessionId);
+		}
+	}
+}
+
+// update current session with new username/email
+export function updateUserSessions(userId, fields) {
+	for (const session of sessionTable.values()) {
+		if (session.id === userId) {
+			Object.assign(session, fields);
 		}
 	}
 }

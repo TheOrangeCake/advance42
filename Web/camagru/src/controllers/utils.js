@@ -30,3 +30,8 @@ export function parseCookie(req) {
 	});
 	return cookies;
 }
+
+const HTML_ESCAPES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+export function escapeHtml(str) {
+	return String(str).replace(/[&<>"']/g, c => HTML_ESCAPES[c]);
+}

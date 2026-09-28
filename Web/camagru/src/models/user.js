@@ -102,7 +102,7 @@ export async function deleteExpiredUnverified() {
 //sign in
 export async function authenticateUser(username, pass) {
 	const query = `
-		SELECT id, username, password, active
+		SELECT id, username, email, password, active
 		FROM users
 		WHERE username = $1`;
 
@@ -119,7 +119,7 @@ export async function authenticateUser(username, pass) {
 		return { status: "inactive" };
 	}
 
-	return { status: "ok", user: { id, username: found.rows[0].username } };
+	return { status: "ok", user: { id, username: found.rows[0].username, email: found.rows[0].email } };
 }
 
 // forgot password
@@ -172,4 +172,57 @@ export async function resetPassword(id, token, pass) {
 		return "invalid";
 	}
 	return "ok";
+}
+
+// modify profile
+export async function checkPassword(id, pass) {
+	const query = `
+		SELECT password
+		FROM users
+		WHERE id = $1 AND active = TRUE`;
+
+	const found = await dbQuery(query, [id]);
+	if (found.rowCount === 0) {
+		return false;
+	}
+	return bcrypt.compare(pass, found.rows[0].password);
+}
+
+// fields: any of username, email, pass
+export async function updateProfile(id, fields) {
+	const sets = [];
+	const values = [id];
+	if (fields.username) {
+		values.push(fields.username);
+		sets.push(`username = $${values.length}`);
+	}
+	if (fields.email) {
+		values.push(fields.email);
+		sets.push(`email = $${values.length}`);
+	}
+	if (fields.pass) {
+		values.push(await hashPassword(fields.pass));
+		sets.push(`password = $${values.length}`);
+	}
+	if (fields.email || fields.pass) {
+		sets.push("mail_token = NULL", "mail_token_exp = NULL");
+	}
+
+	const query = `
+		UPDATE users
+		SET ${sets.join(", ")}
+		WHERE id = $1 AND active = TRUE`;
+
+	try {
+		await dbQuery(query, values);
+	} catch (e) {
+		// 23505 is UNIQUE constraint violation
+		if (e.code === "23505" && e.constraint === "users_username_key") {
+			throw conflict("Username already taken");
+		}
+		if (e.code === "23505" && e.constraint === "users_email_key") {
+			throw conflict("Email already registered");
+		}
+		throw e;
+	}
 }

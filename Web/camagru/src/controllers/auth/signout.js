@@ -1,5 +1,5 @@
-import { destroySession } from "../services/session.js";
-import { returnError } from "./utils.js";
+import { destroySession } from "../../services/session.js";
+import { returnError } from "../utils.js";
 
 export function signoutHandler(req, res) {
 	const method = req.method;

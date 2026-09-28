@@ -1,9 +1,9 @@
 import { text } from "node:stream/consumers";
-import { returnError, parseUrl } from "./utils.js";
-import { resetPassword, isResetTokenValid } from "../models/user.js";
-import { destroyUserSessions } from "../services/session.js";
-import { layout } from "../views/layout.js";
-import { reset } from "../views/sections/reset.js";
+import { returnError, parseUrl } from "../utils.js";
+import { resetPassword, isResetTokenValid } from "../../models/user.js";
+import { destroyUserSessions } from "../../services/session.js";
+import { layout } from "../../views/layout.js";
+import { reset } from "../../views/sections/reset.js";
 
 export async function resetPageHandler(req, res) {
 	const method = req.method;
