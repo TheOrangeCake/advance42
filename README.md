@@ -83,7 +83,7 @@ Mininum 30'000 exp - 3 projects - NOPE
 |Name                                                    |Language|Concept                                  |Exp  |Status|
 |:-------------------------------------------------------|:------:|:----------------------------------------|----:|:----:|
 |[ft_linear_regression](./Ai/ft_linear_regression)|Python  |Linear Regression, data visualization, model trainning  |4'200|DONE  |
-|dslr                                                    |Python  |Logistic Regression, data visualization, model trainning|6'000|NOPE  |
+|[dslr](./Ai/dslr)                                |Python  |Logistic Regression, data visualization, model trainning|6'000|DONE  |
 </br>
 
 ### Web:
