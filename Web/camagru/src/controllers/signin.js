@@ -1,6 +1,6 @@
 import { authenticateUser } from "../models/user.js";
 import { returnError } from "./utils.js";
-import { createSession } from "../services/session.js";
+import { createSession, destroySession } from "../services/session.js";
 import { text } from "node:stream/consumers";
 
 const COOKIE_EXPIRE= 7 * 24 * 60 * 60;  // 7 days
@@ -45,6 +45,7 @@ export async function signinHandler(req, res) {
 	}
 	
 	// add to session table
+	destroySession(req.sessionId);
 	const sessionId = createSession(result.user);
 
 	// return ok with session cookie

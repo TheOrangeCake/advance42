@@ -1,6 +1,6 @@
 import { text } from "node:stream/consumers";
 import { returnError, parseUrl } from "./utils.js";
-import { resetPassword } from "../models/user.js";
+import { resetPassword, isResetTokenValid } from "../models/user.js";
 import { destroyUserSessions } from "../services/session.js";
 import { layout } from "../views/layout.js";
 import { reset } from "../views/sections/reset.js";
@@ -16,10 +16,26 @@ export async function resetPageHandler(req, res) {
 	const params = parseUrl(req).searchParams;
 	const rawId = params.get("id");
 	const token = params.get("token");
+	const id = parseId(rawId);
 
 	// validation
-	if (!parseId(rawId) || !isTokenFormat(token)) {
+	if (!id || !isTokenFormat(token)) {
 		returnError(res, 400, "Invalid reset link");
+		return;
+	}
+
+	// check token against db so an expired or used link doesn't show the form
+	let valid;
+	try {
+		valid = await isResetTokenValid(id, token);
+	} catch (e) {
+		console.error(`Error checking reset token of user ${id}:`, e);
+		returnError(res, 500, "Something went wrong in the server");
+		return;
+	}
+
+	if (!valid) {
+		returnError(res, 400, "Invalid or expired reset link, please ask for a new one");
 		return;
 	}
 

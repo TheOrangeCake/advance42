@@ -138,7 +138,7 @@ export async function setResetToken(email, token) {
 	return result.rows[0].id;
 }
 
-export async function resetPassword(id, token, pass) {
+export async function isResetTokenValid(id, token) {
 	const lookupQuery = `
 		SELECT mail_token, mail_token_exp > now() AS token_valid
 		FROM users
@@ -146,11 +146,15 @@ export async function resetPassword(id, token, pass) {
 
 	const found = await dbQuery(lookupQuery, [id]);
 	if (found.rowCount === 0) {
-		return "invalid";
+		return false;
 	}
 
 	const { mail_token, token_valid } = found.rows[0];
-	if (!token_valid || !tokenMatches(mail_token, token)) {
+	return token_valid === true && tokenMatches(mail_token, token);
+}
+
+export async function resetPassword(id, token, pass) {
+	if (!await isResetTokenValid(id, token)) {
 		return "invalid";
 	}
 

@@ -172,7 +172,7 @@ function validateSigninInput(username, pass) {
 	}
 }
 
-/* forgot password */
+/* forgot password (form) */
 const forgotForm = document.querySelector("#forgot-pass-form");
 
 forgotForm?.addEventListener("submit", async (e) => {
