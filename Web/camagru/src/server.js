@@ -1,5 +1,5 @@
 import { createServer } from 'node:http';
-import { handleRequest } from './controllers/router.js';
+import { handleRequest } from './router.js';
 import { returnError } from './controllers/utils.js';
 
 const hostname = '0.0.0.0';

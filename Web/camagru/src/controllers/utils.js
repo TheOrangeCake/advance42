@@ -11,7 +11,22 @@ export function conflict(message) {
 }
 
 const URL_BASE = "http://localhost";
-
 export function parseUrl(req) {
 	return new URL(req.url, URL_BASE);
+}
+
+export function parseCookie(req) {
+	const cookies = {};
+	const cookiesHeader = req.headers.cookie;
+	if (!cookiesHeader) {
+		return cookies;
+	}
+	cookiesHeader.split(`;`).forEach(cookie => {
+		const parts = cookie.match(/(.*?)=(.*)$/);
+		if (!parts) {
+			return;
+		}
+		cookies[ parts[1].trim() ] = parts[2].trim();
+	});
+	return cookies;
 }

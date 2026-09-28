@@ -1,4 +1,5 @@
-export function navbar() {
+export function navbar(user) {
+	const username = user?.username;
 	return (
 		`<nav class="nav">
 			<a class="logo" href="/">
@@ -8,9 +9,17 @@ export function navbar() {
 			<div class="nav-items">
 				<a href="/">Gallery</a>
 				<a href="/">Create picture</a>
+				${
+					username ?
+					`<a href="/">${ username }</a>` :
+					``
+				}
 			</div>
-			<button type="button" class="button" id="signin-btn">Sign in</button>
-			<button type="button" class="button" id="signout-btn">Sign out</button>
+			${
+				user ?
+				`<button type="button" class="button" id="signout-btn">Sign out</button>` :
+				`<button type="button" class="button" id="signin-btn">Sign in</button>` 
+			}
 		</nav>`
 	)
 }

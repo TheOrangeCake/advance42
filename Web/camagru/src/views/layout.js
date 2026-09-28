@@ -2,9 +2,9 @@ import { modal } from "./components/modal.js"
 import { navbar } from "./sections/navbar.js"
 import { footer } from "./sections/footer.js"
 
-export function layout(title, css, js, body) {
+export function layout(title, css, js, body, user) {
 	const html_modal = modal();
-	const html_nav =  navbar();
+	const html_nav = navbar(user);
 	const html_footer = footer();
 	return (
 		`<!DOCTYPE html>

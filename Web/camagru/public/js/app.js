@@ -36,26 +36,26 @@ function displayForm(form) {
 	}
 }
 
-signupLink.addEventListener("click", () => {
+signupLink?.addEventListener("click", () => {
 	displayForm("signup")
 })
 
-forgotLink.addEventListener("click", () => {
+forgotLink?.addEventListener("click", () => {
 	displayForm("forgot")
 })
 
-backBtn.addEventListener("click", () => {
+backBtn?.addEventListener("click", () => {
 	displayForm("signin")
 })
 
 
-signinBtn.addEventListener("click", () => {
+signinBtn?.addEventListener("click", () => {
 	modal.showModal();
 	displayStatus(null);
 	displayForm("signin");
 })
 
-closeBtn.addEventListener("click", () => {
+closeBtn?.addEventListener("click", () => {
 	modal.close();
 })
 
@@ -81,7 +81,7 @@ function displayStatus(form, status = null, message = "") {
 /* signup */
 const signupForm = document.querySelector("#signup-form");
 
-signupForm.addEventListener("submit", async (e) => {
+signupForm?.addEventListener("submit", async (e) => {
 	e.preventDefault();
 
 	const signupFormData = new FormData(signupForm, signupSubmitBtn);
@@ -130,7 +130,7 @@ function validateSignupInput(username, email, pass, passConfirm) {
 /* signin */
 const signinForm = document.querySelector("#signin-form");
 
-signinForm.addEventListener("submit", async (e) => {
+signinForm?.addEventListener("submit", async (e) => {
 	e.preventDefault();
 
 	const signinFormData = new FormData(signinForm, signinSubmitBtn);
@@ -147,13 +147,8 @@ signinForm.addEventListener("submit", async (e) => {
 		if (!response.ok) {
 			throw new Error(await response.text());
 		}
-		displayStatus(null);
 
-		// TODO: switch navbar sign in button to sign out
-		// store session cookie in browser?
-		// placeholder
-		displayForm("success");
-
+		location.reload();
 	} catch (err) {
 		displayStatus("signin", "error", err.message);
 	}
