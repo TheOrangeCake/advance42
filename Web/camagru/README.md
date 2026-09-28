@@ -75,7 +75,7 @@
             <li>OK - Sign up</li>
             <li>OK - Sign in</li>
             <li>OK - Sign out</li>
-            <li>Forgot password</li>
+            <li>OK - Forgot password</li>
         </ol>
     </li>
     <li>Implement Editing feature

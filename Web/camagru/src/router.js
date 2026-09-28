@@ -5,6 +5,8 @@ import { signinHandler } from "./controllers/signin.js";
 import { verifyHandler } from "./controllers/verify.js";
 import { galleryHandler } from "./controllers/gallery.js";
 import { signoutHandler } from "./controllers/signout.js";
+import { forgotHandler } from "./controllers/forgot.js";
+import { resetPageHandler, resetHandler } from "./controllers/reset.js";
 
 export async function handleRequest(req, res) {
 	const url = parseUrl(req);
@@ -22,6 +24,12 @@ export async function handleRequest(req, res) {
 		await signinHandler(req, res);
 	} else if (url.pathname === "/api/signout") {
 		signoutHandler(req, res);
+	} else if (url.pathname === "/api/forgot") {
+		await forgotHandler(req, res);
+	} else if (url.pathname === "/api/reset") {
+		await resetHandler(req, res);
+	} else if (url.pathname === "/reset") {
+		await resetPageHandler(req, res);
 	} else if (url.pathname === "/" || url.pathname === "/gallery") {
 		await galleryHandler(req, res);
 	} else {

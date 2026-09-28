@@ -149,7 +149,12 @@ signinForm?.addEventListener("submit", async (e) => {
 			throw new Error(await response.text());
 		}
 
-		location.reload();
+		// the reset link is single-use, so don't reload it; replace() also keeps it out of history
+		if (location.pathname === "/reset") {
+			location.replace("/");
+		} else {
+			location.reload();
+		}
 	} catch (err) {
 		displayStatus("signin", "error", err.message);
 	}
@@ -164,6 +169,84 @@ function validateSigninInput(username, pass) {
 	}
 	if (!PASSWORD_REGEX.test(pass)) {
 		throw new Error("Invalid password");
+	}
+}
+
+/* forgot password */
+const forgotForm = document.querySelector("#forgot-pass-form");
+
+forgotForm?.addEventListener("submit", async (e) => {
+	e.preventDefault();
+
+	const forgotFormData = new FormData(forgotForm, forgotSubmitBtn);
+	try {
+		const email = forgotFormData.get("email")?.trim();
+		if (!email) {
+			throw new Error("Empty field(s)");
+		}
+		if (!EMAIL_REGEX.test(email)) {
+			throw new Error("Invalid email address");
+		}
+
+		displayStatus("forgot", "loading", "Sending reset link ...");
+		const response = await fetch("/api/forgot", {
+			method: "POST",
+			body: new URLSearchParams(forgotFormData),
+		})
+		if (!response.ok) {
+			throw new Error(await response.text());
+		}
+		displayStatus(null);
+		displayForm("success");
+	} catch (err) {
+		displayStatus("forgot", "error", err.message);
+	}
+})
+
+/* reset password (page) */
+const resetForm = document.querySelector("#reset-form");
+const resetError = document.querySelector("#reset-error");
+const resetLoading = document.querySelector("#reset-loading");
+const resetSubmitBtn = document.querySelector("#reset-submit-btn");
+
+resetForm?.addEventListener("submit", async (e) => {
+	e.preventDefault();
+
+	const resetFormData = new FormData(resetForm, resetSubmitBtn);
+	resetError.textContent = "";
+	try {
+		const pass = resetFormData.get("pass");
+		const passConfirm = resetFormData.get("passConfirm");
+		validateResetInput(pass, passConfirm);
+
+		resetLoading.textContent = "Updating password ...";
+		resetSubmitBtn.disabled = true;
+		const response = await fetch("/api/reset", {
+			method: "POST",
+			body: new URLSearchParams(resetFormData),
+		})
+		if (!response.ok) {
+			throw new Error(await response.text());
+		}
+		alert(await response.text());
+		location.replace("/");
+	} catch (err) {
+		resetError.textContent = err.message;
+	} finally {
+		resetLoading.textContent = "";
+		resetSubmitBtn.disabled = false;
+	}
+})
+
+function validateResetInput(pass, passConfirm) {
+	if (!pass || !passConfirm) {
+		throw new Error("Empty field(s)");
+	}
+	if (!PASSWORD_REGEX.test(pass)) {
+		throw new Error("Password must be between 8 - 72 characters, with 1 lower case, 1 upper case and 1 special character");
+	}
+	if (passConfirm !== pass) {
+		throw new Error("Password confirmation doesn't match");
 	}
 }
 

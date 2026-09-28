@@ -1,0 +1,4 @@
+#reset-form-wrapper {
+  width: min(100%, 20rem);
+  margin: 0 auto;
+}

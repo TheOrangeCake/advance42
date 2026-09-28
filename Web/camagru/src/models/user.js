@@ -121,3 +121,51 @@ export async function authenticateUser(username, pass) {
 
 	return { status: "ok", user: { id, username: found.rows[0].username } };
 }
+
+// forgot password
+export async function setResetToken(email, token) {
+	const query = `
+		UPDATE users
+		SET mail_token = $2,
+			mail_token_exp = now() + interval '15 minutes'
+		WHERE email = $1 AND active = TRUE
+		RETURNING id`;
+
+	const result = await dbQuery(query, [email, token]);
+	if (result.rowCount === 0) {
+		return null;
+	}
+	return result.rows[0].id;
+}
+
+export async function resetPassword(id, token, pass) {
+	const lookupQuery = `
+		SELECT mail_token, mail_token_exp > now() AS token_valid
+		FROM users
+		WHERE id = $1 AND active = TRUE`;
+
+	const found = await dbQuery(lookupQuery, [id]);
+	if (found.rowCount === 0) {
+		return "invalid";
+	}
+
+	const { mail_token, token_valid } = found.rows[0];
+	if (!token_valid || !tokenMatches(mail_token, token)) {
+		return "invalid";
+	}
+
+	const hashedPass = await hashPassword(pass);
+
+	const updateQuery = `
+		UPDATE users
+		SET password = $3,
+			mail_token = NULL,
+			mail_token_exp = NULL
+		WHERE id = $1 AND mail_token = $2`;
+
+	const updated = await dbQuery(updateQuery, [id, token, hashedPass]);
+	if (updated.rowCount === 0) {
+		return "invalid";
+	}
+	return "ok";
+}

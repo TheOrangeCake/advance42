@@ -25,3 +25,11 @@ export function getSession(sessionId) {
 export function destroySession(sessionId) {
 	return sessionTable.delete(sessionId);
 }
+
+export function destroyUserSessions(userId) {
+	for (const [sessionId, session] of sessionTable) {
+		if (session.id === userId) {
+			sessionTable.delete(sessionId);
+		}
+	}
+}
