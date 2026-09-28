@@ -72,9 +72,10 @@
     <li>OK - Quick layout design</li>
     <li>Implement User feature
         <ol>
-            <li>PARTIAL (/verify endpoint) - Sign up</li>
-            <li>Sign in</li>
-            <li>Sign out</li>
+            <li>OK - Sign up</li>
+            <li>OK - Sign in</li>
+            <li>OK - Sign out</li>
+            <li>Forgot password</li>
         </ol>
     </li>
     <li>Implement Editing feature

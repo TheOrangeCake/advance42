@@ -17,6 +17,8 @@ const forgotLoading = document.querySelector("#forgot-loading");
 const signinSubmitBtn = document.querySelector("#signin-submit-btn");
 const signupSubmitBtn = document.querySelector("#signup-submit-btn");
 const forgotSubmitBtn = document.querySelector("#forgot-submit-btn");
+const signoutBtn = document.querySelector("#signout-btn");
+
 
 const USERNAME_REGEX = /^[\w ]{3,20}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -102,7 +104,6 @@ signupForm?.addEventListener("submit", async (e) => {
 		}
 		displayStatus(null);
 		displayForm("success");
-
 	} catch (err) {
 		displayStatus("signup", "error", err.message);
 	}
@@ -165,3 +166,18 @@ function validateSigninInput(username, pass) {
 		throw new Error("Invalid password");
 	}
 }
+
+/* signout */
+signoutBtn?.addEventListener("click", async () => {
+	try {
+		const response = await fetch("/api/signout", {
+			method: "POST",
+		})
+		if (!response.ok) {
+			throw new Error(await response.text());
+		}
+		location.assign("/");
+	} catch (err) {
+		alert(err.message);
+	}
+})

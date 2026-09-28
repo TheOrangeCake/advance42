@@ -8,10 +8,10 @@ export function navbar(user) {
 			</a>
 			<div class="nav-items">
 				<a href="/">Gallery</a>
-				<a href="/">Create picture</a>
 				${
 					username ?
-					`<a href="/">${ username }</a>` :
+					`<a href="/">Create picture</a>
+					<a href="/">${ username }</a>` :
 					``
 				}
 			</div>
