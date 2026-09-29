@@ -149,7 +149,6 @@ signinForm?.addEventListener("submit", async (e) => {
 			throw new Error(await response.text());
 		}
 
-		// the reset link is single-use, so don't reload it; replace() also keeps it out of history
 		if (location.pathname === "/reset") {
 			location.replace("/");
 		} else {
@@ -203,41 +202,7 @@ forgotForm?.addEventListener("submit", async (e) => {
 	}
 })
 
-/* reset password (page) */
-const resetForm = document.querySelector("#reset-form");
-const resetError = document.querySelector("#reset-error");
-const resetLoading = document.querySelector("#reset-loading");
-const resetSubmitBtn = document.querySelector("#reset-submit-btn");
-
-resetForm?.addEventListener("submit", async (e) => {
-	e.preventDefault();
-
-	const resetFormData = new FormData(resetForm, resetSubmitBtn);
-	resetError.textContent = "";
-	try {
-		const pass = resetFormData.get("pass");
-		const passConfirm = resetFormData.get("passConfirm");
-		validateResetInput(pass, passConfirm);
-
-		resetLoading.textContent = "Updating password ...";
-		resetSubmitBtn.disabled = true;
-		const response = await fetch("/api/reset", {
-			method: "POST",
-			body: new URLSearchParams(resetFormData),
-		})
-		if (!response.ok) {
-			throw new Error(await response.text());
-		}
-		alert(await response.text());
-		location.replace("/");
-	} catch (err) {
-		resetError.textContent = err.message;
-	} finally {
-		resetLoading.textContent = "";
-		resetSubmitBtn.disabled = false;
-	}
-})
-
+/* password validation (shared by reset and profile pages) */
 function validateResetInput(pass, passConfirm) {
 	if (!pass || !passConfirm) {
 		throw new Error("Empty field(s)");
@@ -249,70 +214,6 @@ function validateResetInput(pass, passConfirm) {
 		throw new Error("Password confirmation doesn't match");
 	}
 }
-
-/* modify profile (page) */
-const profileForm = document.querySelector("#profile-form");
-const profileError = document.querySelector("#profile-error");
-const profileLoading = document.querySelector("#profile-loading");
-const profileSubmitBtn = document.querySelector("#profile-submit-btn");
-
-profileForm?.addEventListener("submit", async (e) => {
-	e.preventDefault();
-
-	const { user, email, newPass, newPassConfirm, pass } = profileForm.elements;
-	profileError.textContent = "";
-	try {
-		// only send what changed from the value the page was loaded with
-		const body = new URLSearchParams();
-		const newUser = user.value.trim();
-		const newEmail = email.value.trim().toLowerCase();
-		if (newUser !== user.defaultValue) {
-			if (!USERNAME_REGEX.test(newUser)) {
-				throw new Error("Username must be between 3 - 20 characters, only alphanumeric, space and _ characters");
-			}
-			body.set("user", newUser);
-		}
-		if (newEmail !== email.defaultValue) {
-			if (!EMAIL_REGEX.test(newEmail)) {
-				throw new Error("Invalid email address");
-			}
-			body.set("email", newEmail);
-		}
-		if (newPass.value || newPassConfirm.value) {
-			validateResetInput(newPass.value, newPassConfirm.value);
-			body.set("newPass", newPass.value);
-			body.set("newPassConfirm", newPassConfirm.value);
-		}
-		if (!body.toString()) {
-			throw new Error("Nothing to update");
-		}
-		if (!pass.value) {
-			throw new Error("Empty current password field");
-		}
-		body.set("pass", pass.value);
-
-		profileLoading.textContent = "Saving changes ...";
-		profileSubmitBtn.disabled = true;
-		const response = await fetch("/api/profile", {
-			method: "PATCH",
-			body,
-		})
-		if (!response.ok) {
-			throw new Error(await response.text());
-		}
-		alert(await response.text());
-
-		user.defaultValue = newUser;
-		email.defaultValue = newEmail;
-		document.querySelectorAll('a[href="/profile"]').forEach(a => a.textContent = newUser);
-		profileForm.reset();
-	} catch (err) {
-		profileError.textContent = err.message;
-	} finally {
-		profileLoading.textContent = "";
-		profileSubmitBtn.disabled = false;
-	}
-})
 
 /* signout */
 signoutBtn?.addEventListener("click", async () => {
@@ -328,70 +229,3 @@ signoutBtn?.addEventListener("click", async () => {
 		alert(err.message);
 	}
 })
-
-/* video capture */
-const width = 450;
-let height = 0;
-let streaming = false;
-
-const video = document.querySelector("#video");
-const cameraWarn = document.querySelector("#camera-warn");
-const canvas = document.querySelector("#canvas");
-const startButton = document.querySelector("#start-button");
-const allowButton = document.querySelector("#permissions-button");
-const photo = document.getElementById("photo"); // remove
-
-allowButton?.addEventListener("click", () => {
-navigator.mediaDevices
-	.getUserMedia({ video: true, audio: false })
-	.then((stream) => {
-		video.srcObject = stream;
-		video.style.display = "flex";
-		cameraWarn.style.display = "none";
-		video.play();
-	})
-	.catch((err) => {
-		console.error(`An error occurred: ${err}`);
-	});
-});
-
-video?.addEventListener("canplay", () => {
-	if (!streaming) {
-		height = video.videoHeight / (video.videoWidth / width);
-
-		video.setAttribute("width", width);
-		video.setAttribute("height", height);
-		streaming = true;
-	}
-});
-
-startButton?.addEventListener("click", (ev) => {
-	takePicture();
-	ev.preventDefault();
-});
-
-function resetCanvas() {
-	const context = canvas.getContext("2d");
-	context.fillStyle = "#aaaaaa";
-	context.fillRect(0, 0, canvas.width, canvas.height);
-
-	const data = canvas.toDataURL("image/png");
-	photo.setAttribute("src", data); // remove
-}
-
-resetCanvas();
-
-function takePicture() {
-	const context = canvas.getContext("2d");
-	if (width && height) {
-		canvas.width = width;
-		canvas.height = height;
-		context.drawImage(video, 0, 0, width, height);
-
-		const data = canvas.toDataURL("image/png");
-		// send data back to backend
-		photo.setAttribute("src", data); // remove
-	} else {
-		resetCanvas();
-	}
-}

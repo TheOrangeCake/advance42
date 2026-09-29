@@ -41,7 +41,7 @@ export async function resetPageHandler(req, res) {
 
 	res.statusCode = 200;
 	res.setHeader('Content-type', 'text/html; charset=utf-8');
-	res.end(layout("Camagru | Reset password", "/css/reset.css", "/js/app.js", reset(rawId, token), req.user));
+	res.end(layout("Camagru | Reset password", "/css/reset.css", "/js/reset.js", reset(rawId, token), req.user));
 }
 
 // form submit from the reset page

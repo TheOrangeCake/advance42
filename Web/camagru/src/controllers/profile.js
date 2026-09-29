@@ -25,7 +25,7 @@ export function profilePageHandler(req, res) {
 	const { username, email } = req.user;
 	res.statusCode = 200;
 	res.setHeader('Content-type', 'text/html; charset=utf-8');
-	res.end(layout("Camagru | Profile", "/css/profile.css", "/js/app.js", profile(escapeHtml(username), escapeHtml(email)), req.user));
+	res.end(layout("Camagru | Profile", "/css/profile.css", "/js/profile.js", profile(escapeHtml(username), escapeHtml(email)), req.user));
 }
 
 // PATCH: only the filled fields are updated, the current password is always required

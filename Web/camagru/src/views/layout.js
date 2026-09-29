@@ -19,7 +19,7 @@ export function layout(title, css, js, body, user) {
 				<link rel="stylesheet" href="/css/global.css">
 				<link rel="stylesheet" href="${css}">
 				<script src="/js/app.js" defer></script>
-				<script src="${js}" defer></script>
+				${js ? `<script src="${js}" defer></script>` : ""}
 			</head>
 
 			<body>
