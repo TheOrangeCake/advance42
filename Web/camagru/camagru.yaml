@@ -36,6 +36,7 @@ services:
     volumes:
       - ./src:/app/src
       - camagru-uploads:/app/uploads
+      - ./public/assets:/app/assets:ro
     depends_on:
       camagru-postgresql:
         condition: service_healthy

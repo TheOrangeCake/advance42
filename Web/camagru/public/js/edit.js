@@ -21,6 +21,7 @@ navigator.mediaDevices
 	})
 	.catch((err) => {
 		console.error(`An error occurred: ${err}`);
+		// show error front end
 	});
 });
 
