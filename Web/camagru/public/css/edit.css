@@ -1,0 +1,31 @@
+#canvas {
+	display: none;
+}
+
+.camera {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 20px;
+	border: 1px solid #e2e2e2;
+	border-radius: 12px;
+	padding-bottom: 40px;
+}
+
+#camera-warn {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	margin-top: 80px;
+	margin-bottom: 80px;
+}
+
+#video {
+	display: none;
+}
+
+#camera-buttons {
+	display: flex;
+	gap: 20px;
+}
