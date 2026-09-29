@@ -8,6 +8,7 @@ import { signoutHandler } from "./controllers/auth/signout.js";
 import { forgotHandler } from "./controllers/auth/forgot.js";
 import { resetPageHandler, resetHandler } from "./controllers/auth/reset.js";
 import { profilePageHandler, modifyProfileHandler } from "./controllers/profile.js";
+import { editPageHandler } from "./controllers/edit.js";
 
 export async function handleRequest(req, res) {
 	const url = parseUrl(req);
@@ -35,6 +36,8 @@ export async function handleRequest(req, res) {
 		profilePageHandler(req, res);
 	} else if (url.pathname === "/api/profile") {
 		await modifyProfileHandler(req, res);
+	} else if (url.pathname === "/edit") {
+		editPageHandler(req, res);
 	} else if (url.pathname === "/" || url.pathname === "/gallery") {
 		await galleryHandler(req, res);
 	} else {

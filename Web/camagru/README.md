@@ -101,6 +101,7 @@ docker compose -f camagru.yaml exec camagru-postgresql sh -c 'psql -U "$POSTGRES
 
 
 # External package
-- bcrypt: https://www.npmjs.com/package/bcrypt
-- postgres: https://www.npmjs.com/package/pg
-- nodemailer: https://nodemailer.com/
+- [bcrypt](https://www.npmjs.com/package/bcrypt)
+- [postgres](https://www.npmjs.com/package/pg)
+- [nodemailer](https://nodemailer.com/)
+- [jimp](https://www.npmjs.com/package/jimp)

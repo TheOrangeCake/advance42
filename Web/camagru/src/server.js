@@ -19,5 +19,5 @@ const server = createServer(async (req, res) => {
 })
 
 server.listen(port, hostname, () => {
-	console.log(`Server running at http://${hostname}:${port}/`);
+	console.log(`Node server is running anc accessible by Docker at port ${port}/`);
 })

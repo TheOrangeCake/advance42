@@ -12,7 +12,7 @@ export function navbar(user) {
 				<a href="/">Gallery</a>
 				${
 					username ?
-					`<a href="/">Create picture</a>
+					`<a href="/edit">Create picture</a>
 					<a href="/profile">${ escapeHtml(username) }</a>` :
 					``
 				}
