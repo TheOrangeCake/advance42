@@ -1,6 +1,7 @@
 import { edit } from "../views/sections/edit.js";
 import { layout } from "../views/layout.js";
 import { returnError } from "./utils.js";
+import { getAllStickerName } from "../services/stickers.js";
 
 export async function editPageHandler(req, res) {
 	const method = req.method;
@@ -17,5 +18,5 @@ export async function editPageHandler(req, res) {
 	
 	res.statusCode = 200;
 	res.setHeader('Content-type', 'text/html; charset=utf-8');
-	res.end(layout("Camagru | Edit", "/css/edit.css", "/js/edit.js", edit(), req.user));
+	res.end(layout("Camagru | Edit", "/css/edit.css", "/js/edit.js", edit(getAllStickerName()), req.user));
 }

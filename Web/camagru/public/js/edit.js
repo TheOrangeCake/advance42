@@ -1,6 +1,4 @@
 /* video capture */
-const width = 450;
-let height = 0;
 let streaming = false;
 
 const video = document.querySelector("#video");
@@ -26,13 +24,7 @@ navigator.mediaDevices
 });
 
 video?.addEventListener("canplay", () => {
-	if (!streaming) {
-		height = video.videoHeight / (video.videoWidth / width);
-
-		video.setAttribute("width", width);
-		video.setAttribute("height", height);
-		streaming = true;
-	}
+	streaming = true;
 });
 
 startButton?.addEventListener("click", (ev) => {
@@ -53,7 +45,9 @@ resetCanvas();
 
 function takePicture() {
 	const context = canvas.getContext("2d");
-	if (width && height) {
+	const width = video.videoWidth;
+	const height = video.videoHeight;
+	if (streaming && width && height) {
 		canvas.width = width;
 		canvas.height = height;
 		context.drawImage(video, 0, 0, width, height);

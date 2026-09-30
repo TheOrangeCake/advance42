@@ -37,6 +37,10 @@ export function getSticker(fileName) {
 	return file ?? null;
 }
 
+export function getAllStickerName() {
+	return [... stickerTable.keys()];
+}
+
 export function getStickerUrl(fileName) {
 	const file = stickerTable.get(fileName);
 	return file?.url ?? null;
