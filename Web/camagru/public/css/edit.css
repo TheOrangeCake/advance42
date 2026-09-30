@@ -46,7 +46,7 @@
 #sticker-wrapper {
 	position: relative;
 	display: flex;
-	flex: 0 0 150px;
+	flex: 0 0 180px;
 }
 
 #sticker-list {
@@ -62,8 +62,8 @@
 
 .sticker {
 	flex-shrink: 0;
-	width: 100px;
-	height: 100px;
+	width: 150px;
+	height: 150px;
 	object-fit: contain;
 	border-radius: 12px;
 }
