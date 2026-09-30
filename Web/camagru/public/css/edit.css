@@ -16,7 +16,7 @@
 	align-items: center;
 	justify-content: center;
 	gap: 20px;
-	border: 1px solid #e2e2e2;
+	border: 1px solid var(--cl-grey);
 	border-radius: 12px;
 	padding-bottom: 40px;
 	overflow: hidden;
@@ -46,7 +46,7 @@
 #sticker-wrapper {
 	position: relative;
 	display: flex;
-	flex: 0 0 250px;
+	flex: 0 0 150px;
 }
 
 #sticker-list {
@@ -57,17 +57,37 @@
 	flex-direction: column;
 	align-items: center;
 	gap: 20px;
+	padding: 10px 0px;
 }
 
 .sticker {
 	flex-shrink: 0;
-	width: 200px;
-	height: 200px;
+	width: 100px;
+	height: 100px;
 	object-fit: contain;
 	border-radius: 12px;
 }
 
+.sticker:hover {
+	background-color: var(--cl-grey);
+}
+
+.sticker.selected {
+	outline: 2px dotted var(--cl-primary);
+}
+
 @media (max-width: 700px) {
 	#main-wrapper { flex-direction: column; }
-	#sticker-wrapper { flex-basis: auto; height: 250px; }
+	#sticker-wrapper { flex-basis: auto; height: 130px; }
+	#sticker-list {
+		flex-direction: row;
+		overflow-x: auto;
+		overflow-y: hidden;
+		padding: 0px 10px;
+	}
+}
+
+#start-button:disabled {
+	background-color: grey;
+	color: var(--cl-grey);
 }

@@ -6,7 +6,7 @@ export function edit(stickers) {
 			<div id="main-wrapper">
 				<div id="camera">
 					<div id="camera-warn">
-						<h3>Please enable camera first</h3>
+						<h3 id="camera-warn-message">Please enable camera first</h3>
 						<button type="button" id="permissions-button">Allow camera</button>
 					</div>
 					<video id="video">Video stream not available.</video>
@@ -18,7 +18,9 @@ export function edit(stickers) {
 
 				<div id="sticker-wrapper">
 					<div id="sticker-list">
-						${stickers.map(sticker => `<img class="sticker" src="${getStickerUrl(sticker)}">`).join("")}
+						${stickers
+							.map(sticker => `<img class="sticker" data-image-name="${sticker}" src="${getStickerUrl(sticker)}">`)
+							.join("")}
 					</div>
 				</div>
 			</div>

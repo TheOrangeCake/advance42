@@ -19,7 +19,6 @@ const signupSubmitBtn = document.querySelector("#signup-submit-btn");
 const forgotSubmitBtn = document.querySelector("#forgot-submit-btn");
 const signoutBtn = document.querySelector("#signout-btn");
 
-
 const USERNAME_REGEX = /^[\w ]{3,20}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,72}$/;
