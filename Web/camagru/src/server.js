@@ -1,6 +1,7 @@
 import { createServer } from 'node:http';
 import { handleRequest } from './router.js';
 import { returnError } from './controllers/utils.js';
+import { loadStickers } from './services/stickers.js';
 
 const hostname = '0.0.0.0';
 const port = process.env.PORT || 3000;
@@ -18,6 +19,8 @@ const server = createServer(async (req, res) => {
 	}
 })
 
+await loadStickers();
+
 server.listen(port, hostname, () => {
-	console.log(`Node server is running anc accessible by Docker at port ${port}/`);
+	console.log(`Node server is running and accessible by Docker at port ${port}/`);
 })

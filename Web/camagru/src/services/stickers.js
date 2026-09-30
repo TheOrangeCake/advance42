@@ -4,7 +4,9 @@ import { Jimp } from "jimp";
 const STICKERS_DIR = "/app/assets/";
 const NGINX_DIR = "/assets/";
 
-export async function loadStickers() {
+const stickerTable = new Map();
+
+async function readAllFiles() {
 	// return the list of file in the directory
 	return readdir(STICKERS_DIR)
 		.then(filenames => {
@@ -19,4 +21,28 @@ export async function loadStickers() {
 				})
 			)
 		})
+}
+
+export async function loadStickers() {
+	const files = await readAllFiles();
+	files.forEach(file => {
+		const url = file.url;
+		const image = file.image;
+		stickerTable.set(file.filename, {url, image});
+	})
+}
+
+export function getSticker(fileName) {
+	const file = stickerTable.get(fileName);
+	return file ?? null;
+}
+
+export function getStickerUrl(fileName) {
+	const file = stickerTable.get(fileName);
+	return file?.url ?? null;
+}
+
+export function getStickerImage(fileName) {
+	const file = stickerTable.get(fileName);
+	return file?.image.clone() ?? null;
 }
