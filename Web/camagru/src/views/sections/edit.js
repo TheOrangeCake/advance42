@@ -10,9 +10,11 @@ export function edit(stickers) {
 						<button type="button" id="permissions-button">Allow camera</button>
 					</div>
 					<video id="video">Video stream not available.</video>
+					<img id="upload-preview">
 					<div id="camera-buttons">
 						<button type="button" class="button" id="start-button">Capture photo</button>
 						<button type="button" class="button" id="upload-button">Upload image</button>
+						<input type="file" id="upload-input" accept="image/png, image/jpeg, image/gif, image/webp" hidden>
 					</div>
 				</div>
 
@@ -24,7 +26,7 @@ export function edit(stickers) {
 					</div>
 				</div>
 			</div>
-			<canvas id="canvas"></canvas>
+			<canvas id="canvas" hidden></canvas>
 			<div class="output">
 				<img id="photo" src="" alt="The screen capture will appear in this box." />
 			</div>
