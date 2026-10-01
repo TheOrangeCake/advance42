@@ -26,11 +26,17 @@
 	margin-bottom: 80px;
 }
 
+#camera-screen {
+	position: relative;
+	width: 100%;
+	height: auto;
+	min-width: 280px;
+	max-width: 1024px;
+}
+
 #video, #upload-preview {
 	display: none;
 	width: 100%;
-	min-width: 280px;
-	max-width: 1024px;
 	height: auto;
 }
 
@@ -86,4 +92,14 @@
 #start-button:disabled {
 	background-color: grey;
 	color: var(--cl-grey);
+}
+
+#sticker-layer {
+	display: none;
+	position: absolute;
+	inset: 0;
+}
+
+.placed-sticker {
+	position: absolute;
 }

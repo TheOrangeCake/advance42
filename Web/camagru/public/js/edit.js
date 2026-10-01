@@ -1,7 +1,7 @@
 /* video capture */
 let streaming = false;
 let uploaded = false;
-let imgSelection = new Set();
+let imgSelection = new Map(); // name -> { x, y, w, el }
 
 const video = document.querySelector("#video");
 const cameraWarn = document.querySelector("#camera-warn");
@@ -14,6 +14,7 @@ const stickerList = document.querySelector("#sticker-list");
 const uploadButton = document.querySelector("#upload-button");
 const uploadInput = document.querySelector("#upload-input");
 const uploadPreview = document.querySelector("#upload-preview");
+const stickerLayer = document.querySelector("#sticker-layer");
 
 startButton.disabled = true;
 
@@ -92,17 +93,6 @@ startButton?.addEventListener("click", (ev) => {
 	takePicture();
 });
 
-stickerList?.addEventListener("click", (ev) => {
-	const img = ev.target.closest(".sticker");
-	if (img === null) {
-		return;
-	}
-	const name = img.getAttribute("data-image-name");
-	imgSelection.has(name) ? imgSelection.delete(name) : imgSelection.add(name);
-	img.classList.toggle("selected");
-	updateTakeButton();
-});
-
 function resetCanvas() {
 	const context = canvas.getContext("2d");
 	context.fillStyle = "#aaaaaa";
@@ -135,4 +125,54 @@ function takePicture() {
 function updateTakeButton() {
 	const selected = imgSelection.size > 0;
 	startButton.disabled = !((streaming || uploaded) && selected);
+}
+
+const DEFAULT_X = 0.5;
+const DEFAULT_Y = 0.5;
+const DEFAULT_W = 200;
+stickerList?.addEventListener("click", (ev) => {
+	if (streaming || uploaded) {
+		const img = ev.target.closest(".sticker");
+		if (img === null) {
+			return;
+		}
+		const name = img.getAttribute("data-image-name");
+		if (imgSelection.has(name)) {
+			removeSticker(name);
+		} else {
+			addSticker(img, name);
+		}
+		img.classList.toggle("selected");
+		if (imgSelection.size > 0 && (streaming || uploaded)) {
+			stickerLayer.style.display = "block";
+		} else {
+			stickerLayer.style.display = "none";
+		}
+		updateTakeButton();
+	}
+});
+
+function addSticker(sticker, name) {
+	const entry = {
+		x: DEFAULT_X,
+		y: DEFAULT_Y,
+		w: DEFAULT_W,
+		el: document.createElement("img")
+	};
+	entry.el.src = sticker.src;
+	entry.el.setAttribute("data-image-preview", name);
+	entry.el.classList.toggle("placed-sticker");
+	entry.el.style.left = `${entry.x * 100}%`;
+	entry.el.style.top = `${entry.y * 100}%`;
+	entry.el.style.width = `${entry.w}px`;
+	stickerLayer.appendChild(entry.el);
+	imgSelection.set(name, entry);
+}
+
+function removeSticker(name) {
+	const entry = imgSelection.get(name);
+	if (entry) {
+		entry.el.remove();
+		imgSelection.delete(name);
+	}
 }

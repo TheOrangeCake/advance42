@@ -9,8 +9,11 @@ export function edit(stickers) {
 						<h3 id="camera-warn-message">Please enable camera first</h3>
 						<button type="button" id="permissions-button">Allow camera</button>
 					</div>
-					<video id="video">Video stream not available.</video>
-					<img id="upload-preview">
+					<div id=camera-screen>
+						<video id="video">Video stream not available.</video>
+						<img id="upload-preview">
+						<div id="sticker-layer"></div>
+					</div>
 					<div id="camera-buttons">
 						<button type="button" class="button" id="start-button">Capture photo</button>
 						<button type="button" class="button" id="upload-button">Upload image</button>
