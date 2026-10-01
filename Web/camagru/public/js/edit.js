@@ -18,6 +18,7 @@ const stickerLayer = document.querySelector("#sticker-layer");
 
 startButton.disabled = true;
 
+/* upload */
 uploadButton?.addEventListener("click", () => {
 	uploadInput.click();
 });
@@ -63,6 +64,7 @@ function stopCamera() {
 	streaming = false;
 }
 
+/* allow access camera */
 allowButton?.addEventListener("click", () => {
 	navigator.mediaDevices
 		.getUserMedia({ video: true, audio: false })
@@ -104,6 +106,7 @@ function resetCanvas() {
 
 resetCanvas();
 
+/* take picture */
 function takePicture() {
 	const context = canvas.getContext("2d");
 	const source = uploaded ? uploadPreview : video;
@@ -127,9 +130,10 @@ function updateTakeButton() {
 	startButton.disabled = !((streaming || uploaded) && selected);
 }
 
+/* add/remove sticker from preview */
 const DEFAULT_X = 0.5;
 const DEFAULT_Y = 0.5;
-const DEFAULT_W = 200;
+const DEFAULT_W = 0.2;
 stickerList?.addEventListener("click", (ev) => {
 	if (streaming || uploaded) {
 		const img = ev.target.closest(".sticker");
@@ -157,22 +161,145 @@ function addSticker(sticker, name) {
 		x: DEFAULT_X,
 		y: DEFAULT_Y,
 		w: DEFAULT_W,
-		el: document.createElement("img")
+		el: document.createElement("div")
 	};
-	entry.el.src = sticker.src;
 	entry.el.setAttribute("data-image-preview", name);
-	entry.el.classList.toggle("placed-sticker");
-	entry.el.style.left = `${entry.x * 100}%`;
-	entry.el.style.top = `${entry.y * 100}%`;
-	entry.el.style.width = `${entry.w}px`;
+	entry.el.classList.add("placed-sticker");
+
+	// create the sticker
+	const img = document.createElement("img");
+	img.src = sticker.src;
+	img.draggable = false;
+
+	// create the slider
+	const slider = document.createElement("input");
+	slider.type = "range";
+	slider.className = "sticker-size";
+	slider.min = "0.05";
+	slider.max = "0.6";
+	slider.step = "0.01";
+	slider.value = String(entry.w);
+	slider.addEventListener("input", () => {
+		entry.w = Number(slider.value);
+		renderSticker(entry);
+	});
+
+	entry.el.append(img, slider);
+	renderSticker(entry);
 	stickerLayer.appendChild(entry.el);
 	imgSelection.set(name, entry);
+}
+
+function renderSticker(entry) {
+	entry.el.style.left = `${entry.x * 100}%`;
+	entry.el.style.top = `${entry.y * 100}%`;
+	entry.el.style.width = `${entry.w * 100}%`;
+	if (imgSelection.get(activeSticker) === entry) {
+		placeSlider(entry);
+	}
 }
 
 function removeSticker(name) {
 	const entry = imgSelection.get(name);
 	if (entry) {
+		setActive(null);
 		entry.el.remove();
 		imgSelection.delete(name);
 	}
 }
+
+// sticker resize bar placement
+function placeSlider(entry) {
+	const slider = entry.el.querySelector(".sticker-size");
+	const style = getComputedStyle(slider);
+	const needed = slider.offsetHeight + (parseFloat(style.marginTop) || 0) + (parseFloat(style.marginBottom) || 0);
+	const layerRect = stickerLayer.getBoundingClientRect();
+	const stickerRect = entry.el.getBoundingClientRect();
+	const fitsBelow = layerRect.bottom - stickerRect.bottom >= needed;
+	const fitsAbove = stickerRect.top - layerRect.top >= needed;
+	entry.el.classList.toggle("slider-above", !fitsBelow && fitsAbove);
+	entry.el.classList.toggle("slider-inside", !fitsBelow && !fitsAbove);
+}
+
+/* sticker manipulation: drag */
+let activeSticker = null;
+let drag = null;
+
+stickerLayer?.addEventListener("pointerdown", (ev) => {
+	if (streaming || uploaded) {
+		if (ev.target.closest(".sticker-size")) {
+			return;
+		}
+
+		const img = ev.target.closest(".placed-sticker");
+		if (img === null) {
+			setActive(null);
+			return;
+		}
+		setActive(img);
+		const name = img.getAttribute("data-image-preview");
+		const entry = imgSelection.get(name);
+		if (!entry) {
+			return;
+		}
+		
+		const pos = pointerToFraction(ev);
+		drag = {
+			entry,
+			pointerId: ev.pointerId,
+			offsetX: pos.x - entry.x,
+			offsetY: pos.y - entry.y
+		};
+		entry.el.setPointerCapture(ev.pointerId);
+	}
+})
+
+stickerLayer?.addEventListener("pointermove", (ev) => {
+	if (!drag || ev.pointerId !== drag.pointerId) {
+		return;
+	}
+
+	const pos = pointerToFraction(ev);
+	drag.entry.x = Math.min(1, Math.max(0, pos.x - drag.offsetX));
+	drag.entry.y = Math.min(1, Math.max(0, pos.y - drag.offsetY));
+	renderSticker(drag.entry);
+})
+
+function pointerToFraction(ev) {
+	const rect = stickerLayer.getBoundingClientRect();
+	return {
+		x: (ev.clientX - rect.left) / rect.width,
+		y: (ev.clientY - rect.top) / rect.height
+	};
+}
+
+stickerLayer?.addEventListener("pointerup", () => {
+	drag = null;
+})
+
+stickerLayer?.addEventListener("pointercancel", () => {
+	drag = null;
+})
+
+function setActive(img) {
+	const name = img ? img.getAttribute("data-image-preview") : null;
+	if (name === activeSticker) {
+		return;
+	}
+
+	// remove current actived slider
+	const currentImg = imgSelection.get(activeSticker)?.el;
+	if (currentImg !== undefined) {
+		currentImg.querySelector(".sticker-size").classList.remove("active");
+	}
+	activeSticker = null;
+	if (!img) {
+		return;
+	}
+
+	// active slider
+	img.querySelector(".sticker-size").classList.add("active");
+	activeSticker = name;
+	placeSlider(imgSelection.get(name));
+}
+

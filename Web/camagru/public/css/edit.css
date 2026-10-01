@@ -32,6 +32,7 @@
 	height: auto;
 	min-width: 280px;
 	max-width: 1024px;
+	overflow: hidden;
 }
 
 #video, #upload-preview {
@@ -98,8 +99,47 @@
 	display: none;
 	position: absolute;
 	inset: 0;
+	overflow: hidden;
 }
 
 .placed-sticker {
 	position: absolute;
+	transform: translate(-50%, -50%);
+	touch-action: none;
+	user-select: none;
+	cursor: grab;
+}
+
+.placed-sticker img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.sticker-size.active {
+	display: block;
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 120px;
+	margin-top: 6px;
+	cursor: pointer;
+}
+
+.sticker-size {
+	display: none;
+}
+
+.placed-sticker.slider-above .sticker-size.active {
+	top: auto;
+	bottom: 100%;
+	margin-top: 0;
+	margin-bottom: 6px;
+}
+
+.placed-sticker.slider-inside .sticker-size.active {
+	top: auto;
+	bottom: 6px;
+	margin: 0;
 }
