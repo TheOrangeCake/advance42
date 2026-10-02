@@ -29,10 +29,10 @@ export function edit(stickers) {
 					</div>
 				</div>
 			</div>
-			<canvas id="canvas" hidden></canvas>
-			<div class="output">
-				<img id="photo" src="" alt="The screen capture will appear in this box." />
+			<div id="history-wrapper">
+
 			</div>
+			<canvas id="canvas" hidden></canvas>
 		</section>`
 	)
 }

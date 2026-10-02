@@ -1,6 +1,7 @@
 /* video capture */
 let streaming = false;
 let uploaded = false;
+let isSending = false;
 let imgSelection = new Map(); // name -> { x, y, w, el }
 
 const video = document.querySelector("#video");
@@ -8,13 +9,13 @@ const cameraWarn = document.querySelector("#camera-warn");
 const canvas = document.querySelector("#canvas");
 const startButton = document.querySelector("#start-button");
 const allowButton = document.querySelector("#permissions-button");
-const photo = document.getElementById("photo"); // remove
 const cameraWarnMessage = document.querySelector("#camera-warn-message");
 const stickerList = document.querySelector("#sticker-list");
 const uploadButton = document.querySelector("#upload-button");
 const uploadInput = document.querySelector("#upload-input");
 const uploadPreview = document.querySelector("#upload-preview");
 const stickerLayer = document.querySelector("#sticker-layer");
+const history = document.querySelector("#history-wrapper");
 
 startButton.disabled = true;
 
@@ -99,27 +100,43 @@ function resetCanvas() {
 	const context = canvas.getContext("2d");
 	context.fillStyle = "#aaaaaa";
 	context.fillRect(0, 0, canvas.width, canvas.height);
-
-	const data = canvas.toDataURL("image/png");
-	photo.setAttribute("src", data); // remove
 }
 
 resetCanvas();
 
 /* take picture */
-function takePicture() {
+async function takePicture() {
 	const context = canvas.getContext("2d");
 	const source = uploaded ? uploadPreview : video;
 	const width = uploaded ? uploadPreview.naturalWidth : video.videoWidth;
 	const height = uploaded ? uploadPreview.naturalHeight : video.videoHeight;
 	if (!startButton.disabled && (streaming || uploaded) && width && height) {
+		startButton.disabled = true;
 		canvas.width = width;
 		canvas.height = height;
 		context.drawImage(source, 0, 0, width, height);
 
-		const data = canvas.toDataURL("image/png");
-		// send data back to backend
-		photo.setAttribute("src", data); // remove
+		// send img and meta back to backend
+		const img = canvas.toDataURL("image/png");
+		console.log(buildComposeBody(img));
+		try {
+			isSending = true;
+			const response = await fetch("/api/compose", {
+				method: "POST",
+				headers: {"Content-Type": "application/json"},
+				body: buildComposeBody(img),
+			});
+			if (!response.ok) {
+				alert(await response.text());
+				return;
+			}
+			updateHistory(await response.json()); // TODO
+		} catch (e) {
+			alert(e.message);
+		} finally {
+			isSending = false;
+			updateTakeButton();
+		}
 	} else {
 		resetCanvas();
 	}
@@ -127,7 +144,19 @@ function takePicture() {
 
 function updateTakeButton() {
 	const selected = imgSelection.size > 0;
-	startButton.disabled = !((streaming || uploaded) && selected);
+	startButton.disabled = !((streaming || uploaded) && selected && !isSending);
+}
+
+function buildComposeBody(img) {
+	const payload = {img: img, stickers: []};
+	imgSelection.forEach((value, key) => {
+		payload.stickers.push({name: key, meta: {x: value.x, y: value.y, w: value.w}});
+	});
+	return JSON.stringify(payload);
+}
+
+function updateHistory(res) {
+	// TODO
 }
 
 /* add/remove sticker from preview */
@@ -242,7 +271,7 @@ stickerLayer?.addEventListener("pointerdown", (ev) => {
 		if (!entry) {
 			return;
 		}
-		
+
 		const pos = pointerToFraction(ev);
 		drag = {
 			entry,

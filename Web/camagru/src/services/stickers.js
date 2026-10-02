@@ -50,3 +50,11 @@ export function getStickerImage(fileName) {
 	const file = stickerTable.get(fileName);
 	return file?.image.clone() ?? null;
 }
+
+export function isStickerExist(fileName) {
+	return stickerTable.has(fileName);
+}
+
+export function getStickerCount() {
+	return stickerTable.size;
+}
