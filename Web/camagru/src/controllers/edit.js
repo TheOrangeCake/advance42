@@ -2,7 +2,7 @@ import { Jimp } from "jimp";
 import { edit } from "../views/sections/edit.js";
 import { layout } from "../views/layout.js";
 import { returnError } from "./utils.js";
-import { getAllStickerName, isStickerExist, getStickerCount } from "../services/stickers.js";
+import { getAllStickerName, isStickerExist, getStickerCount, getStickerImage } from "../services/stickers.js";
 
 export function editPageHandler(req, res) {
 	const method = req.method;
@@ -35,12 +35,6 @@ export async function composeHandler(req, res) {
 		return;
 	}
 
-	// validate the image
-	// pass the image to Jimp with the sticker and meta data
-	// compose
-	// save the composed to the db
-	// send back the composed image and the id (for delete)
-
 	try {
 		const data = await readJsonBody(req);
 
@@ -62,7 +56,28 @@ export async function composeHandler(req, res) {
 			return;
 		}
 
-		returnError(res, 200, "OK"); //placeholder
+		// compose
+		// save the composed to the db
+		// send back the composed image and the id (for delete)
+
+		const imgHeight = image.height;
+		const imgWidth = image.width;
+		data.stickers.forEach(sticker => {
+			const stickerJIMP = getStickerImage(sticker.name);
+			const stickerPosX = sticker.meta.x * imgWidth;
+			const stickerPosY = sticker.meta.y * imgHeight;
+			const stickerW = Math.round(sticker.meta.w * imgWidth);
+			stickerJIMP.resize({ w: stickerW });
+			const offsetX = Math.round(stickerPosX - (stickerJIMP.width / 2));
+			const offsetY = Math.round(stickerPosY- (stickerJIMP.height / 2));
+			image.composite(stickerJIMP, offsetX, offsetY);
+		});
+
+		const temp = await image.getBase64("image/png");
+		res.statusCode = 200;
+		res.setHeader('Content-type', 'application/json');
+		res.end(JSON.stringify({img: temp}));
+
 
 	} catch (e) {
 		returnError(res, 400, e.message);

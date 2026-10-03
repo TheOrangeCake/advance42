@@ -118,7 +118,6 @@ async function takePicture() {
 
 		// send img and meta back to backend
 		const img = canvas.toDataURL("image/png");
-		console.log(buildComposeBody(img));
 		try {
 			isSending = true;
 			const response = await fetch("/api/compose", {
@@ -131,6 +130,7 @@ async function takePicture() {
 				return;
 			}
 			updateHistory(await response.json()); // TODO
+
 		} catch (e) {
 			alert(e.message);
 		} finally {
@@ -156,7 +156,9 @@ function buildComposeBody(img) {
 }
 
 function updateHistory(res) {
-	// TODO
+	const composedImg = document.createElement("img");
+	composedImg.src = res.img;
+	history.appendChild(composedImg);
 }
 
 /* add/remove sticker from preview */

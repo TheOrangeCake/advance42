@@ -1,0 +1,8 @@
+CREATE TABLE images (
+	id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	user_id int NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+	filename text NOT NULL UNIQUE,
+	created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX ON images (user_id);
