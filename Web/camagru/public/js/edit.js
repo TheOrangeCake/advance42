@@ -158,7 +158,8 @@ function buildComposeBody(img) {
 function updateHistory(res) {
 	const composedImg = document.createElement("img");
 	composedImg.src = res.img;
-	history.appendChild(composedImg);
+	composedImg.classList.add("history-img");
+	history.insertBefore(composedImg, history.firstChild ?? null);
 }
 
 /* add/remove sticker from preview */
