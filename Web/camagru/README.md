@@ -105,3 +105,10 @@ docker compose -f camagru.yaml exec camagru-postgresql sh -c 'psql -U "$POSTGRES
 - [postgres](https://www.npmjs.com/package/pg)
 - [nodemailer](https://nodemailer.com/)
 - [jimp](https://www.npmjs.com/package/jimp)
+
+
+# Bonus
+- Live preview
+- Multiple stickers
+- Stickers resize
+- Stickers change position

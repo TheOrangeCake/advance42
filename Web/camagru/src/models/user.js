@@ -101,7 +101,8 @@ export async function authenticateUser(username, pass) {
 	const query = `
 		SELECT id, username, email, password, active
 		FROM users
-		WHERE username = $1`;
+		WHERE username = $1
+	`;
 
 	const found = await dbQuery(query, [username]);
 	if (found.rowCount === 0) {

@@ -19,3 +19,15 @@ export async function persistImage(fileName, userId) {
 	}
 	return result.rows[0].id;
 }
+
+export async function getAllImageByUser(userId) {
+	const query = `
+		SELECT id, filename
+		FROM images
+		WHERE user_id = $1
+		ORDER BY created_at desc
+	`;
+
+	const found = await dbQuery(query, [userId]);
+	return found.rows;
+}

@@ -129,8 +129,7 @@ async function takePicture() {
 				alert(await response.text());
 				return;
 			}
-			updateHistory(await response.json()); // TODO
-
+			updateHistory(await response.json());
 		} catch (e) {
 			alert(e.message);
 		} finally {

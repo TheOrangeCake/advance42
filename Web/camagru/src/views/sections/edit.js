@@ -1,6 +1,6 @@
 import { getStickerUrl } from "../../services/stickers.js"
 
-export function edit(stickers) {
+export function edit(stickers, userImages) {
 	return (
 		`<section id="body-wrapper">
 			<div id="main-wrapper">
@@ -25,12 +25,18 @@ export function edit(stickers) {
 					<div id="sticker-list">
 						${stickers
 							.map(sticker => `<img class="sticker" data-image-name="${sticker}" src="${getStickerUrl(sticker)}">`)
-							.join("")}
+							.join("")
+						}
 					</div>
 				</div>
 			</div>
 			<div id="history-wrapper">
-
+				${userImages ? 
+					userImages
+					.map(img => `<img class="history-img" src="/uploads/${img.filename}">`)
+					.join("")
+					: []
+				}
 			</div>
 			<canvas id="canvas" hidden></canvas>
 		</section>`

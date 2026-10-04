@@ -37,7 +37,7 @@ export async function handleRequest(req, res) {
 	} else if (url.pathname === "/api/profile") {
 		await modifyProfileHandler(req, res);
 	} else if (url.pathname === "/edit") {
-		editPageHandler(req, res);
+		await editPageHandler(req, res);
 	} else if (url.pathname === "/api/compose") {
 		await composeHandler(req, res);
 	} else if (url.pathname === "/" || url.pathname === "/gallery") {

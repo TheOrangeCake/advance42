@@ -5,12 +5,12 @@ import { edit } from "../views/sections/edit.js";
 import { layout } from "../views/layout.js";
 import { generateToken, returnError } from "./utils.js";
 import { getAllStickerName, isStickerExist, getStickerCount, getStickerImage } from "../services/stickers.js";
-import { persistImage } from "../models/images.js";
+import { getAllImageByUser, persistImage } from "../models/images.js";
 
 const UPLOADS_DIR = "/app/uploads/";
 const UPLOADS_URL = "/uploads/";
 
-export function editPageHandler(req, res) {
+export async function editPageHandler(req, res) {
 	const method = req.method;
 	if (method.toLowerCase() !== "get") {
 		res.setHeader('Allow', 'GET');
@@ -22,10 +22,17 @@ export function editPageHandler(req, res) {
 		returnError(res, 401, "User not signed in");
 		return;
 	}
+
+	let userImages;
+	try {
+		userImages = await getAllImageByUser(req.user.id);
+	} catch (e) {
+		console.error(`Fail to get user images: ${e.message}`);
+	}
 	
 	res.statusCode = 200;
 	res.setHeader('Content-type', 'text/html; charset=utf-8');
-	res.end(layout("Camagru | Edit", "/css/edit.css", "/js/edit.js", edit(getAllStickerName()), req.user));
+	res.end(layout("Camagru | Edit", "/css/edit.css", "/js/edit.js", edit(getAllStickerName(), userImages ?? null), req.user));
 }
 
 export async function composeHandler(req, res) {
