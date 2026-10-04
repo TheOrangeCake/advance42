@@ -1,8 +1,14 @@
+import { writeFile, unlink } from "node:fs/promises";
+import path from "node:path";
 import { Jimp } from "jimp";
 import { edit } from "../views/sections/edit.js";
 import { layout } from "../views/layout.js";
-import { returnError } from "./utils.js";
+import { generateToken, returnError } from "./utils.js";
 import { getAllStickerName, isStickerExist, getStickerCount, getStickerImage } from "../services/stickers.js";
+import { persistImage } from "../models/images.js";
+
+const UPLOADS_DIR = "/app/uploads/";
+const UPLOADS_URL = "/uploads/";
 
 export function editPageHandler(req, res) {
 	const method = req.method;
@@ -56,10 +62,6 @@ export async function composeHandler(req, res) {
 			return;
 		}
 
-		// compose
-		// save the composed to the db
-		// send back the composed image and the id (for delete)
-
 		const imgHeight = image.height;
 		const imgWidth = image.width;
 		data.stickers.forEach(sticker => {
@@ -73,12 +75,30 @@ export async function composeHandler(req, res) {
 			image.composite(stickerJIMP, offsetX, offsetY);
 		});
 
-		const temp = await image.getBase64("image/png");
-		res.statusCode = 200;
+		const composedImg = await image.getBuffer("image/png");
+		const filename = "compose-" + generateToken() + ".png";
+		const filePath = path.join(UPLOADS_DIR, filename);
+		try {
+			// "wx" fails if the file already exists
+			await writeFile(filePath, composedImg, { flag: "wx" });
+		} catch (e) {
+			console.error(`Fail to write ${filePath}: ${e.message}`);
+			returnError(res, 500, "Something wrong in the server");
+			return;
+		}
+
+		try {
+			await persistImage(filename, req.user.id);
+		} catch (e) {
+			console.error(e.message);
+			await unlink(filePath).catch(err => console.error(`Fail to remove ${filePath}: ${err.message}`));
+			returnError(res, 500, "Something wrong in the server");
+			return;
+		}
+
+		res.statusCode = 201;
 		res.setHeader('Content-type', 'application/json');
-		res.end(JSON.stringify({img: temp}));
-
-
+		res.end(JSON.stringify({url: UPLOADS_URL + filename}));
 	} catch (e) {
 		returnError(res, 400, e.message);
 		return;

@@ -1,3 +1,5 @@
+import crypto from "node:crypto";
+
 export function returnError(res, code, message) {
 	res.statusCode = code;
 	res.setHeader('Content-type', 'text/plain; charset=utf-8');
@@ -34,4 +36,8 @@ export function parseCookie(req) {
 const HTML_ESCAPES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
 export function escapeHtml(str) {
 	return String(str).replace(/[&<>"']/g, c => HTML_ESCAPES[c]);
+}
+
+export function generateToken() {
+	return crypto.randomBytes(32).toString("hex");
 }

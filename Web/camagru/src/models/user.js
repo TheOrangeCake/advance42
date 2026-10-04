@@ -9,10 +9,6 @@ export async function hashPassword(pass) {
 	return bcrypt.hash(pass, saltRounds);
 }
 
-export function generateToken() {
-	return crypto.randomBytes(32).toString("hex");
-}
-
 export async function createUser(username, email, hashedPass, token) {
 	const query = `
 		INSERT INTO users (username, email, password, mail_token, mail_token_exp)
@@ -24,7 +20,8 @@ export async function createUser(username, email, hashedPass, token) {
 				mail_token_exp = EXCLUDED.mail_token_exp,
 				created_at = now()
 			WHERE users.active = FALSE
-		RETURNING id`;
+		RETURNING id
+	`;
 
 	let result;
 	try {

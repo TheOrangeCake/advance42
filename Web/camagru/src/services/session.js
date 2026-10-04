@@ -1,4 +1,4 @@
-import { generateToken } from "../models/user.js";
+import { generateToken } from "../controllers/utils.js";
 
 const SESSION_EXPIRE = 7 * 24 * 60 * 60 * 1000;  // 7 days
 const sessionTable = new Map();

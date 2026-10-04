@@ -1,7 +1,7 @@
 import { text } from "node:stream/consumers";
-import { returnError } from "../utils.js";
+import { generateToken, returnError } from "../utils.js";
 import { sendEmail } from "../../services/mail.js";
-import { generateToken, setResetToken } from "../../models/user.js";
+import { setResetToken } from "../../models/user.js";
 
 export async function forgotHandler(req, res) {
 	const method = req.method;

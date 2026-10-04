@@ -157,7 +157,7 @@ function buildComposeBody(img) {
 
 function updateHistory(res) {
 	const composedImg = document.createElement("img");
-	composedImg.src = res.img;
+	composedImg.src = res.url;
 	composedImg.classList.add("history-img");
 	history.insertBefore(composedImg, history.firstChild ?? null);
 }
