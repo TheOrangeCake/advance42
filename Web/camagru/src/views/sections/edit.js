@@ -33,9 +33,14 @@ export function edit(stickers, userImages) {
 			<div id="history-wrapper">
 				${userImages ? 
 					userImages
-					.map(img => `<img class="history-img" src="/uploads/${img.filename}">`)
+					.map(img => (
+						`<div class="history-item" data-image-history-id="${img.id}">
+							<img class="history-img" src="/uploads/${img.filename}">
+							<button type="button" class="history-delete"></button>
+						</div>`
+					))
 					.join("")
-					: []
+					: ""
 				}
 			</div>
 			<canvas id="canvas" hidden></canvas>

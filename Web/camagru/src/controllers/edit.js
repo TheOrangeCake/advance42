@@ -94,8 +94,9 @@ export async function composeHandler(req, res) {
 			return;
 		}
 
+		let imgId;
 		try {
-			await persistImage(filename, req.user.id);
+			imgId = await persistImage(filename, req.user.id);
 		} catch (e) {
 			console.error(e.message);
 			await unlink(filePath).catch(err => console.error(`Fail to remove ${filePath}: ${err.message}`));
@@ -105,7 +106,7 @@ export async function composeHandler(req, res) {
 
 		res.statusCode = 201;
 		res.setHeader('Content-type', 'application/json');
-		res.end(JSON.stringify({url: UPLOADS_URL + filename}));
+		res.end(JSON.stringify({id: imgId, url: UPLOADS_URL + filename}));
 	} catch (e) {
 		returnError(res, 400, e.message);
 		return;
@@ -192,4 +193,21 @@ async function decodePngDataUrl(dataUrl) {
 	} catch {
 		return null;
 	}
+}
+
+export async function deleteHandler(req, res) {
+	const method = req.method;
+	if (method.toLowerCase() !== "delete") {
+		res.setHeader('Allow', 'DELETE');
+		returnError(res, 405, "Only accept DELETE method");
+		return;
+	}
+
+	if (!req.user) {
+		returnError(res, 401, "User not signed in");
+		return;
+	}
+
+	
+
 }

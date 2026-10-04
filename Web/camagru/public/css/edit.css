@@ -81,12 +81,12 @@
 
 @media (max-width: 700px) {
 	#main-wrapper { flex-direction: column; }
-	#sticker-wrapper { flex-basis: auto; height: 130px; }
+	#sticker-wrapper { flex-basis: auto; height: 180px; }
 	#sticker-list {
 		flex-direction: row;
 		overflow-x: auto;
 		overflow-y: hidden;
-		padding: 0px 10px;
+		padding: 20px 10px;
 	}
 }
 
@@ -153,17 +153,84 @@
 	overflow-y: hidden;
 }
 
-.history-img {
+.history-item {
+	position: relative;
 	flex-shrink: 0;
+}
+
+.history-img {
+	display: block;
 	height: 200px;
 	border-radius: 12px;
 	object-fit: contain;
-	filter: grayscale(1);
 	-webkit-transition-property: all;
 	-webkit-transition-duration: 0.3s;
 	-webkit-transition-timing-function: ease;
 }
 
-.history-img:hover {
-	filter: grayscale(0);
+.history-delete {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	border: none;
+	border-radius: 25%;
+	background-color: rgba(0, 0, 0, 0.5);
+	color: var(--cl-white);
+	cursor: pointer;
+	-webkit-appearance: none;
+	appearance: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+/* only real hover devices, otherwise the color sticks after a tap */
+@media (hover: hover) {
+	.history-delete:hover {
+		background-color: var(--cl-primary);
+	}
+}
+
+.history-delete:active {
+	background-color: var(--cl-primary);
+}
+
+/* bigger tap target on touch screens */
+@media (pointer: coarse) {
+	.history-delete {
+		width: 40px;
+		height: 40px;
+	}
+
+	.history-delete::before,
+	.history-delete::after {
+		width: 18px;
+	}
+}
+
+.history-delete:disabled {
+	cursor: wait;
+	opacity: 0.5;
+}
+
+/* the two bars of the X */
+.history-delete::before,
+.history-delete::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 14px;
+	height: 2px;
+	border-radius: 1px;
+	background-color: currentColor;
+}
+
+.history-delete::before {
+	transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.history-delete::after {
+	transform: translate(-50%, -50%) rotate(-45deg);
 }

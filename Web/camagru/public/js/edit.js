@@ -155,11 +155,49 @@ function buildComposeBody(img) {
 }
 
 function updateHistory(res) {
+	const item = document.createElement("div");
+	item.classList.add("history-item");
+	item.setAttribute("data-image-history-id", res.id);
+
 	const composedImg = document.createElement("img");
 	composedImg.src = res.url;
 	composedImg.classList.add("history-img");
-	history.insertBefore(composedImg, history.firstChild ?? null);
+
+	const deleteButton = document.createElement("button");
+	deleteButton.type = "button";
+	deleteButton.classList.add("history-delete");
+
+	item.append(composedImg, deleteButton);
+	history.insertBefore(item, history.firstChild ?? null);
 }
+
+/* delete image from history */
+history?.addEventListener("click", async (ev) => {
+	const button = ev.target.closest(".history-delete");
+	if (button === null || button.disabled) {
+		return;
+	}
+	const item = button.closest(".history-item");
+	const id = Number(item.getAttribute("data-image-history-id"));
+
+	button.disabled = true;
+	try {
+		const response = await fetch("/api/delete", {
+			method: "DELETE",
+			headers: {"Content-Type": "application/json"},
+			body: JSON.stringify({id: id}),
+		});
+		if (!response.ok) {
+			alert(await response.text());
+			return;
+		}
+		item.remove();
+	} catch (e) {
+		alert(e.message);
+	} finally {
+		button.disabled = false;
+	}
+});
 
 /* add/remove sticker from preview */
 const DEFAULT_X = 0.5;
