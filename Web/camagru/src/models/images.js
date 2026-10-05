@@ -31,3 +31,17 @@ export async function getAllImageByUser(userId) {
 	const found = await dbQuery(query, [userId]);
 	return found.rows;
 }
+
+export async function deleteImageById(imageId, userId) {
+	const query = `
+		DELETE FROM images
+		WHERE id = $1 AND user_id = $2
+		RETURNING filename
+	`;
+
+	const result = await dbQuery(query, [imageId, userId]);
+	if (result.rowCount === 0) {
+		return null;
+	}
+	return {file: result.rows[0].filename};
+}

@@ -5,7 +5,7 @@ import { edit } from "../views/sections/edit.js";
 import { layout } from "../views/layout.js";
 import { generateToken, returnError } from "./utils.js";
 import { getAllStickerName, isStickerExist, getStickerCount, getStickerImage } from "../services/stickers.js";
-import { getAllImageByUser, persistImage } from "../models/images.js";
+import { deleteImageById, getAllImageByUser, persistImage } from "../models/images.js";
 
 const UPLOADS_DIR = "/app/uploads/";
 const UPLOADS_URL = "/uploads/";
@@ -208,6 +208,33 @@ export async function deleteHandler(req, res) {
 		return;
 	}
 
-	
+	try {
+		const data = await readJsonBody(req);
 
+		if (!Number.isInteger(data.id)) {
+			throw new Error("Bad image id");
+		}
+		
+		let result;
+		try {
+			result = await deleteImageById(data.id, req.user.id);
+			if (!result) {
+				returnError(res, 404, "Image was not found or is not belong to user");
+				return;
+			}
+		} catch (e) {
+			console.error(`Fail to remove image from db: ${e.message}`);
+			returnError(res, 500, "Something wrong with the server");
+			return
+		}
+	
+		const filePath = path.join(UPLOADS_DIR, result.file);
+		await unlink(filePath).catch(err => console.error(`Fail to remove ${filePath}: ${err.message}`));
+
+		res.statusCode = 204;
+		res.end();
+	} catch (e) {
+		returnError(res, 400, e.message);
+		return;
+	}
 }
