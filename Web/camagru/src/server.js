@@ -21,6 +21,4 @@ const server = createServer(async (req, res) => {
 
 await loadStickers();
 
-server.listen(port, hostname, () => {
-	console.log(`Node server is running and accessible by Docker at port ${port}/`);
-})
+server.listen(port, hostname);

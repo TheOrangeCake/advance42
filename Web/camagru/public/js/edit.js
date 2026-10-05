@@ -80,7 +80,6 @@ allowButton?.addEventListener("click", () => {
 			video.play();
 		})
 		.catch((err) => {
-			console.log(err.message);
 			cameraWarnMessage.textContent = "Problem with camera, please upload an image instead";
 			allowButton.style.display = "none";
 		});

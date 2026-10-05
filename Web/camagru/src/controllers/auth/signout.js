@@ -11,9 +11,6 @@ export function signoutHandler(req, res) {
 
 	destroySession(req.sessionId);
 
-	if (req.user) {
-		console.log(`User ${req.user?.id} ${req.user?.username} signed out`);
-	}
 	res.statusCode = 200;
 	res.setHeader('Content-type', 'text/plain; charset=utf-8');
 	res.setHeader("Set-Cookie", `sessionId=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0`);

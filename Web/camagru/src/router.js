@@ -13,7 +13,6 @@ import { editPageHandler, composeHandler, deleteHandler } from "./controllers/ed
 export async function handleRequest(req, res) {
 	const url = parseUrl(req);
 	
-	console.log(`${req.method} ${url.pathname}`);
 
 	req.sessionId = parseCookie(req)["sessionId"];
 	req.user = getSession(req.sessionId);

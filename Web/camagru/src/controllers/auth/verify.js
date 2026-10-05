@@ -37,7 +37,6 @@ export async function verifyHandler(req, res) {
 		return;
 	}
 
-	console.log(`Account ${id} activated`);
 	res.statusCode = 200;
 	res.setHeader('Content-type', 'text/plain; charset=utf-8');
 	res.end("Account activated, you can now log in");

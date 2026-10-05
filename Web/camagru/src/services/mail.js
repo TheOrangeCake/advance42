@@ -23,5 +23,4 @@ export async function sendEmail(target, subject, content) {
 		subject: `${subject}`,
 		text: `${content}`,
 	});
-	console.log("Email %s sent to %s", info.messageId, target);
 }

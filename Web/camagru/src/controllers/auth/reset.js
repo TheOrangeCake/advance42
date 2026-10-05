@@ -88,7 +88,6 @@ export async function resetHandler(req, res) {
 
 	destroyUserSessions(id);
 
-	console.log(`Password of user ${id} reset`);
 	res.statusCode = 200;
 	res.setHeader('Content-type', 'text/plain; charset=utf-8');
 	res.end("Password updated, you can now sign in");
