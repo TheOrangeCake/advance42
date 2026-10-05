@@ -45,3 +45,24 @@ export async function deleteImageById(imageId, userId) {
 	}
 	return {file: result.rows[0].filename};
 }
+
+const ITEM_PER_PAGE = 5;
+export async function getImagesByPage(page) {
+	const offset = (page - 1) * ITEM_PER_PAGE;
+	const query = `
+		SELECT id, filename
+		FROM images
+		ORDER BY created_at desc, id desc
+		LIMIT $1
+		OFFSET $2
+	`;
+
+	const result = await dbQuery(query, [ITEM_PER_PAGE + 1, offset]);
+	let hasNext = false;
+	let rows = result.rows;
+	if (result.rowCount > ITEM_PER_PAGE) {
+		hasNext = true;
+		rows = rows.slice(0, ITEM_PER_PAGE);
+	}
+	return {images: rows, hasNext};
+}

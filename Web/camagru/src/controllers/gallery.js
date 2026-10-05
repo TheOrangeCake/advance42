@@ -4,5 +4,5 @@ import { layout } from "../views/layout.js";
 export async function galleryHandler(req, res) {
 	res.statusCode = 200;
 	res.setHeader('Content-type', 'text/html; charset=utf-8');
-	res.end(layout("Camagru | Gallery", "/css/gallery.css", null, gallery(), req.user));
+	res.end(layout("Camagru | Gallery", "/css/gallery.css", "/js/gallery.js", gallery(), req.user));
 }
