@@ -47,17 +47,25 @@ export async function deleteImageById(imageId, userId) {
 }
 
 const ITEM_PER_PAGE = 5;
-export async function getImagesByPage(page) {
+export async function getImagesByPage(page, userId) {
 	const offset = (page - 1) * ITEM_PER_PAGE;
 	const query = `
-		SELECT id, filename
-		FROM images
-		ORDER BY created_at desc, id desc
+		SELECT
+			i.id,
+			i.filename,
+			(SELECT COUNT(*)::int FROM likes l WHERE l.image_id = i.id) AS "likeCount",
+			(SELECT COUNT(*)::int FROM comments c WHERE c.image_id = i.id) AS "commentCount",
+			EXISTS (
+				SELECT 1 FROM likes l
+				WHERE l.image_id = i.id AND l.user_id = $3
+			) AS liked
+		FROM images i
+		ORDER BY i.created_at desc, i.id desc
 		LIMIT $1
 		OFFSET $2
 	`;
 
-	const result = await dbQuery(query, [ITEM_PER_PAGE + 1, offset]);
+	const result = await dbQuery(query, [ITEM_PER_PAGE + 1, offset, userId ?? null]);
 	let hasNext = false;
 	let rows = result.rows;
 	if (result.rowCount > ITEM_PER_PAGE) {

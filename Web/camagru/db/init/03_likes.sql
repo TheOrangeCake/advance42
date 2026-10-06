@@ -1,0 +1,7 @@
+CREATE TABLE likes (
+	id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	user_id int NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+	image_id int NOT NULL REFERENCES images(id) ON DELETE CASCADE,
+	created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+	UNIQUE (image_id, user_id)
+);
