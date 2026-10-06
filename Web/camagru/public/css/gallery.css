@@ -1,0 +1,26 @@
+#page-selector {
+	display: flex;
+	flex-direction: row;
+	gap: 30px;
+	align-items: center;
+	justify-content: center;
+	margin: auto;
+}
+
+.page-button {
+	background-color: var(--cl-white);
+	border: none;
+	border-radius: 8px;
+	color: var(--cl-primary);
+	padding: 0.5rem 0.5rem;
+	text-align: center;
+	cursor: pointer;
+	font-size: var(--fs-base);
+	font-weight: var(--fw-bold);
+	text-decoration: none;
+}
+
+.page-button:hover {
+	background-color: var(--cl-accent);
+	color: var(--cl-white);
+}
