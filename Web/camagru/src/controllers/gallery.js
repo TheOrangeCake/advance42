@@ -4,13 +4,12 @@ import { getImagesByPage } from "../models/images.js";
 import { returnError, parseUrl } from "./utils.js";
 import { getCommentsByImageIds } from "../models/comments.js";
 
-export async function galleryHandler(req, res) {
+export async function galleryPageHandler(req, res) {
 	const method = req.method;
 	if (method.toLowerCase() !== "get") {
 		res.setHeader('Allow', 'GET');
 		returnError(res, 405, "Only accept GET method");
 		return;
-	
 	}
 	
 	const params = parseUrl(req).searchParams;
@@ -55,4 +54,38 @@ export async function galleryHandler(req, res) {
 	res.statusCode = 200;
 	res.setHeader('Content-type', 'text/html; charset=utf-8');
 	res.end(layout(`Camagru | Gallery ${page}`, "/css/gallery.css", "/js/gallery.js", gallery(data, req.user), req.user));
+}
+
+export async function likeHandler(req, res) {
+	const method = req.method;
+	if (method.toLowerCase() !== "post") {
+		res.setHeader('Allow', 'POST');
+		returnError(res, 405, "Only accept POST method");
+		return;
+	}
+
+	if (!req.user) {
+		returnError(res, 401, "User not signed in");
+		return;
+	}
+
+	res.statusCode = 200;
+	res.end();
+}
+
+export async function commentHandler(req, res) {
+	const method = req.method;
+	if (method.toLowerCase() !== "post") {
+		res.setHeader('Allow', 'POST');
+		returnError(res, 405, "Only accept POST method");
+		return;
+	}
+
+	if (!req.user) {
+		returnError(res, 401, "User not signed in");
+		return;
+	}
+
+	res.statusCode = 200;
+	res.end();
 }

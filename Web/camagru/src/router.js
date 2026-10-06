@@ -3,7 +3,7 @@ import { getSession } from "./services/session.js";
 import { signupHandler } from "./controllers/auth/signup.js";
 import { signinHandler } from "./controllers/auth/signin.js";
 import { verifyHandler } from "./controllers/auth/verify.js";
-import { galleryHandler } from "./controllers/gallery.js";
+import { commentHandler, galleryPageHandler, likeHandler } from "./controllers/gallery.js";
 import { signoutHandler } from "./controllers/auth/signout.js";
 import { forgotHandler } from "./controllers/auth/forgot.js";
 import { resetPageHandler, resetHandler } from "./controllers/auth/reset.js";
@@ -41,8 +41,12 @@ export async function handleRequest(req, res) {
 		await composeHandler(req, res);
 	} else if (url.pathname === "/api/delete") {
 		await deleteHandler(req, res);
+	} else if (url.pathname === "/api/like") {
+		await likeHandler(req, res);
+	} else if (url.pathname === "/api/comment") {
+		await commentHandler(req, res);
 	} else if (url.pathname === "/" || url.pathname === "/gallery") {
-		await galleryHandler(req, res);
+		await galleryPageHandler(req, res);
 	} else {
 		res.statusCode = 404;
 		res.setHeader('Content-type', 'text/plain; charset=utf-8');
