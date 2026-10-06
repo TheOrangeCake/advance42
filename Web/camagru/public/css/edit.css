@@ -79,7 +79,7 @@
 	outline: 2px dotted var(--cl-primary);
 }
 
-@media (max-width: 700px) {
+@media (max-width: 48rem) {
 	#main-wrapper { flex-direction: column; }
 	#sticker-wrapper { flex-basis: auto; height: 180px; }
 	#sticker-list {

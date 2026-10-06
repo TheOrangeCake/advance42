@@ -54,5 +54,5 @@ export async function galleryHandler(req, res) {
 
 	res.statusCode = 200;
 	res.setHeader('Content-type', 'text/html; charset=utf-8');
-	res.end(layout(`Camagru | Gallery ${page}`, "/css/gallery.css", "/js/gallery.js", gallery(data), req.user));
+	res.end(layout(`Camagru | Gallery ${page}`, "/css/gallery.css", "/js/gallery.js", gallery(data, req.user), req.user));
 }
