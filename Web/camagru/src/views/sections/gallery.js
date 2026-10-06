@@ -7,9 +7,9 @@ export function gallery({images, hasNext, page}) {
 
 			</div>
 			<div id="page-selector">
-				<a href="/gallery?page=${page === 1 ? page : page - 1}" class="page-button" ${page === 1 ? "hidden" : ""}>Prev</a>
+				<a href="/gallery?page=${page === 1 ? page : page - 1}" class="page-button${page === 1 ? " invisible" : ""}">Prev</a>
 				<div>${page}</div>
-				<a href="/gallery?page=${page + 1}" class="page-button" ${hasNext ? "" : "hidden"}>Next</a>
+				<a href="/gallery?page=${page + 1}" class="page-button${hasNext ? "" : " invisible"}">Next</a>
 			</div>
 		</section>`
 	)

@@ -24,3 +24,7 @@
 	background-color: var(--cl-accent);
 	color: var(--cl-white);
 }
+
+.invisible {
+	visibility: hidden;
+}
