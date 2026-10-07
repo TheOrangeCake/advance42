@@ -1,14 +1,6 @@
-import { escapeHtml } from "../../controllers/utils.js";
+import { escapeHtml, dateFormat } from "../../controllers/utils.js";
 
 const UPLOADS_URL = "/uploads/";
-const COMMENT_MAX_LENGTH = 500;
-const dateFormat = new Intl.DateTimeFormat("en-GB", {
-	day: "numeric",
-	month: "short",
-	year: "numeric",
-	hour: "2-digit",
-	minute: "2-digit",
-});
 
 function plural(count, word) {
 	return `${count} ${word}${count === 1 ? "" : "s"}`;
@@ -26,7 +18,7 @@ export function gallery({images, hasNext, page}, user) {
 			`<div></div>`
 		const commentForm = user ? `
 			<form class="gallery-img-comment-form">
-				<input type="text" class="form-input gallery-comment-input" name="comment" maxlength="${COMMENT_MAX_LENGTH}" required>
+				<input type="text" class="form-input gallery-comment-input" name="comment" required>
 				<input type="submit" value="Send" class="button gallery-submit-btn">
 			</form>
 		` : "";

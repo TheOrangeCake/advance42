@@ -99,7 +99,7 @@
 .gallery-img-date {
 	font-size: var(--fs-sm);
 	font-weight: var(--fw-light);
-	color: #888888;
+	color: var(--cl-grey);
 }
 
 .gallery-img-comment-form {
@@ -132,7 +132,6 @@
 		border-top: 1px solid var(--cl-grey);
 	}
 	.gallery-img-comments {
-		/* min-height: 10rem; */
 		max-height: 24rem;
 	}
 }

@@ -2,7 +2,7 @@ import { gallery } from "../views/sections/gallery.js";
 import { layout } from "../views/layout.js";
 import { getImagesByPage } from "../models/images.js";
 import { returnError, parseUrl, readJsonBody } from "./utils.js";
-import { getCommentsByImageIds } from "../models/comments.js";
+import { getCommentsByImageIds, insertComment } from "../models/comments.js";
 import { updateLike } from "../models/likes.js";
 
 export async function galleryPageHandler(req, res) {
@@ -105,6 +105,9 @@ export async function likeHandler(req, res) {
 
 }
 
+const COMMENT_MAX_LENGTH = 500;
+const COMMENT_MIN_LENGTH = 0;
+
 export async function commentHandler(req, res) {
 	const method = req.method;
 	if (method.toLowerCase() !== "post") {
@@ -118,6 +121,42 @@ export async function commentHandler(req, res) {
 		return;
 	}
 
-	res.statusCode = 200;
-	res.end();
+	try {
+		const data = await readJsonBody(req);
+
+		if (!Number.isInteger(data.id)) {
+			returnError(res, 400, "Bad image id");
+			return;
+		}
+		if (typeof data.comment !== "string") {
+			returnError(res, 400, "Bad comment string");
+			return;
+		}
+		const comment = data.comment.trim();
+		if (comment.length > COMMENT_MAX_LENGTH || comment.length <= COMMENT_MIN_LENGTH) {
+			returnError(res, 400, "Bad comment length");
+			return;
+		}
+
+
+		try {
+			const result = await insertComment(data.id, comment, req.user);
+
+			res.statusCode = 200;
+			res.setHeader('Content-type', 'application/json');
+			res.end(JSON.stringify(result));
+		} catch (e) {
+			if (e.status === 404) {
+				returnError(res, 404, e.message);
+				return;
+			}
+			console.error(`Fail to comment an image: ${e.message}`);
+			returnError(res, 500, "Something wrong with the server");
+			return;
+		}
+
+	} catch (e) {
+		returnError(res, 400, e.message);
+		return;
+	}
 }

@@ -31,5 +31,8 @@ export async function updateLike(imageId, userId, isLike) {
 		WHERE image_id = $1
 	`;
 	const result = await dbQuery(countQuery, [imageId]);
-	return { like: isLike, likeCount: result.rows[0].likeCount };
+	return {
+		like: isLike,
+		likeCount: result.rows[0].likeCount
+	};
 }
