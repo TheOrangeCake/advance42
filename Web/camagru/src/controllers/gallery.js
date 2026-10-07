@@ -1,8 +1,9 @@
 import { gallery } from "../views/sections/gallery.js";
 import { layout } from "../views/layout.js";
 import { getImagesByPage } from "../models/images.js";
-import { returnError, parseUrl } from "./utils.js";
+import { returnError, parseUrl, readJsonBody } from "./utils.js";
 import { getCommentsByImageIds } from "../models/comments.js";
+import { updateLike } from "../models/likes.js";
 
 export async function galleryPageHandler(req, res) {
 	const method = req.method;
@@ -69,8 +70,39 @@ export async function likeHandler(req, res) {
 		return;
 	}
 
-	res.statusCode = 200;
-	res.end();
+	try {
+		const data = await readJsonBody(req);
+
+		if (!Number.isInteger(data.id)) {
+			returnError(res, 400, "Bad image id");
+			return;
+		}
+		if (typeof data.like !== "boolean") {
+			returnError(res, 400, "Bad like boolean");
+			return;
+		}
+
+		try {
+			const result = await updateLike(data.id, req.user.id, data.like);
+
+			res.statusCode = 200;
+			res.setHeader('Content-type', 'application/json');
+			res.end(JSON.stringify(result));
+		} catch (e) {
+			if (e.status === 404) {
+				returnError(res, 404, e.message);
+				return;
+			}
+			console.error(`Fail to like an image: ${e.message}`);
+			returnError(res, 500, "Something wrong with the server");
+			return;
+		}
+
+	} catch (e) {
+		returnError(res, 400, e.message);
+		return;
+	}
+
 }
 
 export async function commentHandler(req, res) {

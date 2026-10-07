@@ -3,7 +3,7 @@ import path from "node:path";
 import { Jimp } from "jimp";
 import { edit } from "../views/sections/edit.js";
 import { layout } from "../views/layout.js";
-import { generateToken, returnError } from "./utils.js";
+import { generateToken, returnError, readJsonBody } from "./utils.js";
 import { getAllStickerName, isStickerExist, getStickerCount, getStickerImage } from "../services/stickers.js";
 import { deleteImageById, getAllImageByUser, persistImage } from "../models/images.js";
 
@@ -113,39 +113,6 @@ export async function composeHandler(req, res) {
 	}
 }
 
-const MAX_BODY_SIZE = 10 * 1024 * 1024; // 10 MB
-
-function readJsonBody(req) {
-	return new Promise((resolve, reject) => {
-		let body = "";
-		let size = 0;
-
-		req.on("data", (chunk) => {
-			size += chunk.length;
-			if (size > MAX_BODY_SIZE) {
-				req.destroy();
-				reject(new Error("Payload too large"));
-				return;
-			}
-			body += chunk;
-		});
-
-		req.on("end", () => {
-		if (body === "") {
-			resolve({});
-			return;
-		}
-		try {
-			resolve(JSON.parse(body));
-		} catch (err) {
-			reject(new Error("Invalid JSON"));
-		}
-		});
-
-		req.on("error", reject);
-	});
-}
-
 function isValidStickerList(stickerList) {
 	if (!Array.isArray(stickerList) || stickerList.length <= 0 || stickerList.length > getStickerCount()) {
 		return false;
@@ -212,7 +179,8 @@ export async function deleteHandler(req, res) {
 		const data = await readJsonBody(req);
 
 		if (!Number.isInteger(data.id)) {
-			throw new Error("Bad image id");
+			returnError(res, 400, "Bad image id");
+			return;
 		}
 		
 		let result;

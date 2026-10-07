@@ -22,7 +22,7 @@ export function gallery({images, hasNext, page}, user) {
 			<span class="img-like">&#128150;</span>
 		`;
 		const like = user ?
-			`<button type="button" class="gallery-img-like${image.liked ? " liked" : ""}" aria-label="Like" aria-pressed="${image.liked}">${likeIcons}</button>` :
+			`<button type="button" class="gallery-img-like${image.liked ? " liked" : ""}">${likeIcons}</button>` :
 			`<div></div>`
 		const commentForm = user ? `
 			<form class="gallery-img-comment-input">

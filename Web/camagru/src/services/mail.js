@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { internalError } from "../controllers/utils.js";
 
 const transporter = nodemailer.createTransport({
 	host: process.env.SMTP_HOST,
@@ -14,7 +15,7 @@ export async function sendEmail(target, subject, content) {
 	try {
 		await transporter.verify();
 	} catch (e) {
-		throw new Error("SMTP server failed", { cause: e });
+		throw internalError("SMTP server failed", e);
 	}
 
 	const info = await transporter.sendMail({
