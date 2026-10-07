@@ -102,14 +102,14 @@
 	color: #888888;
 }
 
-.gallery-img-comment-input {
+.gallery-img-comment-form {
 	display: flex;
 	gap: 0.5rem;
 	padding: 0.75rem 1.25rem;
 	border-top: 1px solid var(--cl-grey);
 }
 
-.gallery-comment-input-field {
+.gallery-comment-input {
 	flex: 1;
 	min-width: 0;
 }

@@ -25,9 +25,9 @@ export function gallery({images, hasNext, page}, user) {
 			`<button type="button" class="gallery-img-like${image.liked ? " liked" : ""}">${likeIcons}</button>` :
 			`<div></div>`
 		const commentForm = user ? `
-			<form class="gallery-img-comment-input">
-				<input type="text" class="form-input gallery-comment-input-field" name="comment" maxlength="${COMMENT_MAX_LENGTH}" required>
-				<input type="submit" value="Comment" class="button gallery-submit-btn">
+			<form class="gallery-img-comment-form">
+				<input type="text" class="form-input gallery-comment-input" name="comment" maxlength="${COMMENT_MAX_LENGTH}" required>
+				<input type="submit" value="Send" class="button gallery-submit-btn">
 			</form>
 		` : "";
 		const right_panel = `
