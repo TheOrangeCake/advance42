@@ -77,9 +77,17 @@ allowButton?.addEventListener("click", () => {
 			video.srcObject = stream;
 			video.style.display = "flex";
 			cameraWarn.style.display = "none";
-			video.play();
+			video.play().catch((err) => {
+				if (err.name === "AbortError") {
+					return;
+				}
+				stopCamera();
+				cameraWarnMessage.textContent = "Could not start the camera, please upload an image instead";
+				cameraWarn.style.display = "flex";
+				allowButton.style.display = "none";
+			});
 		})
-		.catch((err) => {
+		.catch(() => {
 			cameraWarnMessage.textContent = "Problem with camera, please upload an image instead";
 			allowButton.style.display = "none";
 		});

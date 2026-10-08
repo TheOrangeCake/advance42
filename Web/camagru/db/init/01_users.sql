@@ -4,6 +4,7 @@ CREATE TABLE users (
 	email text UNIQUE NOT NULL,
 	password text NOT NULL,
 	active boolean NOT NULL DEFAULT FALSE,
+	notification boolean NOT NULL DEFAULT TRUE,
 	mail_token text UNIQUE,
 	mail_token_exp TIMESTAMPTZ,
 	created_at TIMESTAMPTZ NOT NULL DEFAULT now()

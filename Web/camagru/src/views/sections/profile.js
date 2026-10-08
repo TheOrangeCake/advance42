@@ -1,7 +1,7 @@
 import { formError } from "../components/form_error.js"
 import { formLoading } from "../components/form_loading.js"
 
-export function profile(username, email) {
+export function profile(username, email, notification) {
 	return (
 		`<section id="body-wrapper">
 			<div class="form-wrapper" id="profile-form-wrapper">
@@ -18,6 +18,15 @@ export function profile(username, email) {
 							<input type="email" class="form-input" id="profile-email" name="email" value="${email}" autocomplete="email">
 						</div>
 					</fieldset>
+
+					<fieldset class="profile-group">
+						<legend>Notifications</legend>
+						<div class="profile-field profile-field-checkbox">
+							<label for="profile-notification">Email notification</label>
+							<input type="checkbox" id="profile-notification" name="notification"${notification ? " checked" : ""}>
+						</div>
+					</fieldset>
+
 					<fieldset class="profile-group">
 						<legend>Change password</legend>
 						<p class="profile-hint">Leave blank to keep your current password.</p>
@@ -30,6 +39,7 @@ export function profile(username, email) {
 							<input type="password" class="form-input" id="profile-new-password-confirm" name="newPassConfirm" autocomplete="new-password">
 						</div>
 					</fieldset>
+
 					<fieldset class="profile-group profile-group-confirm">
 						<legend>Current password</legend>
 						<div class="profile-field">

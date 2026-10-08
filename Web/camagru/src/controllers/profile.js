@@ -2,14 +2,14 @@ import { text } from "node:stream/consumers";
 import { returnError, escapeHtml } from "./utils.js";
 import { profile } from "../views/sections/profile.js";
 import { layout } from "../views/layout.js";
-import { checkPassword, updateProfile, deleteExpiredUnverified } from "../models/user.js";
+import { checkPassword, updateProfile, deleteExpiredUnverified, getNotificationById } from "../models/user.js";
 import { updateUserSessions, destroyUserSessions } from "../services/session.js";
 
 const USERNAME_REGEX = /^[\w ]{3,20}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,72}$/;
 
-export function profilePageHandler(req, res) {
+export async function profilePageHandler(req, res) {
 	const method = req.method;
 	if (method.toLowerCase() !== "get") {
 		res.setHeader('Allow', 'GET');
@@ -22,10 +22,19 @@ export function profilePageHandler(req, res) {
 		return;
 	}
 
-	const { username, email } = req.user;
+	const { id, username, email } = req.user;
+	let notification;
+	try {
+		notification = await getNotificationById(id);
+	} catch (e) {
+		console.error(e.message);
+		returnError(res, 500, "Something went wrong in the server");
+		return;
+	}
+
 	res.statusCode = 200;
 	res.setHeader('Content-type', 'text/html; charset=utf-8');
-	res.end(layout("Camagru | Profile", "/css/profile.css", "/js/profile.js", profile(escapeHtml(username), escapeHtml(email)), req.user));
+	res.end(layout("Camagru | Profile", "/css/profile.css", "/js/profile.js", profile(escapeHtml(username), escapeHtml(email), notification), req.user));
 }
 
 // PATCH: only the filled fields are updated, the current password is always required
@@ -53,7 +62,7 @@ export async function modifyProfileHandler(req, res) {
 		returnError(res, 400, e.message);
 		return;
 	}
-	if (!fields.username && !fields.email && !fields.pass) {
+	if (!fields.username && !fields.email && !fields.pass && fields.notification === undefined) {
 		returnError(res, 400, "Nothing to update");
 		return;
 	}
@@ -132,6 +141,14 @@ function parseFields(params, user) {
 			throw new Error("Invalid email address");
 		}
 		fields.email = email;
+	}
+
+	const notification = params.get("notification");
+	if (notification !== null) {
+		if (notification !== "true" && notification !== "false") {
+			throw new Error("Invalid notification value");
+		}
+		fields.notification = notification === "true";
 	}
 
 	const newPass = params.get("newPass");

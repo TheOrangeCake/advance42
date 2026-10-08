@@ -11,17 +11,18 @@ const transporter = nodemailer.createTransport({
 	}
 })
 
-export async function sendEmail(target, subject, content) {
+export async function sendEmail(target, subject, text, html) {
 	try {
 		await transporter.verify();
 	} catch (e) {
 		throw internalError("SMTP server failed", e);
 	}
 
-	const info = await transporter.sendMail({
+	await transporter.sendMail({
 		from: `"Nguyen NGUYEN" <${process.env.SMTP_USER}>`,
 		to: `${target}`,
 		subject: `${subject}`,
-		text: `${content}`,
+		text: `${text}`,
+		...(html && { html }),
 	});
 }

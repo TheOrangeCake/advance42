@@ -7,7 +7,7 @@ const profileSubmitBtn = document.querySelector("#profile-submit-btn");
 profileForm?.addEventListener("submit", async (e) => {
 	e.preventDefault();
 
-	const { user, email, newPass, newPassConfirm, pass } = profileForm.elements;
+	const { user, email, notification, newPass, newPassConfirm, pass } = profileForm.elements;
 	profileError.textContent = "";
 	try {
 		// only send what changed from the value the page was loaded with
@@ -25,6 +25,9 @@ profileForm?.addEventListener("submit", async (e) => {
 				throw new Error("Invalid email address");
 			}
 			body.set("email", newEmail);
+		}
+		if (notification.checked !== notification.defaultChecked) {
+			body.set("notification", String(notification.checked));
 		}
 		if (newPass.value || newPassConfirm.value) {
 			validateResetInput(newPass.value, newPassConfirm.value);
@@ -52,6 +55,7 @@ profileForm?.addEventListener("submit", async (e) => {
 
 		user.defaultValue = newUser;
 		email.defaultValue = newEmail;
+		notification.defaultChecked = notification.checked;
 		document.querySelectorAll('a[href="/profile"]').forEach(a => a.textContent = newUser);
 		profileForm.reset();
 	} catch (err) {

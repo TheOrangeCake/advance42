@@ -50,14 +50,18 @@ export function gallery({images, hasNext, page}, user) {
 
 	return (
 		`<section id="body-wrapper">
-			<div id="gallery">
-				${gallery}
-			</div>
-			<div id="page-selector">
-				<a href="/gallery?page=${page === 1 ? page : page - 1}" class="page-button${page === 1 ? " invisible" : ""}">Prev</a>
-				<div>${page}</div>
-				<a href="/gallery?page=${page + 1}" class="page-button${hasNext ? "" : " invisible"}">Next</a>
-			</div>
+			${ images.length === 0 ?
+				`<h3>No images</h3>`
+				:
+				`<div id="gallery">
+					${gallery}
+				</div>
+				<div id="page-selector">
+					<a href="/gallery?page=${page === 1 ? page : page - 1}" class="page-button${page === 1 ? " invisible" : ""}">Prev</a>
+					<div>${page}</div>
+					<a href="/gallery?page=${page + 1}" class="page-button${hasNext ? "" : " invisible"}">Next</a>
+				</div>`
+			}
 		</section>`
 	)
 }

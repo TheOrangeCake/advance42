@@ -1,10 +1,8 @@
 ### TODO
 - navbar and footer responsive
 - port from 80 to 4242
-- email notificataion on comment (same user -> no email)
 - cap height and width of uploaded png
 - handle out of range id from requests
-- handle video.play() error in frontend
 - add 1 more bonus for full point
 
 # Camagru

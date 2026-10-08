@@ -1,9 +1,10 @@
 import { gallery } from "../views/sections/gallery.js";
 import { layout } from "../views/layout.js";
-import { getImagesByPage } from "../models/images.js";
+import { getImagesByPage, getImageAuthor } from "../models/images.js";
 import { returnError, parseUrl, readJsonBody } from "./utils.js";
 import { getCommentsByImageIds, insertComment } from "../models/comments.js";
 import { updateLike } from "../models/likes.js";
+import { sendEmail } from "../services/mail.js";
 
 export async function galleryPageHandler(req, res) {
 	const method = req.method;
@@ -139,12 +140,9 @@ export async function commentHandler(req, res) {
 		}
 
 
+		let result;
 		try {
-			const result = await insertComment(data.id, comment, req.user);
-
-			res.statusCode = 200;
-			res.setHeader('Content-type', 'application/json');
-			res.end(JSON.stringify(result));
+			result = await insertComment(data.id, comment, req.user);
 		} catch (e) {
 			if (e.status === 404) {
 				returnError(res, 404, e.message);
@@ -154,6 +152,21 @@ export async function commentHandler(req, res) {
 			returnError(res, 500, "Something wrong with the server");
 			return;
 		}
+
+		try {
+			const author = await getImageAuthor(data.id);
+			if (author && author.notification && author.id !== req.user.id) {
+				const subject = "Someone commented on your picture";
+				const text = `Hello ${author.username},\n\n${result.username} commented on your picture:\n"${result.comment}"`;
+				await sendEmail(author.email, subject, text);
+			}
+		} catch (e) {
+			console.error("Error while sending notification email:", e);
+		}
+
+		res.statusCode = 200;
+		res.setHeader('Content-type', 'application/json');
+		res.end(JSON.stringify(result));
 
 	} catch (e) {
 		returnError(res, 400, e.message);

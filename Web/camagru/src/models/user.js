@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { dbQuery } from "../services/db.js";
-import { conflict } from "../controllers/utils.js";
+import { conflict, notFound } from "../controllers/utils.js";
 import crypto from "node:crypto";
 
 // signup
@@ -186,7 +186,7 @@ export async function checkPassword(id, pass) {
 	return bcrypt.compare(pass, found.rows[0].password);
 }
 
-// fields: any of username, email, pass
+// fields: any of username, email, pass, notification
 export async function updateProfile(id, fields) {
 	const sets = [];
 	const values = [id];
@@ -197,6 +197,10 @@ export async function updateProfile(id, fields) {
 	if (fields.email) {
 		values.push(fields.email);
 		sets.push(`email = $${values.length}`);
+	}
+	if (fields.notification !== undefined) {
+		values.push(fields.notification);
+		sets.push(`notification = $${values.length}`);
 	}
 	if (fields.pass) {
 		values.push(await hashPassword(fields.pass));
@@ -209,7 +213,8 @@ export async function updateProfile(id, fields) {
 	const query = `
 		UPDATE users
 		SET ${sets.join(", ")}
-		WHERE id = $1 AND active = TRUE`;
+		WHERE id = $1 AND active = TRUE
+	`;
 
 	try {
 		await dbQuery(query, values);
@@ -223,4 +228,18 @@ export async function updateProfile(id, fields) {
 		}
 		throw e;
 	}
+}
+
+export async function getNotificationById(userId) {
+	const query = `
+		SELECT notification
+		FROM users
+		WHERE id = $1 AND active = TRUE
+	`;
+
+	const found = await dbQuery(query, [userId]);
+	if (found.rowCount === 0) {
+		throw notFound("User notification not found");
+	}
+	return found.rows[0].notification;
 }

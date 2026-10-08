@@ -46,6 +46,21 @@ export async function deleteImageById(imageId, userId) {
 	return {file: result.rows[0].filename};
 }
 
+export async function getImageAuthor(imageId) {
+	const query = `
+		SELECT u.id, u.username, u.email, u.notification
+		FROM images i
+		JOIN users u ON u.id = i.user_id
+		WHERE i.id = $1
+	`;
+
+	const result = await dbQuery(query, [imageId]);
+	if (result.rowCount === 0) {
+		return null;
+	}
+	return result.rows[0];
+}
+
 const ITEM_PER_PAGE = 5;
 export async function getImagesByPage(page, userId) {
 	const offset = (page - 1) * ITEM_PER_PAGE;

@@ -41,8 +41,10 @@ export async function forgotHandler(req, res) {
 		try {
 			const port = process.env.HTTP_PORT;
 			const subject = "Reset password for Camagru";
-			const content = `Reset your password here: http://localhost:${port}/reset?id=${userID}&token=${token}`
-			await sendEmail(email, subject, content);
+			const link = `http://localhost:${port}/reset?id=${userID}&token=${token}`;
+			const text = `Reset your password here: ${link}`;
+			const html = `<p>Reset your password here: <a href="${link}">Reset link</a></p>`;
+			await sendEmail(email, subject, text, html);
 		} catch (e) {
 			console.error("Error while sending email:", e);
 			returnError(res, 500, "Something went wrong in the server");

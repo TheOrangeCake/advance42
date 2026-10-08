@@ -63,10 +63,12 @@ export async function signupHandler(req, res) {
 	try {
 		const port = process.env.HTTP_PORT;
 		const subject = "Activation Link for Camagru";
-		const content = `Activate here: http://localhost:${port}/api/verify?id=${userID}&token=${token}`
-		await sendEmail(email, subject, content);
+		const link = `http://localhost:${port}/api/verify?id=${userID}&token=${token}`;
+		const text = `Activate here: ${link}`;
+		const html = `<p>Activate your account here: <a href="${link}">Activation link</a></p>`;
+		await sendEmail(email, subject, text, html);
 	} catch (e) {
-		console.error("Error while sending email:", e);
+		console.error("Error while sending activation email:", e);
 		returnError(res, 500, "Something went wrong in the server");
 		return;
 	}

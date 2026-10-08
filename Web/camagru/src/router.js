@@ -32,7 +32,7 @@ export async function handleRequest(req, res) {
 	} else if (url.pathname === "/reset") {
 		await resetPageHandler(req, res);
 	} else if (url.pathname === "/profile") {
-		profilePageHandler(req, res);
+		await profilePageHandler(req, res);
 	} else if (url.pathname === "/api/profile") {
 		await modifyProfileHandler(req, res);
 	} else if (url.pathname === "/edit") {
