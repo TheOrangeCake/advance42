@@ -1,6 +1,3 @@
-### TODO
-- add 1 more bonus for full point
-
 # Camagru
 
 Camagru is a small web app built for the advance 42 curriculum. Users sign up with an email confirmation, then take a webcam photo (or upload an image) and add predefined stickers that they can move and resize. The final image is composited on the server. Every picture is shown in a public gallery, paginated and sorted by date, where signed-in users can like and comment.
@@ -78,10 +75,11 @@ Camagru is a small web app built for the advance 42 curriculum. Users sign up wi
 </br>
 
 # Bonus
-- Live preview
-- Multiple stickers
-- Stickers resize
-- Stickers change position
+- Live preview -> Stickers overlay the preview panel
+- Multiple stickers -> Compose multiple stickers while preserving layer order
+- Stickers resize -> Resize stickers interactively with individual handle
+- Stickers change position -> Reposition stickers by drag, handle edge positions
+- “AJAXify” exchanges with the server -> New data is fetch and insert into slot instead of reloading the whole page. Effectively manipulating the DOM for interactivity and update.
 </br>
 
 </br>
