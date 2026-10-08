@@ -1,5 +1,6 @@
 import { returnError, parseUrl, isValidId } from "../utils.js";
 import { verifyUser } from "../../models/user.js";
+import { returnPage } from "../page.js";
 
 export async function verifyHandler(req, res) {
 	const method = req.method;
@@ -14,12 +15,12 @@ export async function verifyHandler(req, res) {
 	const token = params.get("token");
 
 	if (!rawId || !/^\d+$/.test(rawId) || !token) {
-		returnError(res, 400, "Invalid activation link");
+		returnPage(req, res, 400, "Invalid link", "This activation link is invalid");
 		return;
 	}
 	const id = Number(rawId);
 	if (!isValidId(id)) {
-		returnError(res, 400, "Invalid activation link");
+		returnPage(req, res, 400, "Invalid link", "This activation link is invalid");
 		return;
 	}
 
@@ -28,16 +29,19 @@ export async function verifyHandler(req, res) {
 		result = await verifyUser(id, token);
 	} catch (e) {
 		console.error(`Error verifying user ${id}:`, e);
-		returnError(res, 500, "Something went wrong in the server");
+		returnPage(req, res, 500, "Server error", "Something went wrong in the server");
 		return;
 	}
 
 	if (result === "invalid") {
-		returnError(res, 400, "Invalid or expired activation link, please sign up again");
+		returnPage(req, res, 400, "Invalid link", "Invalid or expired activation link, please sign up again");
 		return;
 	}
 
-	res.statusCode = 200;
-	res.setHeader('Content-type', 'text/plain; charset=utf-8');
-	res.end("Account activated, you can now log in");
+	if (result === "already-active") {
+		returnPage(req, res, 200, "Already activated", "This account is already active, you can sign in");
+		return;
+	}
+
+	returnPage(req, res, 200, "Account activated", "Your account is active, you can now sign in");
 }

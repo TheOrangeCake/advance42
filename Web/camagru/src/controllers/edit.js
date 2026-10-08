@@ -6,6 +6,7 @@ import { layout } from "../views/layout.js";
 import { generateToken, returnError, readJsonBody, isValidId } from "./utils.js";
 import { getAllStickerName, isStickerExist, getStickerCount, getStickerImage } from "../services/stickers.js";
 import { deleteImageById, getAllImageByUser, persistImage } from "../models/images.js";
+import { returnPage } from "./page.js";
 
 const UPLOADS_DIR = "/app/uploads/";
 const UPLOADS_URL = "/uploads/";
@@ -19,7 +20,7 @@ export async function editPageHandler(req, res) {
 	}
 
 	if (!req.user) {
-		returnError(res, 401, "User not signed in");
+		returnPage(req, res, 401, "Not signed in", "Please sign in to create pictures");
 		return;
 	}
 
@@ -156,7 +157,7 @@ function isNumberInRange(value, min, max) {
 }
 
 const PNG_DATA_URL_PREFIX = "data:image/png;base64,";
-const MAX_IMG_DIM = 1920;
+const MAX_IMG_DIM = 3000;
 async function decodePngDataUrl(dataUrl) {
 	if (typeof dataUrl !== "string" || !dataUrl.startsWith(PNG_DATA_URL_PREFIX)) {
 		return null;

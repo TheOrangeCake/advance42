@@ -9,6 +9,7 @@ import { forgotHandler } from "./controllers/auth/forgot.js";
 import { resetPageHandler, resetHandler } from "./controllers/auth/reset.js";
 import { profilePageHandler, modifyProfileHandler } from "./controllers/profile.js";
 import { editPageHandler, composeHandler, deleteHandler } from "./controllers/edit.js";
+import { returnPage } from "./controllers/page.js";
 
 export async function handleRequest(req, res) {
 	const url = parseUrl(req);
@@ -48,8 +49,6 @@ export async function handleRequest(req, res) {
 	} else if (url.pathname === "/" || url.pathname === "/gallery") {
 		await galleryPageHandler(req, res);
 	} else {
-		res.statusCode = 404;
-		res.setHeader('Content-type', 'text/plain; charset=utf-8');
-		res.end("Page not found");
+		returnPage(req, res, 404, "Page not found", "The page you are looking for does not exist");
 	}
 }

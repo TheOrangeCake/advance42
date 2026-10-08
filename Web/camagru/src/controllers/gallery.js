@@ -5,6 +5,7 @@ import { returnError, parseUrl, readJsonBody, isValidId } from "./utils.js";
 import { getCommentsByImageIds, insertComment } from "../models/comments.js";
 import { updateLike } from "../models/likes.js";
 import { sendEmail } from "../services/mail.js";
+import { returnPage } from "./page.js";
 
 export async function galleryPageHandler(req, res) {
 	const method = req.method;
@@ -49,7 +50,7 @@ export async function galleryPageHandler(req, res) {
 		data = { images: images.images, hasNext: images.hasNext, page };
 	} catch (e) {
 		console.error(`Fail to retrieve gallery page ${page}: ${e.message}`);
-		returnError(res, 500, "Something wrong in the server");
+		returnPage(req, res, 500, "Server error", "Something went wrong in the server");
 		return;
 	}
 

@@ -4,6 +4,7 @@ import { profile } from "../views/sections/profile.js";
 import { layout } from "../views/layout.js";
 import { checkPassword, updateProfile, deleteExpiredUnverified, getNotificationById } from "../models/user.js";
 import { updateUserSessions, destroyUserSessions } from "../services/session.js";
+import { returnPage } from "./page.js";
 
 const USERNAME_REGEX = /^[\w ]{3,20}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -18,7 +19,7 @@ export async function profilePageHandler(req, res) {
 	}
 
 	if (!req.user) {
-		returnError(res, 401, "User not signed in");
+		returnPage(req, res, 401, "Not signed in", "Please sign in to see your profile");
 		return;
 	}
 
@@ -28,7 +29,7 @@ export async function profilePageHandler(req, res) {
 		notification = await getNotificationById(id);
 	} catch (e) {
 		console.error(e.message);
-		returnError(res, 500, "Something went wrong in the server");
+		returnPage(req, res, 500, "Server error", "Something went wrong in the server");
 		return;
 	}
 

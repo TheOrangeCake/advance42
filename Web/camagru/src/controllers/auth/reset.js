@@ -4,6 +4,7 @@ import { resetPassword, isResetTokenValid } from "../../models/user.js";
 import { destroyUserSessions } from "../../services/session.js";
 import { layout } from "../../views/layout.js";
 import { reset } from "../../views/sections/reset.js";
+import { returnPage } from "../page.js";
 
 export async function resetPageHandler(req, res) {
 	const method = req.method;
@@ -20,7 +21,7 @@ export async function resetPageHandler(req, res) {
 
 	// validation
 	if (!id || !isTokenFormat(token)) {
-		returnError(res, 400, "Invalid reset link");
+		returnPage(req, res, 400, "Invalid link", "This reset link is invalid");
 		return;
 	}
 
@@ -30,12 +31,12 @@ export async function resetPageHandler(req, res) {
 		valid = await isResetTokenValid(id, token);
 	} catch (e) {
 		console.error(`Error checking reset token of user ${id}:`, e);
-		returnError(res, 500, "Something went wrong in the server");
+		returnPage(req, res, 500, "Server error", "Something went wrong in the server");
 		return;
 	}
 
 	if (!valid) {
-		returnError(res, 400, "Invalid or expired reset link, please ask for a new one");
+		returnPage(req, res, 400, "Invalid link", "Invalid or expired reset link, please ask for a new one");
 		return;
 	}
 

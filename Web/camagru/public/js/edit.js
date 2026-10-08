@@ -1,7 +1,7 @@
 /* video capture */
 let streaming = false;
 let uploaded = false;
-const MAX_IMG_DIM = 1920; // must match the server cap
+const MAX_IMG_DIM = 3000; // must match the server cap
 let isSending = false;
 let imgSelection = new Map(); // name -> { x, y, w, el }
 

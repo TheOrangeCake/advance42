@@ -68,7 +68,7 @@ export function generateToken() {
 }
 
 
-const MAX_BODY_SIZE = 10 * 1024 * 1024; // 10 MB
+const MAX_BODY_SIZE = 40 * 1024 * 1024; // 40 MB
 
 export function readJsonBody(req) {
 	return new Promise((resolve, reject) => {
