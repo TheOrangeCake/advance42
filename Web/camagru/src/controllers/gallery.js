@@ -1,7 +1,7 @@
 import { gallery } from "../views/sections/gallery.js";
 import { layout } from "../views/layout.js";
 import { getImagesByPage, getImageAuthor } from "../models/images.js";
-import { returnError, parseUrl, readJsonBody } from "./utils.js";
+import { returnError, parseUrl, readJsonBody, isValidId } from "./utils.js";
 import { getCommentsByImageIds, insertComment } from "../models/comments.js";
 import { updateLike } from "../models/likes.js";
 import { sendEmail } from "../services/mail.js";
@@ -74,7 +74,7 @@ export async function likeHandler(req, res) {
 	try {
 		const data = await readJsonBody(req);
 
-		if (!Number.isInteger(data.id)) {
+		if (!isValidId(data.id)) {
 			returnError(res, 400, "Bad image id");
 			return;
 		}
@@ -125,7 +125,7 @@ export async function commentHandler(req, res) {
 	try {
 		const data = await readJsonBody(req);
 
-		if (!Number.isInteger(data.id)) {
+		if (!isValidId(data.id)) {
 			returnError(res, 400, "Bad image id");
 			return;
 		}

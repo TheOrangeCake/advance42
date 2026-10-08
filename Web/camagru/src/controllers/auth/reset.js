@@ -1,5 +1,5 @@
 import { text } from "node:stream/consumers";
-import { returnError, parseUrl } from "../utils.js";
+import { returnError, parseUrl, isValidId } from "../utils.js";
 import { resetPassword, isResetTokenValid } from "../../models/user.js";
 import { destroyUserSessions } from "../../services/session.js";
 import { layout } from "../../views/layout.js";
@@ -98,7 +98,7 @@ function parseId(rawId) {
 		return null;
 	}
 	const id = Number(rawId);
-	if (id < 1 || id > 2147483647) {
+	if (!isValidId(id)) {
 		return null;
 	}
 	return id;

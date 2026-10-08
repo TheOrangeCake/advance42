@@ -24,6 +24,11 @@ export function internalError(message, cause) {
 	return err;
 }
 
+const INT_MAX = 2147483647;
+export function isValidId(id) {
+	return Number.isInteger(id) && id >= 1 && id <= INT_MAX;
+}
+
 const URL_BASE = "http://localhost";
 export function parseUrl(req) {
 	return new URL(req.url, URL_BASE);

@@ -1,4 +1,4 @@
-import { returnError, parseUrl } from "../utils.js";
+import { returnError, parseUrl, isValidId } from "../utils.js";
 import { verifyUser } from "../../models/user.js";
 
 export async function verifyHandler(req, res) {
@@ -18,7 +18,7 @@ export async function verifyHandler(req, res) {
 		return;
 	}
 	const id = Number(rawId);
-	if (id < 1 || id > 2147483647) {
+	if (!isValidId(id)) {
 		returnError(res, 400, "Invalid activation link");
 		return;
 	}

@@ -3,7 +3,7 @@ import path from "node:path";
 import { Jimp } from "jimp";
 import { edit } from "../views/sections/edit.js";
 import { layout } from "../views/layout.js";
-import { generateToken, returnError, readJsonBody } from "./utils.js";
+import { generateToken, returnError, readJsonBody, isValidId } from "./utils.js";
 import { getAllStickerName, isStickerExist, getStickerCount, getStickerImage } from "../services/stickers.js";
 import { deleteImageById, getAllImageByUser, persistImage } from "../models/images.js";
 
@@ -185,7 +185,7 @@ export async function deleteHandler(req, res) {
 	try {
 		const data = await readJsonBody(req);
 
-		if (!Number.isInteger(data.id)) {
+		if (!isValidId(data.id)) {
 			returnError(res, 400, "Bad image id");
 			return;
 		}

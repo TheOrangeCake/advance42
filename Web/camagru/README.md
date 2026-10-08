@@ -1,7 +1,6 @@
 ### TODO
 - navbar and footer responsive
 - cap height and width of uploaded png
-- handle out of range id from requests
 - add 1 more bonus for full point
 
 # Camagru
