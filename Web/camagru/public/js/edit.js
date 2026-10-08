@@ -1,6 +1,7 @@
 /* video capture */
 let streaming = false;
 let uploaded = false;
+const MAX_IMG_DIM = 1920; // must match the server cap
 let isSending = false;
 let imgSelection = new Map(); // name -> { x, y, w, el }
 
@@ -119,9 +120,11 @@ async function takePicture() {
 	const height = uploaded ? uploadPreview.naturalHeight : video.videoHeight;
 	if (!startButton.disabled && (streaming || uploaded) && width && height) {
 		startButton.disabled = true;
-		canvas.width = width;
-		canvas.height = height;
-		context.drawImage(source, 0, 0, width, height);
+		// downscale to fit MAX_IMG_DIM, keeping the aspect ratio
+		const scale = Math.min(1, MAX_IMG_DIM / Math.max(width, height));
+		canvas.width = Math.round(width * scale);
+		canvas.height = Math.round(height * scale);
+		context.drawImage(source, 0, 0, canvas.width, canvas.height);
 
 		// send img and meta back to backend
 		const img = canvas.toDataURL("image/png");

@@ -156,11 +156,20 @@ function isNumberInRange(value, min, max) {
 }
 
 const PNG_DATA_URL_PREFIX = "data:image/png;base64,";
+const MAX_IMG_DIM = 1920;
 async function decodePngDataUrl(dataUrl) {
 	if (typeof dataUrl !== "string" || !dataUrl.startsWith(PNG_DATA_URL_PREFIX)) {
 		return null;
 	}
 	const buffer = Buffer.from(dataUrl.slice(PNG_DATA_URL_PREFIX.length), "base64");
+	if (buffer.length < 24) {
+		return null;
+	}
+	const width = buffer.readUInt32BE(16);
+	const height = buffer.readUInt32BE(20);
+	if (width > MAX_IMG_DIM || height > MAX_IMG_DIM) {
+		return null;
+	}
 	try {
 		const image = await Jimp.read(buffer);
 		return image.mime === "image/png" ? image : null;

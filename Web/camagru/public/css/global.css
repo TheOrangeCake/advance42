@@ -241,3 +241,24 @@ body {
 		padding-right: 1rem;
 	}
 }
+
+@media (max-width: 768px) {
+	.nav {
+		flex-wrap: wrap;
+		padding: 1rem 1rem 0;
+	}
+
+	.nav-items {
+		order: 1;
+		flex-basis: 100%;
+		justify-content: center;
+		margin: 1rem -1rem 0;
+		padding: 0.75rem 1rem;
+		background-color: var(--cl-accent);
+	}
+
+	.nav-items *,
+	.nav-items *:hover {
+		color: var(--cl-white);
+	}
+}
