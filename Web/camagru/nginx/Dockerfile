@@ -5,6 +5,6 @@ RUN apk upgrade --no-cache && apk add nginx
 COPY nginx/nginx.conf /etc/nginx/http.d/default.conf
 COPY public /public
 
-EXPOSE 80
+EXPOSE 4242
 
 CMD ["/usr/sbin/nginx", "-g", "daemon off;"]

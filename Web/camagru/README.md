@@ -1,6 +1,5 @@
 ### TODO
 - navbar and footer responsive
-- port from 80 to 4242
 - cap height and width of uploaded png
 - handle out of range id from requests
 - add 1 more bonus for full point
