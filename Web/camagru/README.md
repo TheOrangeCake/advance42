@@ -1,3 +1,12 @@
+### TODO
+- navbar and footer responsive
+- port from 80 to 4242
+- email notificataion on comment (same user -> no email)
+- cap height and width of uploaded png
+- handle out of range id from requests
+- handle video.play() error in frontend
+- add 1 more bonus for full point
+
 # Camagru
 
 Camagru is a small web app built for the advance 42 curriculum. Users sign up with an email confirmation, then take a webcam photo (or upload an image) and add predefined stickers that they can move and resize. The final image is composited on the server. Every picture is shown in a public gallery, paginated and sorted by date, where signed-in users can like and comment.

@@ -17,7 +17,7 @@ export function edit(stickers, userImages) {
 					<div id="camera-buttons">
 						<button type="button" class="button" id="start-button">Capture photo</button>
 						<button type="button" class="button" id="upload-button">Upload image</button>
-						<input type="file" id="upload-input" accept="image/png, image/jpeg, image/gif, image/webp" hidden>
+						<input type="file" id="upload-input" accept="image/png, image/jpeg" hidden>
 					</div>
 				</div>
 

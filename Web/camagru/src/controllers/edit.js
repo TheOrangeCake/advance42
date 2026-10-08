@@ -49,7 +49,13 @@ export async function composeHandler(req, res) {
 	}
 
 	try {
-		const data = await readJsonBody(req);
+		let data;
+		try {
+			data = await readJsonBody(req);
+		} catch (e) {
+			returnError(res, 400, e.message);
+			return;
+		}
 
 		if (!data.img || !data.stickers) {
 			returnError(res, 400, "No image or stickers");
@@ -108,7 +114,8 @@ export async function composeHandler(req, res) {
 		res.setHeader('Content-type', 'application/json');
 		res.end(JSON.stringify({id: imgId, url: UPLOADS_URL + filename}));
 	} catch (e) {
-		returnError(res, 400, e.message);
+		console.error(e.message);
+		returnError(res, 500, "Something wrong in the server");
 		return;
 	}
 }
