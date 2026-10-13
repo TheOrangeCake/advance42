@@ -1,9 +1,9 @@
 from argparse import ArgumentParser, Namespace
 
 
-FUNCTION_DEFAULT = 'data/input/functions_definition.json'
-INPUT_DEFAULT = 'data/input/function_calling_tests.json'
-OUTPUT_DEFAULT = 'data/output/function_calling_results.json'
+FUNCTION_DEFAULT = 'src/data/input/functions_definition.json'
+INPUT_DEFAULT = 'src/data/input/function_calling_tests.json'
+OUTPUT_DEFAULT = 'src/data/output/function_calling_results.json'
 
 
 class argParser:
