@@ -1,4 +1,5 @@
 SRC = src
+ARGS =
 
 all: run
 
@@ -6,7 +7,7 @@ install:
 	@uv sync
 
 run:
-	@uv run python3 -m $(SRC)
+	@uv run python3 -m $(SRC) $(ARGS)
 
 debug:
 	echo "TODO"
