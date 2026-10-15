@@ -2,9 +2,6 @@
 
 ## Steps
 - Parse args
-	- Validate and parse function definition file to a json object
-		- Construct a list of allowed function
-	- Validate and parse input file into an array
 	- Validate output file
 - Create base model with Pydantic to defined and validate input and output structures
 - Create a function to block the invalid token by setting the score to negative infinity (FSM - Finite State Machine)

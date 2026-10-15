@@ -31,11 +31,13 @@ class ArgParser(BaseModel):
         parser.add_argument(
             '-i',
             '--input',
+            dest='inputs',
             default=INPUT_DEFAULT
         )
         parser.add_argument(
             '-o',
             '--output',
+            dest='outputs',
             default=OUTPUT_DEFAULT
         )
 
@@ -54,6 +56,6 @@ class ArgParser(BaseModel):
 
         res = self.parser.parse_args(args)
         print(f"Functions defintion file:\t{res.functions}")
-        print(f"Prompt input file:\t\t{res.input}")
-        print(f"Result output file:\t\t{res.output}")
+        print(f"Prompt input file:\t\t{res.inputs}")
+        print(f"Result output file:\t\t{res.outputs}")
         return res
