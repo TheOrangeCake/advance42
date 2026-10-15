@@ -1,5 +1,6 @@
 .venv
 __pycache__
 .mypy_cache
+/output
 
 system_prompt_schema.yml

@@ -1,18 +1,13 @@
-from .a1_arg_parser import argParser
-from .a2_file_handler import fileHandler
+from .a1_arg_parser import ArgParser
+from .a2_file_handler import FileHandler
 import sys
 
 
 def main() -> None:
-    arguments = argParser().parse(sys.argv[1:])
-    functions = fileHandler().read_functions(arguments.functions)
-    
-    for function in functions:
-        print(function['name'])
-        print(function['description'])
-        print(function['parameters'])
-        print(function['returns'])
-        print()
+    arguments = ArgParser().parse(sys.argv[1:])
+    functions = FileHandler().read_functions(arguments.functions)
+
+    print(functions)
 
 
 if __name__ == "__main__":

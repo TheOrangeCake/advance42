@@ -1,32 +1,46 @@
-import json
+from pydantic import TypeAdapter, ConfigDict
+from pydantic.dataclasses import dataclass
 from .z1_utils import error
 
 
-JSON_KEYS = ['name', 'description', 'parameters', 'returns']
+@dataclass(
+    config=ConfigDict(
+        extra='forbid',
+        frozen=True,
+        str_min_length=1,
+        str_strip_whitespace=True,
+
+    )
+)
+class FunctionsData:
+    name: str
+    description: str
+    parameters: dict[str, Items]
+    returns: Items
 
 
-class fileHandler():
-    def __init__(self) -> None:
-        return
+@dataclass(
+    config=ConfigDict(
+        extra='forbid',
+        frozen=True,
+        str_min_length=1,
+        str_strip_whitespace=True,
 
-    def read_functions(self, path: str) -> dict:
-        print(path)
+    )
+)
+class Items:
+    type: str
+
+
+class FileHandler:
+    def read_functions(self, path: str) -> list[FunctionsData]:
         try:
             with open(path, 'r') as file:
-                self.content = json.load(file)
-                self.__validateJsonKeys(JSON_KEYS)
+                raw = file.read()
+                return TypeAdapter(list[FunctionsData]).validate_json(raw)
         except FileNotFoundError:
             error("Functions definition file was not found")
         except PermissionError:
             error("Functions definition file permission denied")
-        except json.JSONDecodeError as e:
-            error(f"Invalid JSON syntax: {e}")
         except Exception as e:
             error(f"{e}")
-
-    def __validateJsonKeys(key: list[str]) -> None:
-        return
-
-
-
-

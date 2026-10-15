@@ -6,7 +6,7 @@ INPUT_DEFAULT = 'src/data/input/function_calling_tests.json'
 OUTPUT_DEFAULT = 'src/data/output/function_calling_results.json'
 
 
-class argParser:
+class ArgParser:
     def __init__(self) -> None:
         self.parser = ArgumentParser(
             prog='Call Me Maybe',

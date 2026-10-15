@@ -6,6 +6,7 @@ all: run
 install:
 	@uv sync
 
+# make ARGS="--input path --functions_definition path"
 run:
 	@uv run python3 -m $(SRC) $(ARGS)
 
