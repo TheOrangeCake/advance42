@@ -4,14 +4,6 @@ from pathlib import Path
 from .z1_utils import Utils
 
 
-type AcceptDataTypes = Literal[
-    "string",
-    "number",
-    "integer",
-    "boolean"
-]
-
-
 class DataShapeConfig(BaseModel):
     """Field Validation for function definition, input and output Json."""
     model_config = ConfigDict(
@@ -22,6 +14,19 @@ class DataShapeConfig(BaseModel):
     )
 
 
+type AcceptDataTypes = Literal[
+    "string",
+    "number",
+    "integer",
+    "boolean"
+]
+
+
+class Item(DataShapeConfig):
+    """Data type for FunctionData object."""
+    type: AcceptDataTypes
+
+
 class FunctionData(DataShapeConfig):
     """Data shape for function definition."""
     name: str
@@ -30,13 +35,18 @@ class FunctionData(DataShapeConfig):
     returns: Item
 
 
-class Item(DataShapeConfig):
-    """Data type for FunctionData object."""
-    type: AcceptDataTypes
-
-
 class InputPrompt(DataShapeConfig):
     prompt: str
+
+
+class OutputResult(DataShapeConfig):
+    prompt: str
+    name: str
+    parameters: dict[str, Item]
+
+
+class Vocab(DataShapeConfig):
+    tokens: dict[str, int]
 
 
 class FileHandler(BaseModel):
@@ -108,5 +118,26 @@ class FileHandler(BaseModel):
             Utils.error("Output file path is a directory")
         except PermissionError:
             Utils.error("Output file permission denied")
+        except Exception as e:
+            Utils.error(f"{e}")
+
+    def read_vocab(self, path: str) -> list[Vocab]:
+        """Read and parse the list of llm vocab.
+
+        Args:
+            path (str): path to the vocab file
+
+        Returns:
+            list[Vocab]: list of Vocab object
+        """
+
+        try:
+            with open(path, 'r', encoding='utf-8') as file:
+                raw = file.read()
+                return Vocab.validate_json(raw)
+        except FileNotFoundError:
+            Utils.error("Vocab file was not found")
+        except PermissionError:
+            Utils.error("Vocab file permission denied")
         except Exception as e:
             Utils.error(f"{e}")
