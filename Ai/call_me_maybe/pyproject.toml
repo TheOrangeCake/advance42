@@ -21,3 +21,6 @@ members = [
 
 [tool.uv.sources]
 llm-sdk = { workspace = true }
+
+[tool.mypy]
+namespace_packages = false

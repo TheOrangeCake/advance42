@@ -40,20 +40,21 @@ class Main(BaseModel):
         vocab_path = llm.get_path_to_vocab_file()
         vocab = FileHandler.read_vocab(vocab_path)
 
-        outputs = []
+        # outputs = []
         for input in inputs:
             # Build the base prompt
             p_builder = PromptBuilder()
             prompt = p_builder.craft_base_prompt(input.prompt, functions, llm)
-    
+
             output = OutputPart.name_part_to_logits(input.prompt, llm)
 
             state = STATE.NAME
             turn = 0
             while turn < 30 and state != STATE.DONE:
                 next_logits = llm.get_logits_from_input_ids(prompt)
-                output, prompt, state, selected_logit = LogitPicker.pick(next_logits, output, prompt)
+                state, selected_logit = LogitPicker.pick(next_logits)
+                output.append(selected_logit)
+                prompt.append(selected_logit)
                 print(vocab[selected_logit])
                 turn = turn + 1
             print(llm.decode(output))
-

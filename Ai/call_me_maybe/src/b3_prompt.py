@@ -36,29 +36,49 @@ class PromptBuilder(BaseModel):
             list[int]: encoded prompt
         """
 
-        self.functions_json = self.__defined_functions_to_string(functions)
+        self.functions_json = self.__function_list_to_string(functions)
         start = OutputPart.name_part_to_string(prompt)
 
         self.base_prompt = (
-            'Select from the list of defined functions the function '
-            'that will solve the input.\n'
-            'Fill the slots with the name of the selected function '
-            'and its parameters.\n'
-            'If no function fits, use None in all slots.\n'
+            'You are a function-calling assistant with access to the '
+            'following tools:\n' +
+            self.functions_json + '\n'
             '\n'
-            'List of defined functions: ' + self.functions_json + '\n'
+            '## Task\n'
+            'Select from the provided tools the one that will solve '
+            'the input.\n'
             '\n'
-            'Example of output shape:\n' + self.output_shape + '\n'
+            '## Process\n'
+            '1. Read the input\n'
+            '2. Read each tool description\n'
+            '3. Select the fitting tool\n'
+            '4. Fill the expected output slots with relevant data from '
+            'the tool and the input\n'
+            '\n'
+            '## Constraints\n'
+            '- Only select a tool from the provided list\n'
+            '- If no tool fits, fill the output slots with '
+            '"None" for string type or None for other types\n'
+            '- Format the response in the output shape. '
+            'Example of output shape:\n' +
+            self.output_shape + '\n'
             '\n'
             'Input: "' + prompt + '"\n'
             '\n' + start
         )
+        print(self.base_prompt)
         self.encoded_base_prompt = llm.encode(self.base_prompt)[0].tolist()
         return self.encoded_base_prompt
 
-    def __defined_functions_to_string(self, functions: list[FunctionData]) -> str:
-        res = "["
-        for function in functions:
-            res = res + function.model_dump_json() + ",\n"
-        return res + "]"
-            
+    def __function_list_to_string(self, functions: list[FunctionData]) -> str:
+        """Convert defined function list to a json string.
+
+        Args:
+            functions (list[FunctionData]) : list of defined functions
+
+        Returns:
+            str: representation of defined list in json string format
+        """
+
+        res = [function.model_dump_json() for function in functions]
+        return "[" + ",\n".join(res) + "]"
