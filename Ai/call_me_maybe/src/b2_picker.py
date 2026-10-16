@@ -9,6 +9,14 @@ class STATE(Enum):
     PARAMS = 2
     DONE = 3
 
+
+class OutputPart(BaseModel):
+
+    @staticmethod
+    def name_part_to_logits(prompt: str, llm: Small_LLM_Model) -> list[int]:
+        start = '{\n\t"prompt": "' + prompt + '",\n\t"name": "'
+        return llm.encode(start)[0].tolist()
+
 class LogitPicker(BaseModel):
 
     @staticmethod
@@ -17,4 +25,4 @@ class LogitPicker(BaseModel):
         output.append(next_logit)
         prompt.append(next_logit)
         state = STATE.NAME
-        return output, prompt, state
+        return output, prompt, state, next_logit

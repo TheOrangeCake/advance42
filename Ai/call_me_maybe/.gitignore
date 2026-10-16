@@ -2,5 +2,3 @@
 __pycache__
 .mypy_cache
 /data/output
-
-system_prompt_schema.yml
