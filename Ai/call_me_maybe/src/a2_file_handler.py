@@ -45,14 +45,11 @@ class OutputResult(DataShapeConfig):
     parameters: dict[str, Item]
 
 
-class Vocab(DataShapeConfig):
-    tokens: dict[str, int]
-
-
 class FileHandler(BaseModel):
     """Open files then read and parse its content."""
 
-    def read_functions(self, path: str) -> list[FunctionData]:
+    @staticmethod
+    def read_functions(path: str) -> list[FunctionData]:
         """Read and parse the list of functions definition.
 
         Args:
@@ -73,7 +70,8 @@ class FileHandler(BaseModel):
         except Exception as e:
             Utils.error(f"{e}")
 
-    def read_inputs(self, path: str) -> list[InputPrompt]:
+    @staticmethod
+    def read_inputs(path: str) -> list[InputPrompt]:
         """Read and parse the list of input prompts.
 
         Args:
@@ -96,7 +94,8 @@ class FileHandler(BaseModel):
         except Exception as e:
             Utils.error(f"{e}")
 
-    def validate_output_file(self, path: str) -> None:
+    @staticmethod
+    def validate_output_file(path: str) -> None:
         """Create missing parent directories and check output file
         validity for append.
 
@@ -121,20 +120,25 @@ class FileHandler(BaseModel):
         except Exception as e:
             Utils.error(f"{e}")
 
-    def read_vocab(self, path: str) -> list[Vocab]:
+    @staticmethod
+    def read_vocab(path: str) -> dict[int, str]:
         """Read and parse the list of llm vocab.
 
         Args:
             path (str): path to the vocab file
 
         Returns:
-            list[Vocab]: list of Vocab object
+            dict[int, str]: dict of token id and its str value
         """
 
         try:
             with open(path, 'r', encoding='utf-8') as file:
                 raw = file.read()
-                return Vocab.validate_json(raw)
+                vocab = TypeAdapter(dict[str, int]).validate_json(raw)
+                vocab_flip = {v: k for k, v in vocab.items()}
+                if len(vocab) != len(vocab_flip):
+                    Utils.error("Vocab file has duplicated id")
+                return vocab_flip
         except FileNotFoundError:
             Utils.error("Vocab file was not found")
         except PermissionError:

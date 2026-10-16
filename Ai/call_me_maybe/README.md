@@ -1,7 +1,6 @@
 # Call me maybe
 
 ## Steps
-- Read the vocab file and build an efficient lookup with id as key
 - Create a function - Picker() - to pick the next token or force the output structure.
 	- The params should be the logits, the current output in token id list, the function list and the vocab list
 	- We should keep track of the current state: NAME, PARAMS
