@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from llm_sdk import Small_LLM_Model
 from .a2_file_handler import FunctionData
+from .b1_part import OutputPart
 
 
 # qwen-ai.com/prompts/
@@ -9,7 +10,7 @@ class PromptBuilder(BaseModel):
 
     functions_json: str = ""
     base_prompt: str = ""
-    encoded_prompt: list[int] = []
+    encoded_base_prompt: list[int] = []
     output_shape: str = (
         '{\n'
         '\t"prompt": "Reverse the string \'hello\'",\n'
@@ -36,6 +37,8 @@ class PromptBuilder(BaseModel):
         """
 
         self.functions_json = self.__defined_functions_to_string(functions)
+        start = OutputPart.name_part_to_string(prompt)
+
         self.base_prompt = (
             'Select from the list of defined functions the function '
             'that will solve the input.\n'
@@ -48,14 +51,10 @@ class PromptBuilder(BaseModel):
             'Example of output shape:\n' + self.output_shape + '\n'
             '\n'
             'Input: "' + prompt + '"\n'
-            '\n'
-            '{\n'
-            '\t"prompt": "' + prompt + '",\n'
-            '\t"name": "'
+            '\n' + start
         )
-        print(self.base_prompt)
-        self.encoded_prompt = llm.encode(self.base_prompt)[0].tolist()
-        return self.encoded_prompt
+        self.encoded_base_prompt = llm.encode(self.base_prompt)[0].tolist()
+        return self.encoded_base_prompt
 
     def __defined_functions_to_string(self, functions: list[FunctionData]) -> str:
         res = "["
