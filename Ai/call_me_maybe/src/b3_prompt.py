@@ -56,9 +56,8 @@ class PromptBuilder(BaseModel):
             'the tool and the input\n'
             '\n'
             '## Constraints\n'
-            '- Only select a tool from the provided list\n'
-            '- If no tool fits, fill the output slots with '
-            '"None" for string type or None for other types\n'
+            '- Only select a tool from the provided list or "None"\n'
+            '- If no tool fits, fill the output slots with "None"\n'
             '- Format the response in the output shape. '
             'Example of output shape:\n' +
             self.output_shape + '\n'

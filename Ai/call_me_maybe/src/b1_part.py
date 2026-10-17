@@ -25,8 +25,8 @@ class OutputPart(BaseModel):
         return (
             '{\n'
             '\t"prompt": "' + prompt + '",\n'
-            '\t"name": "fn_reverse_string",\n'
-            '\t"parameters": {"s": "hello"}\n'
+            '\t"name": "None",\n'
+            '\t"parameters": {"None": "None"}\n'
             '}'
         )
 

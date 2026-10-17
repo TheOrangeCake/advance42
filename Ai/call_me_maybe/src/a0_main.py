@@ -36,26 +36,35 @@ class Main(BaseModel):
         picker = LogitPicker()
 
         # Initialize output with first part of output Json
-        # output = OutputPart.name_part_to_logits(u_input, self.llm)
+        output = OutputPart.name_part_to_logits(u_input, self.llm)
 
-        # prompt_len_save = len(prompt)
+        prompt_len_save = len(prompt)
         state = STATE.NAME
         turn = 0
-        while turn < 42 and state != STATE.DONE:
+        while turn < 12 and state != STATE.DONE:
             # Get next logits, select and update prompt
             next_logits = self.llm.get_logits_from_input_ids(prompt)
-            state, selected_logit = picker.pick_next_logit(next_logits)
+            selected_logit = picker.pick_next_logit(next_logits)
             prompt.append(selected_logit)
 
             # Check if output match defined functions
             if state == STATE.NAME:
-                state, function = picker.pick_function_name(
+                state, f = picker.pick_function_name(
                     selected_logit,
                     self.functions,
                     self.llm
                 )
-                if function is None:
+                if f is None:
                     return OutputPart.get_none_output(u_input)
+                elif state == STATE.PARAMS:
+                    forced_name_part = OutputPart.name_params_to_logits(f[0], self.llm)
+                    output.extend(forced_name_part)
+                    prompt = prompt[:prompt_len_save - 1]
+                    prompt.extend(forced_name_part)
+
+                    # print(self.llm.decode(prompt))
+                    print(self.llm.decode(output))
+                    state = STATE.DONE
 
             turn = turn + 1
         # print(llm.decode(output))

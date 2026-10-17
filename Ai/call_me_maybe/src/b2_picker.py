@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from llm_sdk import Small_LLM_Model
 import numpy as np
+import sys
 from .a2_file_handler import FunctionData
 from .b1_part import STATE
 
@@ -10,21 +11,21 @@ class LogitPicker(BaseModel):
 
     f_name: list[int] = []
     f_matched: list[FunctionData] = []
+    f_matched_old: list[FunctionData] = []
 
-    def pick_next_logit(self, next_logits: list[float]) -> tuple[STATE, int]:
+    def pick_next_logit(self, next_logits: list[float]) -> int:
         """
 
         """
         selected_logit = int(np.array(next_logits).argmax())
-        state = STATE.NAME
-        return state, selected_logit
+        return selected_logit
 
     def pick_function_name(
         self,
         selected_logit: int,
         functions: list[FunctionData],
         llm: Small_LLM_Model
-    ) -> tuple[STATE, FunctionData | None]:
+    ) -> tuple[STATE, list[FunctionData] | None]:
         """
 
         """
@@ -39,12 +40,21 @@ class LogitPicker(BaseModel):
             lambda f: f.name.startswith(function_name),
             functions
         ))
-        print(self.f_matched)
-        return STATE.NAME, self.f_matched[0]
 
-        # if len(matches) == 1:
-        #     name_params_part = OutputPart.name_params_to_logits(matches[0], llm)
-        #     output.extend(name_params_part)
+        matched_len = len(self.f_matched)
+        if matched_len == 1:
+            return STATE.PARAMS, [self.f_matched[0]]
+        elif matched_len == 0:
+            if not self.f_matched_old:
+                return STATE.DONE, None
 
-        #     prompt.extend(name_params_part)
-        #     state = STATE.PARAMS
+            shortest_len = sys.maxsize
+            for f in self.f_matched_old:
+                new_len = len(f.name)
+                if new_len < shortest_len:
+                    f_shortest = f
+                    shortest_len = new_len
+            return STATE.PARAMS, [f_shortest]
+
+        self.f_matched_old = self.f_matched
+        return STATE.NAME, []

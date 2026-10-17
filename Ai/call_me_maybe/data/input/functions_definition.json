@@ -14,6 +14,21 @@
       "type": "number"
     }
   },
+    {
+    "name": "fn_add_numbers_float",
+    "description": "Add two float numbers together and return their sum.",
+    "parameters": {
+      "a": {
+        "type": "number"
+      },
+      "b": {
+        "type": "number"
+      }
+    },
+    "returns": {
+      "type": "number"
+    }
+  },
   {
     "name": "fn_greet",
     "description": "Generate a greeting message for a person by name.",
