@@ -62,9 +62,7 @@ class Main(BaseModel):
                     prompt = prompt[:prompt_len_save - 1]
                     prompt.extend(forced_name_part)
 
-                    # print(self.llm.decode(prompt))
-                    print(self.llm.decode(output))
-                    state = STATE.DONE
+                    return self.llm.decode(output) # placeholder
 
             turn = turn + 1
         # print(llm.decode(output))
@@ -93,7 +91,9 @@ class Main(BaseModel):
 
         outputs = []
         for input in self.inputs:
-            outputs.append(self.__call_llm(input.prompt))
+            output = self.__call_llm(input.prompt)
+            print(output) # debug
+            outputs.append(output)
 
         # TODO: write outputs to file
         # res = "[" + ",\n".join(outputs) + "]"

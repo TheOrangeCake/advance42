@@ -11,11 +11,18 @@ class PromptBuilder(BaseModel):
     functions_json: str = ""
     base_prompt: str = ""
     encoded_base_prompt: list[int] = []
-    output_shape: str = (
+    output_shape_1: str = (
         '{\n'
         '\t"prompt": "Reverse the string \'hello\'",\n'
         '\t"name": "fn_reverse_string",\n'
         '\t"parameters": {"s": "hello"}\n'
+        '}'
+    )
+    output_shape_2: str = (
+        '{\n'
+        '\t"prompt": "Cook a burger",\n'
+        '\t"name": "None",\n'
+        '\t"parameters": {"None": "None"}\n'
         '}'
     )
 
@@ -60,7 +67,9 @@ class PromptBuilder(BaseModel):
             '- If no tool fits, fill the output slots with "None"\n'
             '- Format the response in the output shape. '
             'Example of output shape:\n' +
-            self.output_shape + '\n'
+            self.output_shape_1 + '\n'
+            'or\n' +
+            self.output_shape_2 + '\n'
             '\n'
             'Input: "' + prompt + '"\n'
             '\n' + start
