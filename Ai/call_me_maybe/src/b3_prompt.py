@@ -66,7 +66,7 @@ class PromptBuilder(BaseModel):
             'Input: "' + prompt + '"\n'
             '\n' + start
         )
-        print(self.base_prompt)
+        # print(self.base_prompt)
         self.encoded_base_prompt = llm.encode(self.base_prompt)[0].tolist()
         return self.encoded_base_prompt
 
