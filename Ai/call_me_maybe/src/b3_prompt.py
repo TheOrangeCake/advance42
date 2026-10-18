@@ -26,16 +26,16 @@ class PromptBuilder(BaseModel):
         '}'
     )
 
-    def craft_base_prompt(
+    def build_base_prompt(
         self,
-        prompt: str,
+        u_input: str,
         functions: list[FunctionData],
         llm: Small_LLM_Model
     ) -> list[int]:
         """Create the base prompt and return encoded version.
 
         Args:
-            prompt (str): user input
+            u_input (str): user input
             functions (list[FunctionData]) : list of defined functions
             llm (Small_LLM_Model): instance of llm
 
@@ -44,7 +44,7 @@ class PromptBuilder(BaseModel):
         """
 
         self.functions_json = self.__function_list_to_string(functions)
-        start = OutputPart.name_part_to_string(prompt)
+        start = OutputPart.build_head(u_input)
 
         self.base_prompt = (
             'You are a function-calling assistant with access to the '
@@ -71,7 +71,7 @@ class PromptBuilder(BaseModel):
             'or\n' +
             self.output_shape_2 + '\n'
             '\n'
-            'Input: "' + prompt + '"\n'
+            'Input: "' + u_input + '"\n'
             '\n' + start
         )
         # print(self.base_prompt)
@@ -88,5 +88,5 @@ class PromptBuilder(BaseModel):
             str: representation of defined list in json string format
         """
 
-        res = [function.model_dump_json() for function in functions]
+        res = [f.model_dump_json() for f in functions]
         return "[" + ",\n".join(res) + "]"

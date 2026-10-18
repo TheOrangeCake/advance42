@@ -1,91 +1,161 @@
 from pydantic import BaseModel
 from llm_sdk import Small_LLM_Model
 from enum import Enum
-from .a2_file_handler import FunctionData
-
-
-class STATE(Enum):
-    NAME = 1
-    PARAMS = 2
-    DONE = 3
+import json
+from .a2_file_handler import FunctionData, AcceptDataTypes
 
 
 class OutputPart(BaseModel):
+    """Build the forced parts of Json output."""
 
     @staticmethod
-    def get_none_output(prompt: str) -> str:
+    def get_none(u_input: str) -> str:
         """Get Json output when no tool matched.
 
         Args:
-            prompt (str): user input
+            u_input (str): user input
 
         Returns:
             str: Json string of output in case None
         """
         return (
             '{\n'
-            '\t"prompt": "' + prompt + '",\n'
+            '\t"prompt": ' + json.dumps(u_input, ensure_ascii=False) + ',\n'
             '\t"name": "None",\n'
             '\t"parameters": {"None": "None"}\n'
             '}'
         )
 
     @staticmethod
-    def name_part_to_string(prompt: str) -> str:
+    def get_no_params(u_input: str, f: FunctionData) -> str:
+        """Get Json output when matched tool has no params.
+
+        Args:
+            u_input (str): user input
+            f (FunctionData): matched function
+
+        Returns:
+            str: Json string of output in case no params
+        """
+        return (
+            '{\n'
+            '\t"prompt": ' + json.dumps(u_input, ensure_ascii=False) + ',\n'
+            '\t"name": "' + f.name + '",\n'
+            '\t"parameters": {}\n'
+            '}'
+        )
+
+    @staticmethod
+    def build_head(u_input: str) -> str:
         """Get the start of Json output in string.
 
         Args:
-            prompt (str): user input
+            u_input (str): user input
 
         Returns:
-            str: start of Json output with prompt included
+            str: start of Json output with user input included
         """
-
-        return ('{\n\t"prompt": "' + prompt + '",\n\t"name": "')
+        return ('{\n\t"prompt": ' + json.dumps(u_input, ensure_ascii=False) + ',\n\t"name": "')
 
     @staticmethod
-    def name_part_to_logits(prompt: str, llm: Small_LLM_Model) -> list[int]:
+    def build_head_ids(u_input: str, llm: Small_LLM_Model) -> list[int]:
         """Get the encoded start of Json output.
 
         Args:
-            prompt (str): user input
+            u_input (str): user input
+            llm (Small_LLM_Model): instance of llm
 
         Returns:
-            list[int]: encoded start of Json output with prompt included
+            list[int]: encoded start of Json output with user input included
         """
-
-        start_string = OutputPart.name_part_to_string(prompt)
+        start_string = OutputPart.build_head(u_input)
         start_string_encoded: list[int] = llm.encode(start_string)[0].tolist()
         return start_string_encoded
 
     @staticmethod
-    def name_params_to_string(function: FunctionData) -> str:
-        """Get the name and params of Json output in string.
+    def build_name(f: FunctionData) -> str:
+        """Get the name and params opening of Json output in string.
 
         Args:
-            prompt (str): user input
+            f (FunctionData): matched function
 
         Returns:
-            str: name and params of Json output
+            str: name and params opening of Json output
         """
         return (
-            function.name +
-            '",\n\t"parameters": {"' +
-            next(iter(function.parameters)) +
-            ': '
+            f.name +
+            '",\n\t"parameters": {'
         )
 
     @staticmethod
-    def name_params_to_logits(f: FunctionData, llm: Small_LLM_Model) -> str:
-        """Get the encoded first params of Json output.
+    def build_name_ids(f: FunctionData, llm: Small_LLM_Model) -> list[int]:
+        """Get the encoded name and params opening of Json output.
 
         Args:
-            prompt (str): user input
+            f (FunctionData): matched function
+            llm (Small_LLM_Model): instance of llm
 
         Returns:
-            str: encoded first params of Json output
+            list[int]: encoded name and params opening of Json output
         """
-
-        params_string = OutputPart.name_params_to_string(f)
+        params_string = OutputPart.build_name(f)
         params_encoded: list[int] = llm.encode(params_string)[0].tolist()
         return params_encoded
+
+    @staticmethod
+    def build_params(params: str, isFirst: bool) -> str:
+        """Get the params key of Json output in string.
+
+        Args:
+            params (str): params name
+            isFirst (bool): first params of the function, no comma before
+
+        Returns:
+            str: params key of Json output
+        """
+        if isFirst:
+            return '"' + params + '": '
+        else:
+            return ', "' + params + '": '
+
+    @staticmethod
+    def build_params_ids(params: str, llm: Small_LLM_Model, isFirst: bool) -> list[int]:
+        """Get the encoded params key of Json output.
+
+        Args:
+            params (str): params name
+            llm (Small_LLM_Model): instance of llm
+            isFirst (bool): first params of the function, no comma before
+
+        Returns:
+            list[int]: encoded params key of Json output
+        """
+        params_string = OutputPart.build_params(params, isFirst)
+        params_encoded: list[int] = llm.encode(params_string)[0].tolist()
+        return params_encoded
+
+    @staticmethod
+    def build_tail() -> str:
+        """Get the end of Json output in string.
+
+        Args:
+            None
+
+        Returns:
+            str: end of Json output
+        """
+        return '}\n}'
+
+    @staticmethod
+    def build_tail_ids(llm: Small_LLM_Model) -> list[int]:
+        """Get the encoded end of Json output.
+
+        Args:
+            llm (Small_LLM_Model): instance of llm
+
+        Returns:
+            list[int]: encoded end of Json output
+        """
+        tail_string = OutputPart.build_tail()
+        tail_encoded: list[int] = llm.encode(tail_string)[0].tolist()
+        return tail_encoded

@@ -3,7 +3,8 @@ from .a2_file_handler import FileHandler, FunctionData, InputPrompt
 from .z1_utils import Utils
 from .b3_prompt import PromptBuilder
 from .b2_picker import LogitPicker
-from .b1_part import STATE, OutputPart
+from .b1_part import OutputPart
+from .b0_state import STATE, StateManager
 from pydantic import BaseModel, ConfigDict, Field
 from argparse import Namespace
 from llm_sdk import Small_LLM_Model
@@ -24,48 +25,64 @@ class Main(BaseModel):
         """Main program flow.
 
         Args:
-            prompt: user input
+            u_input (str): user input
 
         Returns:
             str: llm output
         """
         # Build the base prompt
         p_builder = PromptBuilder()
-        prompt = p_builder.craft_base_prompt(u_input, self.functions, self.llm)
+        prompt = p_builder.build_base_prompt(u_input, self.functions, self.llm)
 
-        picker = LogitPicker()
+        manager = StateManager()
+        picker = LogitPicker(manager)
 
         # Initialize output with first part of output Json
-        output = OutputPart.name_part_to_logits(u_input, self.llm)
+        output = OutputPart.build_head_ids(u_input, self.llm)
 
         prompt_len_save = len(prompt)
-        state = STATE.NAME
         turn = 0
-        while turn < 12 and state != STATE.DONE:
+        while turn < 12 and manager.state != STATE.DONE:
+            if manager.state == STATE.NEXT_PARAMS:
+                params = picker.f_param_name
+                isFirst = picker.f_current_params_index == 0
+                params_ids = OutputPart.build_params_ids(params, self.llm, isFirst)
+                output.extend(params_ids)
+                prompt.extend(params_ids)
+                prompt_len_save = len(prompt)
+                manager.state = STATE.PARAMS
+                return self.llm.decode(output) # debug
+
             # Get next logits, select and update prompt
             next_logits = self.llm.get_logits_from_input_ids(prompt)
             selected_logit = picker.pick_next_logit(next_logits)
             prompt.append(selected_logit)
 
             # Check if output match defined functions
-            if state == STATE.NAME:
-                state, f = picker.pick_function_name(
+            if manager.state == STATE.NAME:
+                picker.pick_function_name(
                     selected_logit,
                     self.functions,
                     self.llm
                 )
-                if f is None:
-                    return OutputPart.get_none_output(u_input)
-                elif state == STATE.PARAMS:
-                    forced_name_part = OutputPart.name_params_to_logits(f[0], self.llm)
+                if manager.state == STATE.NONE:
+                    return OutputPart.get_none(u_input)
+                elif manager.state == STATE.DONE:
+                    return OutputPart.get_no_params(u_input, picker.f_chosen)
+                elif manager.state == STATE.NEXT_PARAMS:
+                    forced_name_part = OutputPart.build_name_ids(picker.f_chosen, self.llm)
                     output.extend(forced_name_part)
-                    prompt = prompt[:prompt_len_save - 1]
+                    prompt = prompt[:prompt_len_save]
                     prompt.extend(forced_name_part)
+                    prompt_len_save = len(prompt)
+            
+            if manager.state == STATE.PARAMS:
+                # Do params picker here
+                pass
 
-                    return self.llm.decode(output) # placeholder
+                
 
             turn = turn + 1
-        # print(llm.decode(output))
 
     def run(self) -> None:
         """Main program flow.
