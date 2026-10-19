@@ -16,6 +16,7 @@ class LogitPicker(BaseModel):
     f_param_name: str | None = None
     f_param_type: AcceptDataTypes | None = None
     f_current_params_index: int = -1
+    f_param_value: list[int] = []
 
     def __init__(self, manager: StateManager) -> None:
         """Init LogitPicker with state manager.
@@ -37,7 +38,21 @@ class LogitPicker(BaseModel):
         Returns:
             int: id of the picked logit
         """
-        selected_logit = int(np.array(next_logits).argmax())
+        if self.manager.state == STATE.PARAMS:
+            match self.f_param_type:
+                case "number":
+                    # placeholder
+                    selected_logit = int(np.array(next_logits).argmax())
+                case "integer":
+                    # placeholder
+                    selected_logit = int(np.array(next_logits).argmax())
+                case "boolean":
+                    # placeholder
+                    selected_logit = int(np.array(next_logits).argmax())
+                case _:  # case string included
+                    selected_logit = int(np.array(next_logits).argmax())
+        else:
+            selected_logit = int(np.array(next_logits).argmax())
         return selected_logit
 
     def pick_function_name(
@@ -108,7 +123,7 @@ class LogitPicker(BaseModel):
         Returns:
             STATE: NEXT_PARAMS, or DONE if there is no more params
         """
-        # assert self.f_chosen is not None
+        assert self.f_chosen is not None
         params = list(self.f_chosen.parameters.items())
 
         self.f_current_params_index += 1
@@ -121,3 +136,14 @@ class LogitPicker(BaseModel):
         self.f_param_name = name
         self.f_param_type = item.type
         return STATE.NEXT_PARAMS
+
+    def pick_params(
+        self,
+        selected_logit: int,
+        llm: Small_LLM_Model
+    ) -> None:
+        """
+        """
+        # call set_next_params() for state if current params done
+        # match self.f_param_type:
+        #     case "string":

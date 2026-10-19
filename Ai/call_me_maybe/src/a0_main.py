@@ -11,11 +11,16 @@ from llm_sdk import Small_LLM_Model
 import sys
 
 
+MAX_TURN = 42
+
+
 class Main(BaseModel):
     """Program main entrance."""
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    args: Namespace = Field(default_factory=lambda: ArgParser().parse(sys.argv[1:]))
+    args: Namespace = Field(
+        default_factory=lambda: ArgParser().parse(sys.argv[1:])
+    )
     functions: list[FunctionData] = []
     inputs: list[InputPrompt] = []
     vocab: dict[int, str] = {}
@@ -41,17 +46,19 @@ class Main(BaseModel):
         output = OutputPart.build_head_ids(u_input, self.llm)
 
         prompt_len_save = len(prompt)
-        turn = 0
-        while turn < 12 and manager.state != STATE.DONE:
+        for _ in range(MAX_TURN):
             if manager.state == STATE.NEXT_PARAMS:
                 params = picker.f_param_name
+                if params is None:
+                    return OutputPart.get_none(u_input)
                 isFirst = picker.f_current_params_index == 0
-                params_ids = OutputPart.build_params_ids(params, self.llm, isFirst)
+                params_ids = OutputPart.build_params_ids(
+                    params, self.llm, isFirst
+                )
                 output.extend(params_ids)
                 prompt.extend(params_ids)
                 prompt_len_save = len(prompt)
                 manager.state = STATE.PARAMS
-                return self.llm.decode(output) # debug
 
             # Get next logits, select and update prompt
             next_logits = self.llm.get_logits_from_input_ids(prompt)
@@ -65,24 +72,46 @@ class Main(BaseModel):
                     self.functions,
                     self.llm
                 )
-                if manager.state == STATE.NONE:
-                    return OutputPart.get_none(u_input)
-                elif manager.state == STATE.DONE:
-                    return OutputPart.get_no_params(u_input, picker.f_chosen)
-                elif manager.state == STATE.NEXT_PARAMS:
-                    forced_name_part = OutputPart.build_name_ids(picker.f_chosen, self.llm)
-                    output.extend(forced_name_part)
-                    prompt = prompt[:prompt_len_save]
-                    prompt.extend(forced_name_part)
-                    prompt_len_save = len(prompt)
-            
+                match manager.state:
+                    case STATE.NONE:
+                        return OutputPart.get_none(u_input)
+                    case STATE.DONE:
+                        if picker.f_chosen is None:
+                            return OutputPart.get_none(u_input)
+                        return OutputPart.get_no_params(
+                            u_input, picker.f_chosen
+                        )
+                    case STATE.NEXT_PARAMS:
+                        if picker.f_chosen is None:
+                            return OutputPart.get_none(u_input)
+                        forced_name_part = OutputPart.build_name_ids(
+                            picker.f_chosen, self.llm
+                        )
+                        output.extend(forced_name_part)
+                        prompt = prompt[:prompt_len_save]
+                        prompt.extend(forced_name_part)
+                        prompt_len_save = len(prompt)
+                    case _:
+                        pass
+
             if manager.state == STATE.PARAMS:
-                # Do params picker here
-                pass
-
-                
-
-            turn = turn + 1
+                picker.pick_params(selected_logit, self.llm)
+                # update the prompt and the output
+                if manager.state == STATE.NEXT_PARAMS:
+                    output.extend(picker.f_param_value)
+                    prompt = prompt[:prompt_len_save]
+                    prompt.extend(picker.f_param_value)
+                    prompt_len_save = len(prompt)
+                    picker.f_param_value = []
+                if manager.state == STATE.DONE:
+                    output.extend(picker.f_param_value)
+                    prompt = prompt[:prompt_len_save]
+                    prompt.extend(picker.f_param_value)
+                    tail_ids = OutputPart.build_tail_ids(self.llm)
+                    output.extend(tail_ids)
+                    return self.llm.decode(output)
+        else:
+            return OutputPart.get_none(u_input)
 
     def run(self) -> None:
         """Main program flow.
@@ -109,7 +138,7 @@ class Main(BaseModel):
         outputs = []
         for input in self.inputs:
             output = self.__call_llm(input.prompt)
-            print(output) # debug
+            print(output)  # debug
             outputs.append(output)
 
         # TODO: write outputs to file

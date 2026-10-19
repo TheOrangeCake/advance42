@@ -1,8 +1,7 @@
 from pydantic import BaseModel
 from llm_sdk import Small_LLM_Model
-from enum import Enum
 import json
-from .a2_file_handler import FunctionData, AcceptDataTypes
+from .a2_file_handler import FunctionData
 
 
 class OutputPart(BaseModel):
@@ -22,7 +21,7 @@ class OutputPart(BaseModel):
             '{\n'
             '\t"prompt": ' + json.dumps(u_input, ensure_ascii=False) + ',\n'
             '\t"name": "None",\n'
-            '\t"parameters": {"None": "None"}\n'
+            '\t"parameters": {}\n'
             '}'
         )
 
@@ -55,7 +54,11 @@ class OutputPart(BaseModel):
         Returns:
             str: start of Json output with user input included
         """
-        return ('{\n\t"prompt": ' + json.dumps(u_input, ensure_ascii=False) + ',\n\t"name": "')
+        return (
+            '{\n\t"prompt": ' +
+            json.dumps(u_input, ensure_ascii=False) +
+            ',\n\t"name": "'
+        )
 
     @staticmethod
     def build_head_ids(u_input: str, llm: Small_LLM_Model) -> list[int]:
@@ -119,7 +122,11 @@ class OutputPart(BaseModel):
             return ', "' + params + '": '
 
     @staticmethod
-    def build_params_ids(params: str, llm: Small_LLM_Model, isFirst: bool) -> list[int]:
+    def build_params_ids(
+        params: str,
+        llm: Small_LLM_Model,
+        isFirst: bool
+    ) -> list[int]:
         """Get the encoded params key of Json output.
 
         Args:

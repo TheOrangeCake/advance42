@@ -1,5 +1,4 @@
 from pydantic import BaseModel, ConfigDict
-from llm_sdk import Small_LLM_Model
 from enum import Enum
 
 
@@ -17,4 +16,3 @@ class StateManager(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     state: STATE = STATE.NAME
-
