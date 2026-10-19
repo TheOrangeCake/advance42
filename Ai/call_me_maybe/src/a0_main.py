@@ -48,12 +48,11 @@ class Main(BaseModel):
         prompt_len_save = len(prompt)
         for _ in range(MAX_TURN):
             if manager.state == STATE.NEXT_PARAMS:
-                params = picker.f_param_name
-                if params is None:
+                if picker.f_param_name is None or picker.f_param_type is None:
                     return OutputPart.get_none(u_input)
                 isFirst = picker.f_current_params_index == 0
                 params_ids = OutputPart.build_params_ids(
-                    params, self.llm, isFirst
+                    picker.f_param_name, picker.f_param_type, self.llm, isFirst
                 )
                 output.extend(params_ids)
                 prompt.extend(params_ids)

@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from llm_sdk import Small_LLM_Model
 import json
-from .a2_file_handler import FunctionData
+from .a2_file_handler import FunctionData, AcceptDataTypes
 
 
 class OutputPart(BaseModel):
@@ -106,24 +106,33 @@ class OutputPart(BaseModel):
         return params_encoded
 
     @staticmethod
-    def build_params(params: str, isFirst: bool) -> str:
+    def build_params(
+        params: str,
+        params_type: AcceptDataTypes,
+        isFirst: bool
+    ) -> str:
         """Get the params key of Json output in string.
 
         Args:
             params (str): params name
+            params_type (AcceptDataTypes): params type
             isFirst (bool): first params of the function, no comma before
 
         Returns:
             str: params key of Json output
         """
+        first = ', "'
+        quote = ''
         if isFirst:
-            return '"' + params + '": '
-        else:
-            return ', "' + params + '": '
+            first = '"'
+        if params_type == "string":
+            quote = '"'
+        return first + params + '": ' + quote
 
     @staticmethod
     def build_params_ids(
         params: str,
+        params_type: AcceptDataTypes,
         llm: Small_LLM_Model,
         isFirst: bool
     ) -> list[int]:
@@ -131,13 +140,14 @@ class OutputPart(BaseModel):
 
         Args:
             params (str): params name
+            params_type (AcceptDataTypes): params type
             llm (Small_LLM_Model): instance of llm
             isFirst (bool): first params of the function, no comma before
 
         Returns:
             list[int]: encoded params key of Json output
         """
-        params_string = OutputPart.build_params(params, isFirst)
+        params_string = OutputPart.build_params(params, params_type, isFirst)
         params_encoded: list[int] = llm.encode(params_string)[0].tolist()
         return params_encoded
 

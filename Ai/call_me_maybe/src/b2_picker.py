@@ -145,5 +145,35 @@ class LogitPicker(BaseModel):
         """
         """
         # call set_next_params() for state if current params done
-        # match self.f_param_type:
-        #     case "string":
+        match self.f_param_type:
+            case "string":
+                self.f_param_value.append(selected_logit)
+                decoded = llm.decode(self.f_param_value)
+                quote_pos = self.find_closing_quote(decoded)
+                if quote_pos >= 0:
+                    value = decoded[:quote_pos + 1]
+                    self.f_param_value = llm.encode(value)[0].tolist()
+                    self.manager.state = self.set_next_params()
+                    return
+
+    @staticmethod
+    def find_closing_quote(text: str) -> int:
+        """Find the first unescaped double quote in a Json string value.
+
+        Also handle edge cases like \\\\ or substring like s\"substr\"tring".
+
+        Args:
+            text (str): decoded string value, without the opening quote
+
+        Returns:
+            int: index of the closing quote, or -1 if not found
+        """
+        escaped = False
+        for i, c in enumerate(text):
+            if escaped:
+                escaped = False
+            elif c == '\\':
+                escaped = True
+            elif c == '"':
+                return i
+        return -1
