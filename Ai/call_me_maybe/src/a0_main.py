@@ -26,6 +26,37 @@ class Main(BaseModel):
     vocab: dict[int, str] = {}
     llm: Small_LLM_Model = Field(default_factory=lambda: Small_LLM_Model())
 
+    def run(self) -> None:
+        """Main program flow.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        self.functions = FileHandler.read_functions(self.args.functions)
+        if not self.functions:
+            Utils.error("Empty function definition list")
+
+        self.inputs = FileHandler.read_inputs(self.args.inputs)
+        if not self.inputs:
+            Utils.error("Empty input list")
+
+        FileHandler.validate_output_file(self.args.outputs)
+
+        vocab_path = self.llm.get_path_to_vocab_file()
+        self.vocab = FileHandler.read_vocab(vocab_path)
+
+        outputs = []
+        for input in self.inputs:
+            output = self.__call_llm(input.prompt)
+            print(output)  # debug
+            outputs.append(output)
+
+        # TODO: write outputs to file
+        # res = "[" + ",\n".join(outputs) + "]"
+
     def __call_llm(self, u_input: str) -> str:
         """Main program flow.
 
@@ -111,34 +142,3 @@ class Main(BaseModel):
                     return self.llm.decode(output)
         else:
             return OutputPart.get_none(u_input)
-
-    def run(self) -> None:
-        """Main program flow.
-
-        Args:
-            None
-
-        Returns:
-            None
-        """
-        self.functions = FileHandler.read_functions(self.args.functions)
-        if not self.functions:
-            Utils.error("Empty function definition list")
-
-        self.inputs = FileHandler.read_inputs(self.args.inputs)
-        if not self.inputs:
-            Utils.error("Empty input list")
-
-        FileHandler.validate_output_file(self.args.outputs)
-
-        vocab_path = self.llm.get_path_to_vocab_file()
-        self.vocab = FileHandler.read_vocab(vocab_path)
-
-        outputs = []
-        for input in self.inputs:
-            output = self.__call_llm(input.prompt)
-            print(output)  # debug
-            outputs.append(output)
-
-        # TODO: write outputs to file
-        # res = "[" + ",\n".join(outputs) + "]"
