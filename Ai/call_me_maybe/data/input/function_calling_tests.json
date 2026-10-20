@@ -15,6 +15,9 @@
     "prompt": "What is the sum of 265.2 and 345.7?"
   },
   {
+    "prompt": "What is the sum of 1e3 and 1e2?"
+  },
+  {
     "prompt": "Replace all numbers in \"Hello 34 I'm 233 years old\" with NUMBERS"
   },
   {

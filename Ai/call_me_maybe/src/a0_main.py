@@ -125,7 +125,6 @@ class Main(BaseModel):
             next_logits = self.llm.get_logits_from_input_ids(prompt)
             selected_logit = picker.pick_next_logit(next_logits)
             prompt.append(selected_logit)
-            print(self.llm.decode(selected_logit))  # debug
 
             # Check if output match defined functions
             if manager.state == STATE.NAME:

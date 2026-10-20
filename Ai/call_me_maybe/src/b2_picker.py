@@ -1,9 +1,14 @@
 from pydantic import BaseModel, ConfigDict
 from llm_sdk import Small_LLM_Model
+from typing import Literal
 import numpy as np
+import math
 from .a2_file_handler import FunctionData, AcceptDataTypes
 from .b0_state import STATE, StateManager
 from .z1_utils import Utils
+
+
+type NumberType = Literal["integer", "float"]
 
 
 class LogitPicker(BaseModel):
@@ -66,24 +71,11 @@ class LogitPicker(BaseModel):
         """
         if self.manager.state == STATE.PARAMS:
             match self.f_param_type:
-                case "number":
-                    # placeholder
-                    selected_logit = int(np.array(next_logits).argmax())
-
                 case "integer":
-                    sorted_ids = np.argsort(next_logits, descending=True)
-                    current_param = self.llm.decode(self.f_param_value)
-                    for token_id in sorted_ids:
-                        if token_id in self.integer_ids:
-                            token_str = self.integer_ids[token_id]
-                            if self.is_int_valid(current_param + token_str):
-                                return int(token_id)
-                        elif token_id in self.end_ids:
-                            if self.is_end_valid(current_param):
-                                return int(token_id)
-                    Utils.error(
-                        f"No valid integer token after '{current_param}'"
-                    )
+                    selected_logit = self.handle_number(next_logits, "integer")
+
+                case "number":
+                    selected_logit = self.handle_number(next_logits, "float")
 
                 case "boolean":
                     # force true or false
@@ -98,11 +90,67 @@ class LogitPicker(BaseModel):
             selected_logit = int(np.array(next_logits).argmax())
         return selected_logit
 
+    def handle_number(
+        self,
+        next_logits: list[float],
+        nb_type: NumberType
+    ) -> int:
+        """Pick the highest scored token that keeps the value a valid number.
+
+        Args:
+            next_logits (list[float]): logits score from llm
+            nb_type (NumberType): integer or float
+
+        Returns:
+            int: id of the picked token, a number token or an end token
+        """
+        if nb_type == "integer":
+            number_ids = self.integer_ids
+            number_check = self.is_int_valid
+        else:
+            number_ids = self.float_ids
+            number_check = self.is_float_valid
+
+        sorted_ids = np.argsort(next_logits, descending=True)
+        current_param = self.llm.decode(self.f_param_value)
+        for token_id in sorted_ids:
+            if token_id in number_ids:
+                token_str = number_ids[token_id]
+                if number_check(current_param + token_str):
+                    return int(token_id)
+            elif token_id in self.end_ids:
+                if self.is_end_valid(current_param, nb_type):
+                    return int(token_id)
+        Utils.error(
+            f"No valid '{nb_type}' token after '{current_param}'"
+        )
+
+    def is_float_valid(self, new_str: str) -> bool:
+        """Check if a string is a valid start of a Json number.
+
+        Args:
+            new_str (str): current value with the candidate token appended
+
+        Returns:
+            bool: True if the string can still become a valid number
+        """
+        # one space allowed at the start only
+        if new_str.startswith(" "):
+            new_str = new_str[1:]
+        if " " in new_str:
+            return False
+
+        # scientific notation case
+        for candidate in (new_str, new_str + "0"):
+            try:
+                if math.isfinite(float(candidate)):
+                    return True
+            except ValueError:
+                pass
+        return False
+
     def is_int_valid(self, new_str: str) -> bool:
         """Check if a string is a valid start of a Json integer.
-
-        Accept one leading space and a lone "-", reject leading 0 like "05"
-        or "-05".
 
         Args:
             new_str (str): current value with the candidate token appended
@@ -127,19 +175,22 @@ class LogitPicker(BaseModel):
         except Exception:
             return False
 
-    def is_end_valid(self, current_str: str) -> bool:
-        """Check if a string is a complete Json integer, ready to be closed.
+    def is_end_valid(self, current_str: str, nb_type: NumberType) -> bool:
+        """Check if a string is a complete Json number, ready to be closed.
 
         Args:
             current_str (str): current value, without the end token
+            nb_type (NumberType): integer or float
 
         Returns:
-            bool: True if the string is a complete integer
+            bool: True if the string is a complete integer or finite float
         """
         try:
-            int(current_str)
-            return True
-        except Exception:
+            if nb_type == "integer":
+                int(current_str)
+                return True
+            return math.isfinite(float(current_str))
+        except ValueError:
             return False
 
     def pick_function_name(
@@ -251,6 +302,18 @@ class LogitPicker(BaseModel):
                     # remove the leading 0
                     decoded = self.llm.decode(self.f_param_value)
                     value = ' ' + str(int(decoded))
+                    self.f_param_value = self.llm.encode(value)[0].tolist()
+                    self.manager.state = self.set_next_params()
+                    return
+            case "number":
+                if selected_logit in self.float_ids:
+                    self.f_param_value.append(selected_logit)
+                    return
+                if selected_logit in self.end_ids:
+                    # remove the leading 0
+                    decoded = self.llm.decode(self.f_param_value)
+
+                    value = ' ' + str(float(decoded))
                     self.f_param_value = self.llm.encode(value)[0].tolist()
                     self.manager.state = self.set_next_params()
                     return
