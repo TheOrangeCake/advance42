@@ -121,24 +121,23 @@ class FileHandler(BaseModel):
             Utils.error(f"{e}")
 
     @staticmethod
-    def read_vocab(path: str) -> dict[int, str]:
+    def read_vocab(path: str) -> dict[str, int]:
         """Read and parse the list of llm vocab.
 
         Args:
             path (str): path to the vocab file
 
         Returns:
-            dict[int, str]: dict of token id and its str value
+            dict[str, int]: dict of token str value and its id
         """
 
         try:
             with open(path, 'r', encoding='utf-8') as file:
                 raw = file.read()
                 vocab = TypeAdapter(dict[str, int]).validate_json(raw)
-                vocab_flip = {v: k for k, v in vocab.items()}
-                if len(vocab) != len(vocab_flip):
+                if len(vocab) != len(set(vocab.values())):
                     Utils.error("Vocab file has duplicated id")
-                return vocab_flip
+                return vocab
         except FileNotFoundError:
             Utils.error("Vocab file was not found")
         except PermissionError:

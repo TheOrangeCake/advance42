@@ -74,6 +74,24 @@
     }
   },
   {
+    "name": "fn_user_registration",
+    "description": "Register an user to an event",
+    "parameters": {
+      "event": {
+        "type": "string"
+      },
+      "user": {
+        "type": "string"
+      },
+      "isFirstTime": {
+        "type": "boolean"
+      }
+    },
+    "returns": {
+      "type": "number"
+    }
+  },
+  {
     "name": "fn_substitute_string_with_regex",
     "description": "Replace all occurrences matching a regex pattern in a string.",
     "parameters": {

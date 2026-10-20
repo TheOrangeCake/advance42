@@ -23,7 +23,8 @@ class Main(BaseModel):
     )
     functions: list[FunctionData] = []
     inputs: list[InputPrompt] = []
-    vocab: dict[int, str] = {}
+    vocab: dict[str, int] = {}
+    boolean_ids: dict[str, int] = {}
     llm: Small_LLM_Model = Field(default_factory=lambda: Small_LLM_Model())
 
     def run(self) -> None:
@@ -47,6 +48,10 @@ class Main(BaseModel):
 
         vocab_path = self.llm.get_path_to_vocab_file()
         self.vocab = FileHandler.read_vocab(vocab_path)
+        self.boolean_ids = {
+            "true": self.vocab["true"],
+            "false": self.vocab["false"]
+        }
 
         outputs = []
         for input in self.inputs:
@@ -71,7 +76,7 @@ class Main(BaseModel):
         prompt = p_builder.build_base_prompt(u_input, self.functions, self.llm)
 
         manager = StateManager()
-        picker = LogitPicker(manager)
+        picker = LogitPicker(manager, self.boolean_ids, self.llm)
 
         # Initialize output with first part of output Json
         output = OutputPart.build_head_ids(u_input, self.llm)
@@ -94,14 +99,11 @@ class Main(BaseModel):
             next_logits = self.llm.get_logits_from_input_ids(prompt)
             selected_logit = picker.pick_next_logit(next_logits)
             prompt.append(selected_logit)
+            print(self.llm.decode(selected_logit))  # debug
 
             # Check if output match defined functions
             if manager.state == STATE.NAME:
-                picker.pick_function_name(
-                    selected_logit,
-                    self.functions,
-                    self.llm
-                )
+                picker.pick_function_name(selected_logit, self.functions)
                 match manager.state:
                     case STATE.NONE:
                         return OutputPart.get_none(u_input)
@@ -125,8 +127,7 @@ class Main(BaseModel):
                         pass
 
             if manager.state == STATE.PARAMS:
-                picker.pick_params(selected_logit, self.llm)
-                # update the prompt and the output
+                picker.pick_params(selected_logit)
                 if manager.state == STATE.NEXT_PARAMS:
                     output.extend(picker.f_param_value)
                     prompt = prompt[:prompt_len_save]

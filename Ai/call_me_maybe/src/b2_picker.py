@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from llm_sdk import Small_LLM_Model
 import numpy as np
 from .a2_file_handler import FunctionData, AcceptDataTypes
@@ -7,8 +7,11 @@ from .b0_state import STATE, StateManager
 
 class LogitPicker(BaseModel):
     """Pick next logits, function names and parameters. Also define state"""
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     manager: StateManager
+    boolean_ids: dict[str, int]
+    llm: Small_LLM_Model
     f_name: list[int] = []
     f_matched: list[FunctionData] = []
     f_matched_old: list[FunctionData] = []
@@ -18,16 +21,27 @@ class LogitPicker(BaseModel):
     f_current_params_index: int = -1
     f_param_value: list[int] = []
 
-    def __init__(self, manager: StateManager) -> None:
+    def __init__(
+        self,
+        manager: StateManager,
+        boolean_ids: dict[str, int],
+        llm: Small_LLM_Model
+    ) -> None:
         """Init LogitPicker with state manager.
 
         Args:
             manager (StateManager): state manager
+            boolean_ids (dict[str, int]): true and false in token id
+            llm (Small_LLM_Model): instance of llm
 
         Returns:
             None
         """
-        super().__init__(manager=manager)
+        super().__init__(
+            manager=manager,
+            boolean_ids=boolean_ids,
+            llm=llm
+        )
 
     def pick_next_logit(self, next_logits: list[float]) -> int:
         """Pick the logit with the highest score.
@@ -47,8 +61,10 @@ class LogitPicker(BaseModel):
                     # placeholder
                     selected_logit = int(np.array(next_logits).argmax())
                 case "boolean":
-                    # placeholder
-                    selected_logit = int(np.array(next_logits).argmax())
+                    true_value = next_logits[self.boolean_ids["true"]]
+                    false_value = next_logits[self.boolean_ids["false"]]
+                    selected = "true" if true_value > false_value else "false"
+                    return self.boolean_ids[selected]
                 case _:  # case string included
                     selected_logit = int(np.array(next_logits).argmax())
         else:
@@ -58,8 +74,7 @@ class LogitPicker(BaseModel):
     def pick_function_name(
         self,
         selected_logit: int,
-        functions: list[FunctionData],
-        llm: Small_LLM_Model
+        functions: list[FunctionData]
     ) -> None:
         """Match the picked logits with defined function names.
 
@@ -69,13 +84,12 @@ class LogitPicker(BaseModel):
         Args:
             selected_logit (int): id of the picked logit
             functions (list[FunctionData]): list of defined functions
-            llm (Small_LLM_Model): instance of llm
 
         Returns:
             None
         """
         self.f_name.append(selected_logit)
-        function_name = llm.decode(self.f_name)
+        function_name = self.llm.decode(self.f_name)
 
         if (function_name == "None"):
             self.manager.state = STATE.NONE
@@ -93,7 +107,7 @@ class LogitPicker(BaseModel):
             self.manager.state = self.set_next_params()
             return
         elif matched_len == 0:
-            prev_name = llm.decode(self.f_name[:-1])
+            prev_name = self.llm.decode(self.f_name[:-1])
             f_exact = None
             for f in self.f_matched_old:
                 if f.name == prev_name:
@@ -139,8 +153,7 @@ class LogitPicker(BaseModel):
 
     def pick_params(
         self,
-        selected_logit: int,
-        llm: Small_LLM_Model
+        selected_logit: int
     ) -> None:
         """
         """
@@ -148,13 +161,17 @@ class LogitPicker(BaseModel):
         match self.f_param_type:
             case "string":
                 self.f_param_value.append(selected_logit)
-                decoded = llm.decode(self.f_param_value)
+                decoded = self.llm.decode(self.f_param_value)
                 quote_pos = self.__find_closing_quote(decoded)
                 if quote_pos >= 0:
                     value = decoded[:quote_pos + 1]
-                    self.f_param_value = llm.encode(value)[0].tolist()
+                    self.f_param_value = self.llm.encode(value)[0].tolist()
                     self.manager.state = self.set_next_params()
                     return
+            case "boolean":
+                self.f_param_value.append(selected_logit)
+                self.manager.state = self.set_next_params()
+                return
 
     def __find_closing_quote(self, text: str) -> int:
         """Find the first unescaped double quote in a Json string value.
