@@ -3,6 +3,7 @@ from llm_sdk import Small_LLM_Model
 import numpy as np
 from .a2_file_handler import FunctionData, AcceptDataTypes
 from .b0_state import STATE, StateManager
+from .z1_utils import Utils
 
 
 class LogitPicker(BaseModel):
@@ -11,9 +12,9 @@ class LogitPicker(BaseModel):
 
     manager: StateManager
     boolean_ids: dict[str, int]
-    integer_ids: dict[str, int]
-    float_ids: dict[str, int]
-    end_ids: dict[str, int]
+    integer_ids: dict[int, str]
+    float_ids: dict[int, str]
+    end_ids: dict[int, str]
     llm: Small_LLM_Model
     f_name: list[int] = []
     f_matched: list[FunctionData] = []
@@ -27,21 +28,24 @@ class LogitPicker(BaseModel):
     def __init__(
         self,
         manager: StateManager,
-        token_ids: list[dict[str, int]],
+        boolean_ids: dict[str, int],
+        token_ids: list[dict[int, str]],
         llm: Small_LLM_Model
     ) -> None:
         """Init LogitPicker with state manager.
 
         Args:
             manager (StateManager): state manager
-            token_ids (list[dict[str, int]]): boolean, integer, float and
+            boolean_ids (dict[str, int]): boolean ids
+            token_ids (list[dict[int, str]]): integer, float and
                 end token ids, in this order
             llm (Small_LLM_Model): instance of llm
 
         Returns:
             None
         """
-        boolean_ids, integer_ids, float_ids, end_ids = token_ids
+        integer_ids, float_ids, end_ids = token_ids
+
         super().__init__(
             manager=manager,
             boolean_ids=boolean_ids,
@@ -65,19 +69,78 @@ class LogitPicker(BaseModel):
                 case "number":
                     # placeholder
                     selected_logit = int(np.array(next_logits).argmax())
+
                 case "integer":
-                    # placeholder
-                    selected_logit = int(np.array(next_logits).argmax())
+                    sorted_ids = np.argsort(next_logits, descending=True)
+                    current_param = self.llm.decode(self.f_param_value)
+                    for token_id in sorted_ids:
+                        if token_id in self.integer_ids:
+                            token_str = self.integer_ids[token_id]
+                            if self.is_int_valid(current_param + token_str):
+                                return int(token_id)
+                        elif token_id in self.end_ids:
+                            if self.is_end_valid(current_param):
+                                return int(token_id)
+                    Utils.error(
+                        f"No valid integer token after '{current_param}'"
+                    )
+
                 case "boolean":
+                    # force true or false
                     true_value = next_logits[self.boolean_ids["true"]]
                     false_value = next_logits[self.boolean_ids["false"]]
                     selected = "true" if true_value > false_value else "false"
                     return self.boolean_ids[selected]
+
                 case _:  # case string included
                     selected_logit = int(np.array(next_logits).argmax())
         else:
             selected_logit = int(np.array(next_logits).argmax())
         return selected_logit
+
+    def is_int_valid(self, new_str: str) -> bool:
+        """Check if a string is a valid start of a Json integer.
+
+        Accept one leading space and a lone "-", reject leading 0 like "05"
+        or "-05".
+
+        Args:
+            new_str (str): current value with the candidate token appended
+
+        Returns:
+            bool: True if the string can still become a valid integer
+        """
+        # one space allowed at the start only
+        if new_str.startswith(" "):
+            new_str = new_str[1:]
+        if " " in new_str:
+            return False
+
+        # if only " " or "-"
+        if new_str == "" or new_str == "-":
+            return True
+
+        # is valid int
+        try:
+            int(new_str)
+            return True
+        except Exception:
+            return False
+
+    def is_end_valid(self, current_str: str) -> bool:
+        """Check if a string is a complete Json integer, ready to be closed.
+
+        Args:
+            current_str (str): current value, without the end token
+
+        Returns:
+            bool: True if the string is a complete integer
+        """
+        try:
+            int(current_str)
+            return True
+        except Exception:
+            return False
 
     def pick_function_name(
         self,
@@ -180,6 +243,17 @@ class LogitPicker(BaseModel):
                 self.f_param_value.append(selected_logit)
                 self.manager.state = self.set_next_params()
                 return
+            case "integer":
+                if selected_logit in self.integer_ids:
+                    self.f_param_value.append(selected_logit)
+                    return
+                if selected_logit in self.end_ids:
+                    # remove the leading 0
+                    decoded = self.llm.decode(self.f_param_value)
+                    value = ' ' + str(int(decoded))
+                    self.f_param_value = self.llm.encode(value)[0].tolist()
+                    self.manager.state = self.set_next_params()
+                    return
 
     def __find_closing_quote(self, text: str) -> int:
         """Find the first unescaped double quote in a Json string value.

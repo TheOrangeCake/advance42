@@ -25,9 +25,9 @@ class Main(BaseModel):
     inputs: list[InputPrompt] = []
     vocab: dict[str, int] = {}
     boolean_ids: dict[str, int] = {}
-    integer_ids: dict[str, int] = {}
-    float_ids: dict[str, int] = {}
-    end_ids: dict[str, int] = {}
+    integer_ids: dict[int, str] = {}
+    float_ids: dict[int, str] = {}
+    end_ids: dict[int, str] = {}
     llm: Small_LLM_Model = Field(default_factory=lambda: Small_LLM_Model())
 
     def run(self) -> None:
@@ -56,16 +56,21 @@ class Main(BaseModel):
             "false": self.vocab["false"]
         }
         self.integer_ids = {
-            k: v for k, v in self.vocab.items()
+            v: k for k, v in self.vocab.items()
             if k and all(c in "0123456789-" for c in k)
         }
         self.float_ids = {
-            k: v for k, v in self.vocab.items()
+            v: k for k, v in self.vocab.items()
             if k and all(c in "0123456789-+.eE" for c in k)
         }
+        # Value starts right after '":', so allow " " and " -" as first token
+        for start in ("Ġ", "Ġ-"):
+            text = start.replace("Ġ", " ")
+            self.integer_ids[self.vocab[start]] = text
+            self.float_ids[self.vocab[start]] = text
         # "Ġ" is a space, "Ċ" a newline
         self.end_ids = {
-            k: v for k, v in self.vocab.items()
+            v: k for k, v in self.vocab.items()
             if all(c in ",}ĊĠ" for c in k) and ("," in k or "}" in k)
         }
 
@@ -94,7 +99,8 @@ class Main(BaseModel):
         manager = StateManager()
         picker = LogitPicker(
             manager,
-            [self.boolean_ids, self.integer_ids, self.float_ids, self.end_ids],
+            self.boolean_ids,
+            [self.integer_ids, self.float_ids, self.end_ids],
             self.llm
         )
 

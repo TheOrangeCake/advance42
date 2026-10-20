@@ -1,18 +1,21 @@
 [
   {
+    "prompt": "What is the sum of -21 and 0021?"
+  },
+  {
     "prompt": "Register user \"hoannguy\" to event \"Evaluation\", first time is false"
   },
   {
     "prompt": "Greet shrek"
   },
   {
-    "prompt": "Replace all numbers in \"Hello 34 I'm 233 years old\" with NUMBERS"
-  },
-  {
     "prompt": "What is the sum of 2 and 3?"
   },
   {
     "prompt": "What is the sum of 265.2 and 345.7?"
+  },
+  {
+    "prompt": "Replace all numbers in \"Hello 34 I'm 233 years old\" with NUMBERS"
   },
   {
     "prompt": "Do a backflip"

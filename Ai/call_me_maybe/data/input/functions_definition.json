@@ -1,5 +1,20 @@
 [
   {
+    "name": "fn_add_integers",
+    "description": "Add two integers together and return their sum.",
+    "parameters": {
+      "a": {
+        "type": "integer"
+      },
+      "b": {
+        "type": "integer"
+      }
+    },
+    "returns": {
+      "type": "integer"
+    }
+  },
+  {
     "name": "fn_add_numbers",
     "description": "Add two numbers together and return their sum.",
     "parameters": {
@@ -14,7 +29,7 @@
       "type": "number"
     }
   },
-    {
+  {
     "name": "fn_add_numbers_float",
     "description": "Add two float numbers together and return their sum.",
     "parameters": {

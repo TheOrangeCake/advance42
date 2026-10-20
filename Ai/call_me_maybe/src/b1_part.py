@@ -122,12 +122,15 @@ class OutputPart(BaseModel):
             str: params key of Json output
         """
         first = ', "'
+        space = '": '
         quote = ''
         if isFirst:
             first = '"'
         if params_type == "string":
             quote = '"'
-        return first + params + '": ' + quote
+        if params_type == "number" or params_type == "integer":
+            space = '":'
+        return first + params + space + quote
 
     @staticmethod
     def build_params_ids(
