@@ -25,6 +25,9 @@ class Main(BaseModel):
     inputs: list[InputPrompt] = []
     vocab: dict[str, int] = {}
     boolean_ids: dict[str, int] = {}
+    integer_ids: dict[str, int] = {}
+    float_ids: dict[str, int] = {}
+    end_ids: dict[str, int] = {}
     llm: Small_LLM_Model = Field(default_factory=lambda: Small_LLM_Model())
 
     def run(self) -> None:
@@ -52,6 +55,19 @@ class Main(BaseModel):
             "true": self.vocab["true"],
             "false": self.vocab["false"]
         }
+        self.integer_ids = {
+            k: v for k, v in self.vocab.items()
+            if k and all(c in "0123456789-" for c in k)
+        }
+        self.float_ids = {
+            k: v for k, v in self.vocab.items()
+            if k and all(c in "0123456789-+.eE" for c in k)
+        }
+        # "Ġ" is a space, "Ċ" a newline
+        self.end_ids = {
+            k: v for k, v in self.vocab.items()
+            if all(c in ",}ĊĠ" for c in k) and ("," in k or "}" in k)
+        }
 
         outputs = []
         for input in self.inputs:
@@ -76,7 +92,11 @@ class Main(BaseModel):
         prompt = p_builder.build_base_prompt(u_input, self.functions, self.llm)
 
         manager = StateManager()
-        picker = LogitPicker(manager, self.boolean_ids, self.llm)
+        picker = LogitPicker(
+            manager,
+            [self.boolean_ids, self.integer_ids, self.float_ids, self.end_ids],
+            self.llm
+        )
 
         # Initialize output with first part of output Json
         output = OutputPart.build_head_ids(u_input, self.llm)

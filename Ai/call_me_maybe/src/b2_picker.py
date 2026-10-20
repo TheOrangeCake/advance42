@@ -11,6 +11,9 @@ class LogitPicker(BaseModel):
 
     manager: StateManager
     boolean_ids: dict[str, int]
+    integer_ids: dict[str, int]
+    float_ids: dict[str, int]
+    end_ids: dict[str, int]
     llm: Small_LLM_Model
     f_name: list[int] = []
     f_matched: list[FunctionData] = []
@@ -24,22 +27,27 @@ class LogitPicker(BaseModel):
     def __init__(
         self,
         manager: StateManager,
-        boolean_ids: dict[str, int],
+        token_ids: list[dict[str, int]],
         llm: Small_LLM_Model
     ) -> None:
         """Init LogitPicker with state manager.
 
         Args:
             manager (StateManager): state manager
-            boolean_ids (dict[str, int]): true and false in token id
+            token_ids (list[dict[str, int]]): boolean, integer, float and
+                end token ids, in this order
             llm (Small_LLM_Model): instance of llm
 
         Returns:
             None
         """
+        boolean_ids, integer_ids, float_ids, end_ids = token_ids
         super().__init__(
             manager=manager,
             boolean_ids=boolean_ids,
+            integer_ids=integer_ids,
+            float_ids=float_ids,
+            end_ids=end_ids,
             llm=llm
         )
 
