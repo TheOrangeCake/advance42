@@ -95,7 +95,9 @@ class Main(BaseModel):
         """
         # Build the base prompt
         p_builder = PromptBuilder()
-        prompt = p_builder.build_base_prompt(u_input, self.functions, self.llm)
+        prompt = p_builder.build_name_prompt(
+            u_input, self.functions, self.llm
+        )
 
         manager = StateManager()
         picker = LogitPicker(
@@ -146,8 +148,11 @@ class Main(BaseModel):
                             picker.f_chosen, self.llm
                         )
                         output.extend(forced_name_part)
-                        prompt = prompt[:prompt_len_save]
-                        prompt.extend(forced_name_part)
+                        # Switch to the params prompt, the head and name
+                        # part only go to output
+                        prompt = p_builder.build_params_prompt(
+                            u_input, picker.f_chosen, self.llm
+                        )
                         prompt_len_save = len(prompt)
                     case _:
                         pass

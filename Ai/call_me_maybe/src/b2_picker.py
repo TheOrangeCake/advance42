@@ -3,6 +3,7 @@ from llm_sdk import Small_LLM_Model
 from typing import Literal
 import numpy as np
 import math
+import string
 from .a2_file_handler import FunctionData, AcceptDataTypes
 from .b0_state import STATE, StateManager
 from .z1_utils import Utils
@@ -84,11 +85,51 @@ class LogitPicker(BaseModel):
                     selected = "true" if true_value > false_value else "false"
                     return self.boolean_ids[selected]
 
-                case _:  # case string included
+                case "string":
+                    selected_logit = self.handle_string(next_logits)
+
+                case _:
                     selected_logit = int(np.array(next_logits).argmax())
         else:
             selected_logit = int(np.array(next_logits).argmax())
         return selected_logit
+
+    def handle_string(self, next_logits: list[float]) -> int:
+        """Pick the highest scored token that keeps the value a valid
+        Json string.
+
+        Args:
+            next_logits (list[float]): logits score from llm
+
+        Returns:
+            int: id of the picked token
+        """
+        sorted_ids = np.argsort(next_logits, descending=True)
+        current_param = self.llm.decode(self.f_param_value)
+        for token_id in sorted_ids:
+            new_str = self.llm.decode(self.f_param_value + [int(token_id)])
+            if new_str == current_param:
+                continue
+            if self.is_string_valid(new_str):
+                return int(token_id)
+        Utils.error(f"No valid 'string' token after '{current_param}'")
+
+    def is_string_valid(self, new_str: str) -> bool:
+        """Check if a string is a valid start of a Json string value.
+
+        Args:
+            new_str (str): current value with the candidate token appended
+
+        Returns:
+            bool: True if the string can still become a valid Json string
+        """
+        # one space allowed at the start only
+        if new_str.startswith(" "):
+            new_str = new_str[1:]
+        if not new_str.startswith('"'):
+            return False
+        _, valid = self.__scan_string(new_str[1:])
+        return valid
 
     def handle_number(
         self,
@@ -284,9 +325,10 @@ class LogitPicker(BaseModel):
             case "string":
                 self.f_param_value.append(selected_logit)
                 decoded = self.llm.decode(self.f_param_value)
-                quote_pos = self.__find_closing_quote(decoded)
+                content = decoded.lstrip(" ")[1:]
+                quote_pos, _ = self.__scan_string(content)
                 if quote_pos >= 0:
-                    value = decoded[:quote_pos + 1]
+                    value = ' "' + content[:quote_pos + 1]
                     self.f_param_value = self.llm.encode(value)[0].tolist()
                     self.manager.state = self.set_next_params()
                     return
@@ -318,23 +360,41 @@ class LogitPicker(BaseModel):
                     self.manager.state = self.set_next_params()
                     return
 
-    def __find_closing_quote(self, text: str) -> int:
-        """Find the first unescaped double quote in a Json string value.
-
-        Also handle edge cases like \\\\ or substring like s\"substr\"tring".
+    def __scan_string(self, text: str) -> tuple[int, bool]:
+        """Find the first unescaped double quote in a Json string value and
+        check the content before it is valid Json.
 
         Args:
             text (str): decoded string value, without the opening quote
 
         Returns:
-            int: index of the closing quote, or -1 if not found
+            tuple[int, bool]: index of the closing quote, or -1 if not
+                found, and True if the content is valid
         """
-        escaped = False
-        for i, c in enumerate(text):
-            if escaped:
-                escaped = False
-            elif c == '\\':
-                escaped = True
-            elif c == '"':
-                return i
-        return -1
+        i = 0
+        while i < len(text):
+            c = text[i]
+            if c == '"':
+                return i, True
+            # No controlling like \n \t
+            if ord(c) < 0x20:
+                return -1, False
+            if c == '\\':
+                escaped = text[i + 1:i + 2]
+                if escaped == "":
+                    return -1, True
+                # geeksforgeeks.org/javascript/how-to-escape-strings-in-json/
+                # escape characters
+                if escaped not in '"\\/bfnrtu':
+                    return -1, False
+                # special character
+                if escaped == "u":
+                    hex_part = text[i + 2:i + 6]
+                    if any(h not in string.hexdigits for h in hex_part):
+                        return -1, False
+                    i += 2 + len(hex_part)
+                    continue
+                i += 2
+                continue
+            i += 1
+        return -1, True

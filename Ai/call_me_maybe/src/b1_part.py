@@ -123,14 +123,11 @@ class OutputPart(BaseModel):
         """
         first = ', "'
         space = '": '
-        quote = ''
         if isFirst:
             first = '"'
-        if params_type == "string":
-            quote = '"'
-        if params_type == "number" or params_type == "integer":
+        if params_type in ("number", "integer", "string"):
             space = '":'
-        return first + params + space + quote
+        return first + params + space
 
     @staticmethod
     def build_params_ids(
