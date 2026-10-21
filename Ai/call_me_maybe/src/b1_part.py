@@ -18,11 +18,11 @@ class OutputPart(BaseModel):
             str: Json string of output in case None
         """
         return (
-            '{\n'
-            '\t"prompt": ' + json.dumps(u_input, ensure_ascii=False) + ',\n'
-            '\t"name": "None",\n'
-            '\t"parameters": {}\n'
-            '}'
+            '\t{\n'
+            '\t\t"prompt": ' + json.dumps(u_input, ensure_ascii=False) + ',\n'
+            '\t\t"name": "None",\n'
+            '\t\t"parameters": {}\n'
+            '\t}'
         )
 
     @staticmethod
@@ -37,11 +37,11 @@ class OutputPart(BaseModel):
             str: Json string of output in case no params
         """
         return (
-            '{\n'
-            '\t"prompt": ' + json.dumps(u_input, ensure_ascii=False) + ',\n'
-            '\t"name": "' + f.name + '",\n'
-            '\t"parameters": {}\n'
-            '}'
+            '\t{\n'
+            '\t\t"prompt": ' + json.dumps(u_input, ensure_ascii=False) + ',\n'
+            '\t\t"name": "' + f.name + '",\n'
+            '\t\t"parameters": {}\n'
+            '\t}'
         )
 
     @staticmethod
@@ -55,9 +55,9 @@ class OutputPart(BaseModel):
             str: start of Json output with user input included
         """
         return (
-            '{\n\t"prompt": ' +
+            '\t{\n\t\t"prompt": ' +
             json.dumps(u_input, ensure_ascii=False) +
-            ',\n\t"name": "'
+            ',\n\t\t"name": "'
         )
 
     @staticmethod
@@ -87,7 +87,7 @@ class OutputPart(BaseModel):
         """
         return (
             f.name +
-            '",\n\t"parameters": {'
+            '",\n\t\t"parameters": {'
         )
 
     @staticmethod
@@ -164,7 +164,7 @@ class OutputPart(BaseModel):
         Returns:
             str: end of Json output
         """
-        return '}\n}'
+        return '}\n\t}'
 
     @staticmethod
     def build_tail_ids(llm: Small_LLM_Model) -> list[int]:

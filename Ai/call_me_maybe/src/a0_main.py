@@ -80,8 +80,9 @@ class Main(BaseModel):
             print(output)  # debug
             outputs.append(output)
 
-        # TODO: write outputs to file
-        # res = "[" + ",\n".join(outputs) + "]"
+        res = "[\n" + ",\n".join(outputs) + "\n]"
+        FileHandler.write_outputs(self.args.outputs, res)
+        return
 
     def __call_llm(self, u_input: str) -> str:
         """Main program flow.

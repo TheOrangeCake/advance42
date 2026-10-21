@@ -39,12 +39,6 @@ class InputPrompt(DataShapeConfig):
     prompt: str
 
 
-class OutputResult(DataShapeConfig):
-    prompt: str
-    name: str
-    parameters: dict[str, Item]
-
-
 class FileHandler(BaseModel):
     """Open files then read and parse its content."""
 
@@ -142,5 +136,23 @@ class FileHandler(BaseModel):
             Utils.error("Vocab file was not found")
         except PermissionError:
             Utils.error("Vocab file permission denied")
+        except Exception as e:
+            Utils.error(f"{e}")
+
+    @staticmethod
+    def write_outputs(path: str, outputs: str) -> None:
+        """
+        """
+        try:
+            with open(path, 'w', encoding="utf-8") as file:
+                file.write(outputs)
+        except FileNotFoundError:
+            Utils.error("Output file was not found")
+        except (FileExistsError, NotADirectoryError):
+            Utils.error("Output file path has a non-directory component")
+        except IsADirectoryError:
+            Utils.error("Output file path is a directory")
+        except PermissionError:
+            Utils.error("Output file permission denied")
         except Exception as e:
             Utils.error(f"{e}")
