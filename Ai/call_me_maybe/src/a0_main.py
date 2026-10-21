@@ -39,59 +39,65 @@ class Main(BaseModel):
             None
         """
         try:
-            llm = Small_LLM_Model()
-        except Exception:
-            Utils.error("LLM init")
+            self.functions = FileHandler.read_functions(self.args.functions)
+            if not self.functions:
+                Utils.error("Empty function definition list")
 
-        self.functions = FileHandler.read_functions(self.args.functions)
-        if not self.functions:
-            Utils.error("Empty function definition list")
+            self.inputs = FileHandler.read_inputs(self.args.inputs)
+            if not self.inputs:
+                Utils.error("Empty input list")
 
-        self.inputs = FileHandler.read_inputs(self.args.inputs)
-        if not self.inputs:
-            Utils.error("Empty input list")
+            FileHandler.validate_output_file(self.args.outputs)
 
-        FileHandler.validate_output_file(self.args.outputs)
-
-        vocab_path = llm.get_path_to_vocab_file()
-        self.vocab = FileHandler.read_vocab(vocab_path)
-        self.boolean_ids = {
-            "true": self.vocab["true"],
-            "false": self.vocab["false"]
-        }
-        self.integer_ids = {
-            v: k for k, v in self.vocab.items()
-            if k and all(c in "0123456789-" for c in k)
-        }
-        self.float_ids = {
-            v: k for k, v in self.vocab.items()
-            if k and all(c in "0123456789-+.eE" for c in k)
-        }
-        # Value starts right after '":', so allow " " and " -" as first token
-        for start in ("Ġ", "Ġ-"):
-            text = start.replace("Ġ", " ")
-            self.integer_ids[self.vocab[start]] = text
-            self.float_ids[self.vocab[start]] = text
-        # "Ġ" is a space, "Ċ" a newline
-        self.end_ids = {
-            v: k for k, v in self.vocab.items()
-            if all(c in ",}ĊĠ" for c in k) and ("," in k or "}" in k)
-        }
-
-        outputs = []
-        for input in self.inputs:
             try:
-                output = self.__call_llm(input.prompt, llm)
-            except KeyboardInterrupt:
-                Utils.error("Keyboard interrupted")
-            except Exception as e:
-                Utils.error(f"{e}")
-            print(output)  # debug
-            outputs.append(output)
+                llm = Small_LLM_Model()
+            except Exception:
+                Utils.error("LLM init")
 
-        res = "[\n" + ",\n".join(outputs) + "\n]"
-        FileHandler.write_outputs(self.args.outputs, res)
-        return
+            vocab_path = llm.get_path_to_vocab_file()
+            self.vocab = FileHandler.read_vocab(vocab_path)
+            self.boolean_ids = {
+                "true": self.vocab["true"],
+                "false": self.vocab["false"]
+            }
+            self.integer_ids = {
+                v: k for k, v in self.vocab.items()
+                if k and all(c in "0123456789-" for c in k)
+            }
+            self.float_ids = {
+                v: k for k, v in self.vocab.items()
+                if k and all(c in "0123456789-+.eE" for c in k)
+            }
+            # Value starts right after '":', so allow " " and " -" as first token
+            for start in ("Ġ", "Ġ-"):
+                text = start.replace("Ġ", " ")
+                self.integer_ids[self.vocab[start]] = text
+                self.float_ids[self.vocab[start]] = text
+            # "Ġ" is a space, "Ċ" a newline
+            self.end_ids = {
+                v: k for k, v in self.vocab.items()
+                if all(c in ",}ĊĠ" for c in k) and ("," in k or "}" in k)
+            }
+
+            outputs = []
+            for input in self.inputs:
+                try:
+                    output = self.__call_llm(input.prompt, llm)
+                except KeyboardInterrupt:
+                    Utils.error("Keyboard interrupted")
+                except Exception as e:
+                    print(f"Error: {e}", file=sys.stderr)
+                    output = OutputPart.get_error(input.prompt)
+                print(output)  # debug
+                outputs.append(output)
+
+            res = "[\n" + ",\n".join(outputs) + "\n]"
+            FileHandler.write_outputs(self.args.outputs, res)
+            return
+        except KeyboardInterrupt:
+            Utils.error("Keyboard interrupted")
+        except Exception as e:
+            Utils.error(f"{e}")
 
     def __call_llm(self, u_input: str, llm: Small_LLM_Model) -> str:
         """Generate the function call Json of one user input.

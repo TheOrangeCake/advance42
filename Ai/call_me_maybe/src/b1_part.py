@@ -26,6 +26,24 @@ class OutputPart(BaseModel):
         )
 
     @staticmethod
+    def get_error(u_input: str) -> str:
+        """Get Json output when generation failed with an error.
+
+        Args:
+            u_input (str): user input
+
+        Returns:
+            str: Json string of output in case Error
+        """
+        return (
+            '\t{\n'
+            '\t\t"prompt": ' + json.dumps(u_input, ensure_ascii=False) + ',\n'
+            '\t\t"name": "Error",\n'
+            '\t\t"parameters": {}\n'
+            '\t}'
+        )
+
+    @staticmethod
     def get_no_params(u_input: str, f: FunctionData) -> str:
         """Get Json output when matched tool has no params.
 

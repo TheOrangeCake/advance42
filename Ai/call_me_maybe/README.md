@@ -28,10 +28,10 @@ make run
 ```
 - With arguments
 ```bash
-make ARGS= \
-"--input "path"" \
-"--functions_definition "path"" \
-"--output "path""
+make ARGS=
+"--input "path" 
+--functions_definition "path" 
+--output "path""
 ```
 
 </br>
@@ -84,7 +84,7 @@ LLM call -> Logits generation -> Token selection -> Output auto-complete -> Stat
     - Picker: Picking the next token
     - Utils: utility functions
 - Output auto-complete: To limit LLM call for better performance and lower cost
-- Error handling with slots filled with "None": Guarantee Json output without skipping prompts
+- Error handling with slots filled with "None" or "Error": Guarantee Json output without skipping prompts
 
 </br>
 </br>
@@ -93,7 +93,7 @@ LLM call -> Logits generation -> Token selection -> Output auto-complete -> Stat
 ### Accuracy
 Very high accuracy due to auto completion and specifically crafted prompts
 ### Speed
-Program prioritises readability and separation of concern architecture, so the speed can be improved. The major bottle neck is still the LLM call; Better hardware and faster server response will improve the speed drastically.
+Speed is carefully balanced with accuracy. Current benchmark for subject input and functions definition: 2 minutes 5 seconds
 ### Reliability
 JSON format output is 100% guaranteed thank to constrained decoding
 
@@ -101,6 +101,7 @@ JSON format output is 100% guaranteed thank to constrained decoding
 </br>
 
 ## Challenges faced
+- Biggest challenge is speed optimisation. The most impactful optimisation is not actually from the code, but from the LLM prompt. The first version sent 1 universal prompt for every LLM call with full context and it takes roughly 10 minutes to handle 16 prompts. The improved version splitted the prompt into 2 parts and only sent relevant part. Each prompt is carefully crafted so only neccessary tokens were sent. Result is same 16 prompts took roughly 3 minutes 30 seconds, so almost 66% faster.
 - Error handling when no function fit the prompt -> Include an example in the prompt of what to return in no match case.
 - Bugs due to unusual form of token, for example "-" could be returned as " -" instead -> Observe token generation step to identify problematic tokens.
 

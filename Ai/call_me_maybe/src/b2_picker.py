@@ -6,7 +6,6 @@ import math
 import string
 from .a2_file_handler import FunctionData, AcceptDataTypes
 from .b0_state import STATE, StateManager
-from .z1_utils import Utils
 
 
 type NumberType = Literal["integer", "float"]
@@ -115,7 +114,7 @@ class LogitPicker(BaseModel):
                 continue
             if self.__is_string_valid(new_str):
                 return int(token_id)
-        Utils.error(f"No valid 'string' token after '{current_param}'")
+        raise ValueError(f"No valid 'string' token after '{current_param}'")
 
     def __is_string_valid(self, new_str: str) -> bool:
         """Check if a string is a valid start of a Json string value.
@@ -165,7 +164,7 @@ class LogitPicker(BaseModel):
             elif token_id in self.end_ids:
                 if self.__is_end_valid(current_param, nb_type):
                     return int(token_id)
-        Utils.error(
+        raise ValueError(
             f"No valid '{nb_type}' token after '{current_param}'"
         )
 
