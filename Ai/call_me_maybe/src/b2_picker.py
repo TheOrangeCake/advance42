@@ -62,7 +62,8 @@ class LogitPicker(BaseModel):
         )
 
     def pick_next_logit(self, next_logits: list[float]) -> int:
-        """Pick the logit with the highest score.
+        """Pick the logit with the highest score, constrained by the
+        current params type.
 
         Args:
             next_logits (list[float]): logits score from llm
@@ -73,10 +74,12 @@ class LogitPicker(BaseModel):
         if self.manager.state == STATE.PARAMS:
             match self.f_param_type:
                 case "integer":
-                    selected_logit = self.handle_number(next_logits, "integer")
+                    selected_logit = self.__handle_number(
+                        next_logits, "integer"
+                    )
 
                 case "number":
-                    selected_logit = self.handle_number(next_logits, "float")
+                    selected_logit = self.__handle_number(next_logits, "float")
 
                 case "boolean":
                     # force true or false
@@ -86,7 +89,7 @@ class LogitPicker(BaseModel):
                     return self.boolean_ids[selected]
 
                 case "string":
-                    selected_logit = self.handle_string(next_logits)
+                    selected_logit = self.__handle_string(next_logits)
 
                 case _:
                     selected_logit = int(np.array(next_logits).argmax())
@@ -94,7 +97,7 @@ class LogitPicker(BaseModel):
             selected_logit = int(np.array(next_logits).argmax())
         return selected_logit
 
-    def handle_string(self, next_logits: list[float]) -> int:
+    def __handle_string(self, next_logits: list[float]) -> int:
         """Pick the highest scored token that keeps the value a valid
         Json string.
 
@@ -110,11 +113,11 @@ class LogitPicker(BaseModel):
             new_str = self.llm.decode(self.f_param_value + [int(token_id)])
             if new_str == current_param:
                 continue
-            if self.is_string_valid(new_str):
+            if self.__is_string_valid(new_str):
                 return int(token_id)
         Utils.error(f"No valid 'string' token after '{current_param}'")
 
-    def is_string_valid(self, new_str: str) -> bool:
+    def __is_string_valid(self, new_str: str) -> bool:
         """Check if a string is a valid start of a Json string value.
 
         Args:
@@ -131,7 +134,7 @@ class LogitPicker(BaseModel):
         _, valid = self.__scan_string(new_str[1:])
         return valid
 
-    def handle_number(
+    def __handle_number(
         self,
         next_logits: list[float],
         nb_type: NumberType
@@ -147,10 +150,10 @@ class LogitPicker(BaseModel):
         """
         if nb_type == "integer":
             number_ids = self.integer_ids
-            number_check = self.is_int_valid
+            number_check = self.__is_int_valid
         else:
             number_ids = self.float_ids
-            number_check = self.is_float_valid
+            number_check = self.__is_float_valid
 
         sorted_ids = np.argsort(next_logits, descending=True)
         current_param = self.llm.decode(self.f_param_value)
@@ -160,13 +163,13 @@ class LogitPicker(BaseModel):
                 if number_check(current_param + token_str):
                     return int(token_id)
             elif token_id in self.end_ids:
-                if self.is_end_valid(current_param, nb_type):
+                if self.__is_end_valid(current_param, nb_type):
                     return int(token_id)
         Utils.error(
             f"No valid '{nb_type}' token after '{current_param}'"
         )
 
-    def is_float_valid(self, new_str: str) -> bool:
+    def __is_float_valid(self, new_str: str) -> bool:
         """Check if a string is a valid start of a Json number.
 
         Args:
@@ -190,7 +193,7 @@ class LogitPicker(BaseModel):
                 pass
         return False
 
-    def is_int_valid(self, new_str: str) -> bool:
+    def __is_int_valid(self, new_str: str) -> bool:
         """Check if a string is a valid start of a Json integer.
 
         Args:
@@ -216,7 +219,7 @@ class LogitPicker(BaseModel):
         except Exception:
             return False
 
-    def is_end_valid(self, current_str: str, nb_type: NumberType) -> bool:
+    def __is_end_valid(self, current_str: str, nb_type: NumberType) -> bool:
         """Check if a string is a complete Json number, ready to be closed.
 
         Args:
@@ -267,7 +270,7 @@ class LogitPicker(BaseModel):
         matched_len = len(self.f_matched)
         if matched_len == 1:
             self.f_chosen = self.f_matched[0]
-            self.manager.state = self.set_next_params()
+            self.manager.state = self.__set_next_params()
             return
         elif matched_len == 0:
             prev_name = self.llm.decode(self.f_name[:-1])
@@ -281,14 +284,14 @@ class LogitPicker(BaseModel):
                 return
 
             self.f_chosen = f_exact
-            self.manager.state = self.set_next_params()
+            self.manager.state = self.__set_next_params()
             return
 
         self.f_matched_old = self.f_matched
         self.manager.state = STATE.NAME
         return
 
-    def set_next_params(self) -> STATE:
+    def __set_next_params(self) -> STATE:
         """Move to the next params of the chosen function.
 
         Update f_param_name and f_param_type, or set them to None
@@ -318,9 +321,15 @@ class LogitPicker(BaseModel):
         self,
         selected_logit: int
     ) -> None:
+        """Add the picked token to the current params value.
+
+        Args:
+            selected_logit (int): id of the picked logit
+
+        Returns:
+            None
         """
-        """
-        # call set_next_params() for state if current params done
+        # call __set_next_params() for state if current params done
         match self.f_param_type:
             case "string":
                 self.f_param_value.append(selected_logit)
@@ -330,11 +339,11 @@ class LogitPicker(BaseModel):
                 if quote_pos >= 0:
                     value = ' "' + content[:quote_pos + 1]
                     self.f_param_value = self.llm.encode(value)[0].tolist()
-                    self.manager.state = self.set_next_params()
+                    self.manager.state = self.__set_next_params()
                     return
             case "boolean":
                 self.f_param_value.append(selected_logit)
-                self.manager.state = self.set_next_params()
+                self.manager.state = self.__set_next_params()
                 return
             case "integer":
                 if selected_logit in self.integer_ids:
@@ -345,7 +354,7 @@ class LogitPicker(BaseModel):
                     decoded = self.llm.decode(self.f_param_value)
                     value = ' ' + str(int(decoded))
                     self.f_param_value = self.llm.encode(value)[0].tolist()
-                    self.manager.state = self.set_next_params()
+                    self.manager.state = self.__set_next_params()
                     return
             case "number":
                 if selected_logit in self.float_ids:
@@ -357,7 +366,7 @@ class LogitPicker(BaseModel):
 
                     value = ' ' + str(float(decoded))
                     self.f_param_value = self.llm.encode(value)[0].tolist()
-                    self.manager.state = self.set_next_params()
+                    self.manager.state = self.__set_next_params()
                     return
 
     def __scan_string(self, text: str) -> tuple[int, bool]:

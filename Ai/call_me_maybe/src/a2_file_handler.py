@@ -36,6 +36,7 @@ class FunctionData(DataShapeConfig):
 
 
 class InputPrompt(DataShapeConfig):
+    """Data shape for an input prompt."""
     prompt: str
 
 
@@ -141,7 +142,14 @@ class FileHandler(BaseModel):
 
     @staticmethod
     def write_outputs(path: str, outputs: str) -> None:
-        """
+        """Write the Json outputs to the output file.
+
+        Args:
+            path (str): path to the output file
+            outputs (str): Json string of all outputs
+
+        Returns:
+            None
         """
         try:
             with open(path, 'w', encoding="utf-8") as file:

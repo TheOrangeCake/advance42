@@ -28,7 +28,6 @@ class Main(BaseModel):
     integer_ids: dict[int, str] = {}
     float_ids: dict[int, str] = {}
     end_ids: dict[int, str] = {}
-    llm: Small_LLM_Model = Field(default_factory=lambda: Small_LLM_Model())
 
     def run(self) -> None:
         """Main program flow.
@@ -39,6 +38,11 @@ class Main(BaseModel):
         Returns:
             None
         """
+        try:
+            llm = Small_LLM_Model()
+        except Exception:
+            Utils.error("LLM init")
+
         self.functions = FileHandler.read_functions(self.args.functions)
         if not self.functions:
             Utils.error("Empty function definition list")
@@ -49,7 +53,7 @@ class Main(BaseModel):
 
         FileHandler.validate_output_file(self.args.outputs)
 
-        vocab_path = self.llm.get_path_to_vocab_file()
+        vocab_path = llm.get_path_to_vocab_file()
         self.vocab = FileHandler.read_vocab(vocab_path)
         self.boolean_ids = {
             "true": self.vocab["true"],
@@ -76,7 +80,12 @@ class Main(BaseModel):
 
         outputs = []
         for input in self.inputs:
-            output = self.__call_llm(input.prompt)
+            try:
+                output = self.__call_llm(input.prompt, llm)
+            except KeyboardInterrupt:
+                Utils.error("Keyboard interrupted")
+            except Exception as e:
+                Utils.error(f"{e}")
             print(output)  # debug
             outputs.append(output)
 
@@ -84,11 +93,12 @@ class Main(BaseModel):
         FileHandler.write_outputs(self.args.outputs, res)
         return
 
-    def __call_llm(self, u_input: str) -> str:
-        """Main program flow.
+    def __call_llm(self, u_input: str, llm: Small_LLM_Model) -> str:
+        """Generate the function call Json of one user input.
 
         Args:
             u_input (str): user input
+            llm (Small_LLM_Model): instance of LLM
 
         Returns:
             str: llm output
@@ -96,7 +106,7 @@ class Main(BaseModel):
         # Build the base prompt
         p_builder = PromptBuilder()
         prompt = p_builder.build_name_prompt(
-            u_input, self.functions, self.llm
+            u_input, self.functions, llm
         )
 
         manager = StateManager()
@@ -104,11 +114,11 @@ class Main(BaseModel):
             manager,
             self.boolean_ids,
             [self.integer_ids, self.float_ids, self.end_ids],
-            self.llm
+            llm
         )
 
         # Initialize output with first part of output Json
-        output = OutputPart.build_head_ids(u_input, self.llm)
+        output = OutputPart.build_head_ids(u_input, llm)
 
         prompt_len_save = len(prompt)
         for _ in range(MAX_TURN):
@@ -117,7 +127,7 @@ class Main(BaseModel):
                     return OutputPart.get_none(u_input)
                 isFirst = picker.f_current_params_index == 0
                 params_ids = OutputPart.build_params_ids(
-                    picker.f_param_name, picker.f_param_type, self.llm, isFirst
+                    picker.f_param_name, picker.f_param_type, llm, isFirst
                 )
                 output.extend(params_ids)
                 prompt.extend(params_ids)
@@ -125,7 +135,7 @@ class Main(BaseModel):
                 manager.state = STATE.PARAMS
 
             # Get next logits, select and update prompt
-            next_logits = self.llm.get_logits_from_input_ids(prompt)
+            next_logits = llm.get_logits_from_input_ids(prompt)
             selected_logit = picker.pick_next_logit(next_logits)
             prompt.append(selected_logit)
 
@@ -145,13 +155,13 @@ class Main(BaseModel):
                         if picker.f_chosen is None:
                             return OutputPart.get_none(u_input)
                         forced_name_part = OutputPart.build_name_ids(
-                            picker.f_chosen, self.llm
+                            picker.f_chosen, llm
                         )
                         output.extend(forced_name_part)
                         # Switch to the params prompt, the head and name
                         # part only go to output
                         prompt = p_builder.build_params_prompt(
-                            u_input, picker.f_chosen, self.llm
+                            u_input, picker.f_chosen, llm
                         )
                         prompt_len_save = len(prompt)
                     case _:
@@ -169,8 +179,8 @@ class Main(BaseModel):
                     output.extend(picker.f_param_value)
                     prompt = prompt[:prompt_len_save]
                     prompt.extend(picker.f_param_value)
-                    tail_ids = OutputPart.build_tail_ids(self.llm)
+                    tail_ids = OutputPart.build_tail_ids(llm)
                     output.extend(tail_ids)
-                    return self.llm.decode(output)
+                    return llm.decode(output)
         else:
             return OutputPart.get_none(u_input)

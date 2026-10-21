@@ -85,13 +85,14 @@ class PromptBuilder(BaseModel):
         return params_prompt_ids
 
     def __function_list_to_string(self, functions: list[FunctionData]) -> str:
-        """Convert defined function list to a json string.
+        """Convert defined function list to a Json string of names and
+        descriptions.
 
         Args:
             functions (list[FunctionData]) : list of defined functions
 
         Returns:
-            str: representation of defined list in json string format
+            str: Json list of function names and descriptions
         """
 
         res = [

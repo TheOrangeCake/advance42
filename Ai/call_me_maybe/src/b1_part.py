@@ -45,7 +45,7 @@ class OutputPart(BaseModel):
         )
 
     @staticmethod
-    def build_head(u_input: str) -> str:
+    def __build_head(u_input: str) -> str:
         """Get the start of Json output in string.
 
         Args:
@@ -71,12 +71,12 @@ class OutputPart(BaseModel):
         Returns:
             list[int]: encoded start of Json output with user input included
         """
-        start_string = OutputPart.build_head(u_input)
+        start_string = OutputPart.__build_head(u_input)
         start_string_encoded: list[int] = llm.encode(start_string)[0].tolist()
         return start_string_encoded
 
     @staticmethod
-    def build_name(f: FunctionData) -> str:
+    def __build_name(f: FunctionData) -> str:
         """Get the name and params opening of Json output in string.
 
         Args:
@@ -101,12 +101,12 @@ class OutputPart(BaseModel):
         Returns:
             list[int]: encoded name and params opening of Json output
         """
-        params_string = OutputPart.build_name(f)
+        params_string = OutputPart.__build_name(f)
         params_encoded: list[int] = llm.encode(params_string)[0].tolist()
         return params_encoded
 
     @staticmethod
-    def build_params(
+    def __build_params(
         params: str,
         params_type: AcceptDataTypes,
         isFirst: bool
@@ -147,12 +147,12 @@ class OutputPart(BaseModel):
         Returns:
             list[int]: encoded params key of Json output
         """
-        params_string = OutputPart.build_params(params, params_type, isFirst)
+        params_string = OutputPart.__build_params(params, params_type, isFirst)
         params_encoded: list[int] = llm.encode(params_string)[0].tolist()
         return params_encoded
 
     @staticmethod
-    def build_tail() -> str:
+    def __build_tail() -> str:
         """Get the end of Json output in string.
 
         Args:
@@ -173,6 +173,6 @@ class OutputPart(BaseModel):
         Returns:
             list[int]: encoded end of Json output
         """
-        tail_string = OutputPart.build_tail()
+        tail_string = OutputPart.__build_tail()
         tail_encoded: list[int] = llm.encode(tail_string)[0].tolist()
         return tail_encoded
