@@ -11,7 +11,7 @@ run:
 	@uv run python3 -m $(SRC) $(ARGS)
 
 debug:
-	echo "TODO"
+	@uv run python3 -m pdb -m $(SRC) $(ARGS)
 
 clean:
 	@echo "Cleaning ..."

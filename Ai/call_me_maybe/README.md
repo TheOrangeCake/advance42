@@ -2,13 +2,6 @@
 
 # Call me maybe
 
-</br>
-</br>
-
-TODO:
-- Token visualization
-- makefile debug rule
-
 ## Description
 Bridge the gap between LLM non deterministic output and function deterministic parameters by guarantee the LLM output to be a valid JSON. The function called must be correct and the parameters are correctly formatted.
 ### Brief
@@ -51,6 +44,7 @@ make ARGS= \
 - [Docstring google style](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html)
 - [Qwen Prompt Engineering](https://qwen-ai.com/prompts/)
 - [Pydantic Validation](https://pydantic.dev/docs/validation/latest/get-started/)
+- [Python debugger pdb](https://realpython.com/python-debugging-pdb/#essential-pdb-commands)
 ### AI use
 AI was used to explore new concepts, validate approaches, find edge cases and some light code formatting.
 
@@ -115,6 +109,9 @@ JSON format output is 100% guaranteed thank to constrained decoding
 
 ## Testing strategy
 The program is simple enough and the separation of concern was clear, so the testing is simply testing with different input and observe the result.
+
+</br>
+</br>
 
 ## Example usage
 - Prompts:
