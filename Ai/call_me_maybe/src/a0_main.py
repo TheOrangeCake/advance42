@@ -125,7 +125,7 @@ class Main(BaseModel):
             (minutes, seconds) = divmod(elapsed.seconds, 60)
             print(
                 COLOR.YELLOW.value +
-                'Total generation time:' + COLOR.RESET.value +
+                'Total generation time: ' + COLOR.RESET.value +
                 str(minutes) + 'm ' + str(seconds) + 's'
             )
 

@@ -31,7 +31,8 @@ make run
 make ARGS=
 "--input "path" 
 --functions_definition "path" 
---output "path""
+--output "path"
+--visualize"
 ```
 
 </br>
@@ -45,6 +46,7 @@ make ARGS=
 - [Qwen Prompt Engineering](https://qwen-ai.com/prompts/)
 - [Pydantic Validation](https://pydantic.dev/docs/validation/latest/get-started/)
 - [Python debugger pdb](https://realpython.com/python-debugging-pdb/#essential-pdb-commands)
+- [Terminal formatting](https://blog.finxter.com/how-to-overwrite-the-previous-print-to-stdout-in-python/)
 ### AI use
 AI was used to explore new concepts, validate approaches, find edge cases and some light code formatting.
 
