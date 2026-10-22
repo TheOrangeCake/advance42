@@ -6,7 +6,7 @@ import math
 import string
 from .a2_file_handler import FunctionData, AcceptDataTypes
 from .b0_state import STATE, StateManager
-from .c0_printer import Printer
+from .c0_printer import Printer, GenMode
 
 
 type NumberType = Literal["integer", "float"]
@@ -75,6 +75,13 @@ class LogitPicker(BaseModel):
         Returns:
             int: id of the picked logit
         """
+        if self.printer.enable:
+            top_ids = np.argsort(next_logits, descending=True)[:5]
+            self.printer.set_print_top({
+                self.llm.decode(int(token_id)): float(next_logits[token_id])
+                for token_id in top_ids
+            })
+
         if self.manager.state == STATE.PARAMS:
             match self.f_param_type:
                 case "integer":
@@ -104,7 +111,7 @@ class LogitPicker(BaseModel):
 
         if self.printer.enable:
             self.printer.set_print_logit(self.llm.decode(selected_logit))
-        
+
         return selected_logit
 
     def __handle_string(self, next_logits: list[float]) -> int:
@@ -266,8 +273,13 @@ class LogitPicker(BaseModel):
         """
         self.f_name.append(selected_logit)
         function_name = self.llm.decode(self.f_name)
+        if self.printer.enable:
+            self.printer.set_print_pending(function_name)
 
         if (function_name == "None"):
+            if self.printer.enable:
+                self.printer.set_print_pending("")
+                self.printer.append_print_output("None", "generated")
             self.manager.state = STATE.NONE
             return
 
@@ -280,6 +292,13 @@ class LogitPicker(BaseModel):
         matched_len = len(self.f_matched)
         if matched_len == 1:
             self.f_chosen = self.f_matched[0]
+            if self.printer.enable:
+                # split generated from autocompleted
+                self.printer.set_print_pending("")
+                self.printer.append_print_output(function_name, "generated")
+                self.printer.append_print_output(
+                    self.f_chosen.name[len(function_name):], "autoCompleted"
+                )
             self.manager.state = self.__set_next_params()
             return
         elif matched_len == 0:
@@ -291,9 +310,15 @@ class LogitPicker(BaseModel):
                     break
             if f_exact is None:
                 self.manager.state = STATE.NONE
+                if self.printer.enable:
+                    self.printer.set_print_pending("")
+                    self.printer.append_print_output("None", "autoCompleted")
                 return
 
             self.f_chosen = f_exact
+            if self.printer.enable:
+                self.printer.set_print_pending("")
+                self.printer.append_print_output(prev_name, "generated")
             self.manager.state = self.__set_next_params()
             return
 
@@ -349,26 +374,34 @@ class LogitPicker(BaseModel):
                 if quote_pos >= 0:
                     value = ' "' + content[:quote_pos + 1]
                     self.f_param_value = self.llm.encode(value)[0].tolist()
+                    self.__print_value(value, "generated")
                     self.manager.state = self.__set_next_params()
                     return
+                self.__print_pending()
             case "boolean":
                 self.f_param_value.append(selected_logit)
+                self.__print_value(
+                    self.llm.decode(self.f_param_value), "autoCompleted"
+                )
                 self.manager.state = self.__set_next_params()
                 return
             case "integer":
                 if selected_logit in self.integer_ids:
                     self.f_param_value.append(selected_logit)
+                    self.__print_pending()
                     return
                 if selected_logit in self.end_ids:
                     # remove the leading 0
                     decoded = self.llm.decode(self.f_param_value)
                     value = ' ' + str(int(decoded))
                     self.f_param_value = self.llm.encode(value)[0].tolist()
+                    self.__print_value(value, "generated")
                     self.manager.state = self.__set_next_params()
                     return
             case "number":
                 if selected_logit in self.float_ids:
                     self.f_param_value.append(selected_logit)
+                    self.__print_pending()
                     return
                 if selected_logit in self.end_ids:
                     # remove the leading 0
@@ -376,8 +409,37 @@ class LogitPicker(BaseModel):
 
                     value = ' ' + str(float(decoded))
                     self.f_param_value = self.llm.encode(value)[0].tolist()
+                    self.__print_value(value, "generated")
                     self.manager.state = self.__set_next_params()
                     return
+
+    def __print_pending(self) -> None:
+        """Show the params value generated so far.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        if self.printer.enable:
+            self.printer.set_print_pending(
+                self.llm.decode(self.f_param_value)
+            )
+
+    def __print_value(self, value: str, gen_mode: GenMode) -> None:
+        """Replace the pending value with the final params value.
+
+        Args:
+            value (str): final params value
+            gen_mode (GenMode): how the value was produced
+
+        Returns:
+            None
+        """
+        if self.printer.enable:
+            self.printer.set_print_pending("")
+            self.printer.append_print_output(value, gen_mode)
 
     def __scan_string(self, text: str) -> tuple[int, bool]:
         """Find the first unescaped double quote in a Json string value and

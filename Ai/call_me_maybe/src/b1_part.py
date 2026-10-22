@@ -2,21 +2,30 @@ from pydantic import BaseModel
 from llm_sdk import Small_LLM_Model
 import json
 from .a2_file_handler import FunctionData, AcceptDataTypes
+from .c0_printer import Printer
 
 
 class OutputPart(BaseModel):
     """Build the forced parts of Json output."""
 
     @staticmethod
-    def get_none(u_input: str) -> str:
+    def get_none(u_input: str, printer: Printer) -> str:
         """Get Json output when no tool matched.
 
         Args:
             u_input (str): user input
+            printer (Printer): printer instance
 
         Returns:
             str: Json string of output in case None
         """
+        if printer.enable:
+            none_append = (
+                '",\n'
+                '\t\t"parameters": {}\n'
+                '\t}'
+            )
+            printer.append_print_output(none_append, "autoCompleted")
         return (
             '\t{\n'
             '\t\t"prompt": ' + json.dumps(u_input, ensure_ascii=False) + ',\n'
@@ -44,16 +53,28 @@ class OutputPart(BaseModel):
         )
 
     @staticmethod
-    def get_no_params(u_input: str, f: FunctionData) -> str:
+    def get_no_params(
+        u_input: str,
+        f: FunctionData,
+        printer: Printer
+    ) -> str:
         """Get Json output when matched tool has no params.
 
         Args:
             u_input (str): user input
             f (FunctionData): matched function
+            printer (Printer): printer instance
 
         Returns:
             str: Json string of output in case no params
         """
+        if printer.enable:
+            no_params_append = (
+                '",\n'
+                '\t\t"parameters": {}\n'
+                '\t}'
+            )
+            printer.append_print_output(no_params_append, "template")
         return (
             '\t{\n'
             '\t\t"prompt": ' + json.dumps(u_input, ensure_ascii=False) + ',\n'
@@ -79,17 +100,24 @@ class OutputPart(BaseModel):
         )
 
     @staticmethod
-    def build_head_ids(u_input: str, llm: Small_LLM_Model) -> list[int]:
+    def build_head_ids(
+        u_input: str,
+        printer: Printer,
+        llm: Small_LLM_Model
+    ) -> list[int]:
         """Get the encoded start of Json output.
 
         Args:
             u_input (str): user input
+            printer (Printer): printer instance
             llm (Small_LLM_Model): instance of llm
 
         Returns:
             list[int]: encoded start of Json output with user input included
         """
         start_string = OutputPart.__build_head(u_input)
+        if printer.enable:
+            printer.append_print_output(start_string, "template")
         start_string_encoded: list[int] = llm.encode(start_string)[0].tolist()
         return start_string_encoded
 
@@ -109,17 +137,27 @@ class OutputPart(BaseModel):
         )
 
     @staticmethod
-    def build_name_ids(f: FunctionData, llm: Small_LLM_Model) -> list[int]:
+    def build_name_ids(
+        f: FunctionData,
+        printer: Printer,
+        llm: Small_LLM_Model
+    ) -> list[int]:
         """Get the encoded name and params opening of Json output.
 
         Args:
             f (FunctionData): matched function
+            printer (Printer): printer instance
             llm (Small_LLM_Model): instance of llm
 
         Returns:
             list[int]: encoded name and params opening of Json output
         """
         params_string = OutputPart.__build_name(f)
+        if printer.enable:
+            # name is already printed by the picker, only the opening left
+            printer.append_print_output(
+                params_string[len(f.name):], "template"
+            )
         params_encoded: list[int] = llm.encode(params_string)[0].tolist()
         return params_encoded
 
@@ -151,6 +189,7 @@ class OutputPart(BaseModel):
     def build_params_ids(
         params: str,
         params_type: AcceptDataTypes,
+        printer: Printer,
         llm: Small_LLM_Model,
         isFirst: bool
     ) -> list[int]:
@@ -159,6 +198,7 @@ class OutputPart(BaseModel):
         Args:
             params (str): params name
             params_type (AcceptDataTypes): params type
+            printer (Printer): printer instance
             llm (Small_LLM_Model): instance of llm
             isFirst (bool): first params of the function, no comma before
 
@@ -166,6 +206,8 @@ class OutputPart(BaseModel):
             list[int]: encoded params key of Json output
         """
         params_string = OutputPart.__build_params(params, params_type, isFirst)
+        if printer.enable:
+            printer.append_print_output(params_string, "template")
         params_encoded: list[int] = llm.encode(params_string)[0].tolist()
         return params_encoded
 
@@ -182,15 +224,21 @@ class OutputPart(BaseModel):
         return '}\n\t}'
 
     @staticmethod
-    def build_tail_ids(llm: Small_LLM_Model) -> list[int]:
+    def build_tail_ids(
+        printer: Printer,
+        llm: Small_LLM_Model
+    ) -> list[int]:
         """Get the encoded end of Json output.
 
         Args:
+            printer (Printer): printer instance
             llm (Small_LLM_Model): instance of llm
 
         Returns:
             list[int]: encoded end of Json output
         """
         tail_string = OutputPart.__build_tail()
+        if printer.enable:
+            printer.append_print_output(tail_string, "template")
         tail_encoded: list[int] = llm.encode(tail_string)[0].tolist()
         return tail_encoded

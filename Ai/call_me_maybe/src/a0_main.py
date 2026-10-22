@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from argparse import Namespace
 from llm_sdk import Small_LLM_Model
 import sys
+from datetime import datetime
 
 
 MAX_TURN = 42
@@ -74,7 +75,7 @@ class Main(BaseModel):
                 print(
                     COLOR.GREEN.value +
                     'LLM initialized' +
-                    COLOR.RESET.value + '\n\n'
+                    COLOR.RESET.value + '\n'
                 )
             except Exception:
                 Utils.error("LLM init")
@@ -104,17 +105,29 @@ class Main(BaseModel):
                 if all(c in ",}ĊĠ" for c in k) and ("," in k or "}" in k)
             }
 
+            start_time = datetime.now()
             outputs = []
             for input in self.inputs:
                 try:
                     print("")
+                    Printer.print_wait(input.prompt, self.args.visualize)
                     output = self.__call_llm(input.prompt, llm)
+                    Printer.print_done(input.prompt, self.args.visualize)
                 except KeyboardInterrupt:
                     Utils.error("Keyboard interrupted")
                 except Exception as e:
                     print(f"Error: {e}", file=sys.stderr)
                     output = OutputPart.get_error(input.prompt)
                 outputs.append(output)
+
+            end_time = datetime.now()
+            elapsed = end_time - start_time
+            (minutes, seconds) = divmod(elapsed.seconds, 60)
+            print(
+                COLOR.YELLOW.value +
+                'Total generation time:' + COLOR.RESET.value +
+                str(minutes) + 'm ' + str(seconds) + 's'
+            )
 
             res = "[\n" + ",\n".join(outputs) + "\n]"
             FileHandler.write_outputs(self.args.outputs, res)
@@ -151,17 +164,22 @@ class Main(BaseModel):
         )
 
         # Initialize output with first part of output Json
-        output = OutputPart.build_head_ids(u_input, llm)
+        output = OutputPart.build_head_ids(u_input, printer, llm)
 
         prompt_len_save = len(prompt)
         for _ in range(MAX_TURN):
             if manager.state == STATE.NEXT_PARAMS:
                 if picker.f_param_name is None or picker.f_param_type is None:
+                    none_output = OutputPart.get_none(u_input, printer)
                     printer.print_snapshot()
-                    return OutputPart.get_none(u_input)
+                    return none_output
                 isFirst = picker.f_current_params_index == 0
                 params_ids = OutputPart.build_params_ids(
-                    picker.f_param_name, picker.f_param_type, llm, isFirst
+                    picker.f_param_name,
+                    picker.f_param_type,
+                    printer,
+                    llm,
+                    isFirst
                 )
                 output.extend(params_ids)
                 prompt.extend(params_ids)
@@ -178,22 +196,27 @@ class Main(BaseModel):
                 picker.pick_function_name(selected_logit, self.functions)
                 match manager.state:
                     case STATE.NONE:
+                        none_output = OutputPart.get_none(u_input, printer)
                         printer.print_snapshot()
-                        return OutputPart.get_none(u_input)
+                        return none_output
                     case STATE.DONE:
                         if picker.f_chosen is None:
+                            none_output = OutputPart.get_none(u_input, printer)
                             printer.print_snapshot()
-                            return OutputPart.get_none(u_input)
-                        printer.print_snapshot()
-                        return OutputPart.get_no_params(
-                            u_input, picker.f_chosen
+                            return none_output
+
+                        no_params_output = OutputPart.get_no_params(
+                            u_input, picker.f_chosen, printer
                         )
+                        printer.print_snapshot()
+                        return no_params_output
                     case STATE.NEXT_PARAMS:
                         if picker.f_chosen is None:
+                            none_output = OutputPart.get_none(u_input, printer)
                             printer.print_snapshot()
-                            return OutputPart.get_none(u_input)
+                            return none_output
                         forced_name_part = OutputPart.build_name_ids(
-                            picker.f_chosen, llm
+                            picker.f_chosen, printer, llm
                         )
                         output.extend(forced_name_part)
                         # Switch to the params prompt, the head and name
@@ -218,10 +241,12 @@ class Main(BaseModel):
                     output.extend(picker.f_param_value)
                     prompt = prompt[:prompt_len_save]
                     prompt.extend(picker.f_param_value)
-                    tail_ids = OutputPart.build_tail_ids(llm)
+                    tail_ids = OutputPart.build_tail_ids(printer, llm)
                     output.extend(tail_ids)
                     printer.print_snapshot()
                     return str(llm.decode(output))
             printer.print_snapshot()
         else:
-            return OutputPart.get_none(u_input)
+            none_output = OutputPart.get_none(u_input, printer)
+            printer.print_snapshot()
+            return none_output
