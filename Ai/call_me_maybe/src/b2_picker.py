@@ -6,6 +6,7 @@ import math
 import string
 from .a2_file_handler import FunctionData, AcceptDataTypes
 from .b0_state import STATE, StateManager
+from .c0_printer import Printer
 
 
 type NumberType = Literal["integer", "float"]
@@ -16,6 +17,7 @@ class LogitPicker(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     manager: StateManager
+    printer: Printer
     boolean_ids: dict[str, int]
     integer_ids: dict[int, str]
     float_ids: dict[int, str]
@@ -33,6 +35,7 @@ class LogitPicker(BaseModel):
     def __init__(
         self,
         manager: StateManager,
+        printer: Printer,
         boolean_ids: dict[str, int],
         token_ids: list[dict[int, str]],
         llm: Small_LLM_Model
@@ -41,6 +44,7 @@ class LogitPicker(BaseModel):
 
         Args:
             manager (StateManager): state manager
+            printer (Printer): printer
             boolean_ids (dict[str, int]): boolean ids
             token_ids (list[dict[int, str]]): integer, float and
                 end token ids, in this order
@@ -53,6 +57,7 @@ class LogitPicker(BaseModel):
 
         super().__init__(
             manager=manager,
+            printer=printer,
             boolean_ids=boolean_ids,
             integer_ids=integer_ids,
             float_ids=float_ids,
@@ -85,6 +90,8 @@ class LogitPicker(BaseModel):
                     true_value = next_logits[self.boolean_ids["true"]]
                     false_value = next_logits[self.boolean_ids["false"]]
                     selected = "true" if true_value > false_value else "false"
+                    if self.printer.enable:
+                        self.printer.set_print_logit(selected)
                     return self.boolean_ids[selected]
 
                 case "string":
@@ -94,6 +101,10 @@ class LogitPicker(BaseModel):
                     selected_logit = int(np.array(next_logits).argmax())
         else:
             selected_logit = int(np.array(next_logits).argmax())
+
+        if self.printer.enable:
+            self.printer.set_print_logit(self.llm.decode(selected_logit))
+        
         return selected_logit
 
     def __handle_string(self, next_logits: list[float]) -> int:

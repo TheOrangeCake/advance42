@@ -5,6 +5,7 @@ from .b3_prompt import PromptBuilder
 from .b2_picker import LogitPicker
 from .b1_part import OutputPart
 from .b0_state import STATE, StateManager
+from .c0_printer import COLOR, Printer
 from pydantic import BaseModel, ConfigDict, Field
 from argparse import Namespace
 from llm_sdk import Small_LLM_Model
@@ -38,6 +39,20 @@ class Main(BaseModel):
         Returns:
             None
         """
+        config_line = (
+            COLOR.YELLOW.value +
+            'Configuration:\n'
+            '├ ' + COLOR.BLUE.value + 'Functions:\t' + COLOR.RESET.value +
+            self.args.functions + '\n' + COLOR.YELLOW.value +
+            '├ ' + COLOR.BLUE.value + 'Inputs:\t' + COLOR.RESET.value +
+            self.args.inputs + '\n' + COLOR.YELLOW.value +
+            '├ ' + COLOR.BLUE.value + 'Output:\t' + COLOR.RESET.value +
+            self.args.outputs + '\n' + COLOR.YELLOW.value +
+            '└ ' + COLOR.BLUE.value + 'Visualize:\t' + COLOR.RESET.value +
+            str(self.args.visualize) + '\n\n'
+        )
+        print(config_line)
+
         try:
             self.functions = FileHandler.read_functions(self.args.functions)
             if not self.functions:
@@ -50,7 +65,17 @@ class Main(BaseModel):
             FileHandler.validate_output_file(self.args.outputs)
 
             try:
+                print(
+                    COLOR.YELLOW.value +
+                    'LLM Initialization...' +
+                    COLOR.RESET.value
+                )
                 llm = Small_LLM_Model()
+                print(
+                    COLOR.GREEN.value +
+                    'LLM initialized' +
+                    COLOR.RESET.value + '\n\n'
+                )
             except Exception:
                 Utils.error("LLM init")
 
@@ -82,13 +107,13 @@ class Main(BaseModel):
             outputs = []
             for input in self.inputs:
                 try:
+                    print("")
                     output = self.__call_llm(input.prompt, llm)
                 except KeyboardInterrupt:
                     Utils.error("Keyboard interrupted")
                 except Exception as e:
                     print(f"Error: {e}", file=sys.stderr)
                     output = OutputPart.get_error(input.prompt)
-                print(output)  # debug
                 outputs.append(output)
 
             res = "[\n" + ",\n".join(outputs) + "\n]"
@@ -115,9 +140,11 @@ class Main(BaseModel):
             u_input, self.functions, llm
         )
 
+        printer = Printer(u_input, self.args.visualize)
         manager = StateManager()
         picker = LogitPicker(
             manager,
+            printer,
             self.boolean_ids,
             [self.integer_ids, self.float_ids, self.end_ids],
             llm
@@ -130,6 +157,7 @@ class Main(BaseModel):
         for _ in range(MAX_TURN):
             if manager.state == STATE.NEXT_PARAMS:
                 if picker.f_param_name is None or picker.f_param_type is None:
+                    printer.print_snapshot()
                     return OutputPart.get_none(u_input)
                 isFirst = picker.f_current_params_index == 0
                 params_ids = OutputPart.build_params_ids(
@@ -150,15 +178,19 @@ class Main(BaseModel):
                 picker.pick_function_name(selected_logit, self.functions)
                 match manager.state:
                     case STATE.NONE:
+                        printer.print_snapshot()
                         return OutputPart.get_none(u_input)
                     case STATE.DONE:
                         if picker.f_chosen is None:
+                            printer.print_snapshot()
                             return OutputPart.get_none(u_input)
+                        printer.print_snapshot()
                         return OutputPart.get_no_params(
                             u_input, picker.f_chosen
                         )
                     case STATE.NEXT_PARAMS:
                         if picker.f_chosen is None:
+                            printer.print_snapshot()
                             return OutputPart.get_none(u_input)
                         forced_name_part = OutputPart.build_name_ids(
                             picker.f_chosen, llm
@@ -188,6 +220,8 @@ class Main(BaseModel):
                     prompt.extend(picker.f_param_value)
                     tail_ids = OutputPart.build_tail_ids(llm)
                     output.extend(tail_ids)
+                    printer.print_snapshot()
                     return str(llm.decode(output))
+            printer.print_snapshot()
         else:
             return OutputPart.get_none(u_input)

@@ -40,6 +40,11 @@ class ArgParser(BaseModel):
             dest='outputs',
             default=OUTPUT_DEFAULT
         )
+        parser.add_argument(
+            "-v",
+            "--visualize",
+            action="store_true"
+        )
 
         # Call the pydantic init
         super().__init__(parser=parser)
@@ -54,8 +59,4 @@ class ArgParser(BaseModel):
             argparse.Namespace: object containing arguments and its values
         """
 
-        res = self.parser.parse_args(args)
-        print(f"Functions defintion file:\t{res.functions}")
-        print(f"Prompt input file:\t\t{res.inputs}")
-        print(f"Result output file:\t\t{res.outputs}")
-        return res
+        return self.parser.parse_args(args)
