@@ -68,7 +68,7 @@ class Main(BaseModel):
                 v: k for k, v in self.vocab.items()
                 if k and all(c in "0123456789-+.eE" for c in k)
             }
-            # Value starts right after '":', so allow " " and " -" as first token
+            # Value starts right after '":', allow " " and " -" as first token
             for start in ("Ġ", "Ġ-"):
                 text = start.replace("Ġ", " ")
                 self.integer_ids[self.vocab[start]] = text
@@ -175,18 +175,19 @@ class Main(BaseModel):
 
             if manager.state == STATE.PARAMS:
                 picker.pick_params(selected_logit)
-                if manager.state == STATE.NEXT_PARAMS:
+                state: STATE = manager.state
+                if state == STATE.NEXT_PARAMS:
                     output.extend(picker.f_param_value)
                     prompt = prompt[:prompt_len_save]
                     prompt.extend(picker.f_param_value)
                     prompt_len_save = len(prompt)
                     picker.f_param_value = []
-                if manager.state == STATE.DONE:
+                if state == STATE.DONE:
                     output.extend(picker.f_param_value)
                     prompt = prompt[:prompt_len_save]
                     prompt.extend(picker.f_param_value)
                     tail_ids = OutputPart.build_tail_ids(llm)
                     output.extend(tail_ids)
-                    return llm.decode(output)
+                    return str(llm.decode(output))
         else:
             return OutputPart.get_none(u_input)
