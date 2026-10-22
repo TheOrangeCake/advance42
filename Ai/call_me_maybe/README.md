@@ -28,11 +28,11 @@ make run
 ```
 - With arguments
 ```bash
-make ARGS=
-"--input "path" 
---functions_definition "path" 
---output "path"
---visualize"
+make ARGS="--input path --functions_definition path --output path --visualize"
+```
+- Or directly with uv
+```bash
+uv run python -m src --functions_definition path --input path --output path --visualize
 ```
 
 </br>
@@ -63,19 +63,19 @@ Constrained decoding is an act of restricting the next token choice in every ste
     - Function name: The token is match with the list of the predefined functions. If there is only 1 match then we auto-complete the function name. This help reduce LLM call and also guarantee the right function name.
     - Parameters: depend on the parameter type (string, boolean, number, integer), only specific tokens will be checked and validated. For example, integer parameter only accept and check digit and minus tokens.
 4. Any part that does not require LLM generation will be automatically detected and appended to the output. The detection work based on the STATE of the output.
-5. There are 4 STATES:
+5. There are 5 STATES:
     - NAME: Function name generation
     - PARAMS: Parameter arguments generation
     - NEXT_PARAMS: Transition state between parameters. Set when a parameter is finished to move to the next
     - DONE: Generation is finished
-    - NONE: Used when encoutered error during generation, or no predefined function is selected
+    - NONE: No predefined function is selected, output name is "None". An error during generation outputs "Error" instead
 So the loop is: 
 LLM call -> Logits generation -> Token selection -> Output auto-complete -> State change -> Update prompt -> ...
 
 </br>
 </br>
 
-## Design decistions:
+## Design decisions:
 ### Key choices:
 - Python in OOP: Object oriented approach is a natural way to separate responsibility. Here are classes used:
     - ArgParser: handle program arguments

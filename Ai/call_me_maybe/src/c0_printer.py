@@ -56,7 +56,13 @@ class Printer(BaseModel):
     def print_snapshot(
         self
     ) -> None:
-        """
+        """Print current generation state, overwrite the previous one.
+
+        Args:
+            None
+
+        Returns:
+            None
         """
         if not self.enable:
             return
@@ -121,12 +127,24 @@ class Printer(BaseModel):
         self.line_count = whole_line.count("\n") + 1
 
     def set_print_logit(self, logit: str) -> None:
-        """
+        """Set the selected token.
+
+        Args:
+            logit (str): decoded selected token
+
+        Returns:
+            None
         """
         self.logit = repr(logit)
 
     def set_print_top(self, logits: dict[str, float]) -> None:
-        """
+        """Set the top tokens and their score.
+
+        Args:
+            logits (dict[str, float]): decoded token and its score
+
+        Returns:
+            None
         """
         self.logits = logits
 
@@ -143,7 +161,14 @@ class Printer(BaseModel):
         self.pending = part
 
     def append_print_output(self, part: str, gen_mode: GenMode) -> None:
-        """
+        """Append a part to the output, colored by gen mode.
+
+        Args:
+            part (str): output part
+            gen_mode (GenMode): how the part was produced
+
+        Returns:
+            None
         """
         if gen_mode == "generated":
             self.output = (
@@ -162,7 +187,14 @@ class Printer(BaseModel):
 
     @staticmethod
     def print_wait(u_input: str, enable: bool) -> None:
-        """
+        """Print the waiting line when visualize mode is off.
+
+        Args:
+            u_input (str): input prompt
+            enable (bool): visualize mode on or off
+
+        Returns:
+            None
         """
         if not enable:
             print(
@@ -173,7 +205,14 @@ class Printer(BaseModel):
 
     @staticmethod
     def print_done(u_input: str, enable: bool) -> None:
-        """
+        """Replace the waiting line with done when visualize mode is off.
+
+        Args:
+            u_input (str): input prompt
+            enable (bool): visualize mode on or off
+
+        Returns:
+            None
         """
         if not enable:
             move_up = "\033[1F\033[J"

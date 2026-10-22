@@ -78,7 +78,7 @@ class LogitPicker(BaseModel):
         if self.printer.enable:
             top_ids = np.argsort(next_logits, descending=True)[:5]
             self.printer.set_print_top({
-                self.llm.decode(int(token_id)): float(next_logits[token_id])
+                self.llm.decode([int(token_id)]): float(next_logits[token_id])
                 for token_id in top_ids
             })
 
@@ -110,7 +110,7 @@ class LogitPicker(BaseModel):
             selected_logit = int(np.array(next_logits).argmax())
 
         if self.printer.enable:
-            self.printer.set_print_logit(self.llm.decode(selected_logit))
+            self.printer.set_print_logit(self.llm.decode([selected_logit]))
 
         return selected_logit
 

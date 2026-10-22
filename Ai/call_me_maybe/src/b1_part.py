@@ -78,7 +78,7 @@ class OutputPart(BaseModel):
         return (
             '\t{\n'
             '\t\t"prompt": ' + json.dumps(u_input, ensure_ascii=False) + ',\n'
-            '\t\t"name": "' + f.name + '",\n'
+            '\t\t"name": ' + json.dumps(f.name, ensure_ascii=False) + ',\n'
             '\t\t"parameters": {}\n'
             '\t}'
         )
@@ -131,10 +131,23 @@ class OutputPart(BaseModel):
         Returns:
             str: name and params opening of Json output
         """
+        # opening quote is already in the head
         return (
-            f.name +
+            OutputPart.escape_name(f) +
             '",\n\t\t"parameters": {'
         )
+
+    @staticmethod
+    def escape_name(f: FunctionData) -> str:
+        """Get the Json escaped function name, without the quotes.
+
+        Args:
+            f (FunctionData): matched function
+
+        Returns:
+            str: escaped function name
+        """
+        return json.dumps(f.name, ensure_ascii=False)[1:-1]
 
     @staticmethod
     def build_name_ids(
@@ -156,7 +169,7 @@ class OutputPart(BaseModel):
         if printer.enable:
             # name is already printed by the picker, only the opening left
             printer.append_print_output(
-                params_string[len(f.name):], "template"
+                params_string[len(OutputPart.escape_name(f)):], "template"
             )
         params_encoded: list[int] = llm.encode(params_string)[0].tolist()
         return params_encoded
@@ -177,13 +190,13 @@ class OutputPart(BaseModel):
         Returns:
             str: params key of Json output
         """
-        first = ', "'
-        space = '": '
+        first = ', '
+        space = ': '
         if isFirst:
-            first = '"'
+            first = ''
         if params_type in ("number", "integer", "string"):
-            space = '":'
-        return first + params + space
+            space = ':'
+        return first + json.dumps(params, ensure_ascii=False) + space
 
     @staticmethod
     def build_params_ids(
