@@ -88,7 +88,7 @@ Mininum 30'000 exp - 3 projects - NOPE
 </br>
 
 ### Web:
-|Name   |Language                      |Concept                                                          |Exp  |Status|
-|:------|:----------------------------:|:----------------------------------------------------------------|----:|:----:|
-|camagru|JavaScript, CSS, HTML, Node.js|DOM manipulation, authentication, authorization, database, mailer|4'200|DONE  |
+|Name                    |Language                      |Concept                                                          |Exp  |Status|
+|:-----------------------|:----------------------------:|:----------------------------------------------------------------|----:|:----:|
+|[camagru](./Web/camagru)|JavaScript, CSS, HTML, Node.js|DOM manipulation, authentication, authorization, database, mailer|4'200|DONE  |
 </br>
