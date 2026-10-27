@@ -6,11 +6,11 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 20:20:05 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/10/27 22:03:16 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/10/27 22:27:56 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
+#include "libft_malloc.h"
 
 void *realloc(void *ptr, size_t size) {
     (void*) (ptr = NULL);

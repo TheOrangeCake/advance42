@@ -1,8 +1,6 @@
 # Malloc
 
 ## Concept to read before start
-- Shared library format .so
-- Symlink in Makefile
 - mmap()
 - munmap()
 - sysconf(_SC_PAGESIZE) 

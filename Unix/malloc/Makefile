@@ -4,6 +4,7 @@ endif
 
 LIB_NAME = libft_malloc_$(HOSTTYPE).so
 SYMLINK = libft_malloc.so
+
 FLAGS = -Wall -Wextra -Werror -fPIC
 
 SRC_DIR = src
@@ -11,28 +12,32 @@ SRC =	$(SRC_DIR)/free.c		\
 		$(SRC_DIR)/malloc.c	\
 		$(SRC_DIR)/realloc.c	\
 
-OBJECTS = ${SRC:.c=.o}
+OBJECTS = $(SRC:.c=.o)
 
-all: run
+all: $(LIB_NAME)
 
 .c.o:
-	@gcc ${FLAGS} -c -I. $< -o ${<:.c=.o}
+	@gcc $(FLAGS) -c $< -o $(<:.c=.o)
 
-run: $(OBJECTS)
-	@echo "Building $(LIB_NAME)..."
+$(LIB_NAME): $(OBJECTS)
+	@echo "Building .so lib..."
 	@gcc -shared -o $(LIB_NAME) $(OBJECTS)
-	@echo "Built $(LIB_NAME) !"
+	@echo "-> Built $(LIB_NAME) !"
+	@echo "Creating symlink..."
+	@rm -f $(SYMLINK)
+	@ln -s $(LIB_NAME) $(SYMLINK)
+	@echo "-> Symlink $(SYMLINK) created !"
 
 clean:
 	@echo "Removing .o files..."
-	@rm -f ${OBJECTS}
-	@echo "All .o files removed !"
+	@rm -f $(OBJECTS)
+	@echo "-> All .o files removed !"
 
 fclean:		clean
-	@echo "Removing lib file $(LIB_NAME)..."
-	@rm -f ${LIB_NAME}
-	@echo "Lib file $(LIB_NAME) removed !"
+	@echo "Removing lib files..."
+	@rm -f $(LIB_NAME) $(SYMLINK)
+	@echo "-> Lib files $(LIB_NAME) and $(SYMLINK) removed !"
 
 re: fclean all
 
-.PHONY: all run clean fclean re
+.PHONY: all clean fclean re

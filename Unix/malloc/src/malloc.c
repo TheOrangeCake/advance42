@@ -6,11 +6,11 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 20:19:56 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/10/27 22:02:50 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/10/27 22:27:38 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
+#include "libft_malloc.h"
 
 void *malloc(size_t size) {
     (void*) (size = 1);
