@@ -9,8 +9,9 @@ FLAGS = -Wall -Wextra -Werror -fPIC
 
 SRC_DIR = src
 SRC =	$(SRC_DIR)/free.c		\
-		$(SRC_DIR)/malloc.c	\
+		$(SRC_DIR)/malloc.c		\
 		$(SRC_DIR)/realloc.c	\
+		$(SRC_DIR)/utils.c		\
 
 OBJECTS = $(SRC:.c=.o)
 
