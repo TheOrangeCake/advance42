@@ -34,7 +34,7 @@ clean:
 	@rm -f $(OBJECTS)
 	@echo "-> All .o files removed !"
 
-fclean:		clean
+fclean:	clean
 	@echo "Removing lib files..."
 	@rm -f $(LIB_NAME) $(SYMLINK)
 	@echo "-> Lib files $(LIB_NAME) and $(SYMLINK) removed !"
