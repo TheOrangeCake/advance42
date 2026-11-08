@@ -1,0 +1,28 @@
+{
+	"name" : "sequence_02n",
+	"alphabet": [ "0", ".", "y", "n" ],
+	"blank" : ".",
+	"states" : [ "EVEN", "ODD", "NO", "END" ],
+	"initial" : "EVEN",
+	"finals" : [ "END" ],
+	"transitions" : {
+		"EVEN": [
+			{ "read" : "0", "to_state": "ODD", "write": "0", "action": "RIGHT" },
+			{ "read" : "y", "to_state": "NO", "write": "y", "action": "RIGHT" },
+			{ "read" : "n", "to_state": "NO", "write": "n", "action": "RIGHT" },
+			{ "read" : ".", "to_state": "END", "write": "y", "action": "LEFT" }
+		],
+		"ODD": [
+			{ "read" : "0", "to_state": "EVEN", "write": "0", "action": "RIGHT" },
+			{ "read" : "y", "to_state": "NO", "write": "y", "action": "RIGHT" },
+			{ "read" : "n", "to_state": "NO", "write": "n", "action": "RIGHT" },
+			{ "read" : ".", "to_state": "END", "write": "n", "action": "LEFT" }
+		],
+		"NO": [
+			{ "read" : "0", "to_state": "NO", "write": "0", "action": "RIGHT" },
+			{ "read" : "y", "to_state": "NO", "write": "y", "action": "RIGHT" },
+			{ "read" : "n", "to_state": "NO", "write": "n", "action": "RIGHT" },
+			{ "read" : ".", "to_state": "END", "write": "n", "action": "LEFT" }
+		]
+	}
+}

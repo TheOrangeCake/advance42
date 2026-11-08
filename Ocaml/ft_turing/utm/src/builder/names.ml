@@ -1,0 +1,67 @@
+type rules = (string * Yojson.Safe.t list)
+let final = "HALT"
+
+let find_hash = "find_hash"
+let seek = "seek"
+let read = "read"
+let rewind = "rewind"
+let create_carry_name c = "carry_" ^ Core.String.of_char c
+let create_put_name c = "put_" ^ Core.String.of_char c
+
+let matchcase = "match"
+let match_read_1 = "m_read1"
+let match_eq_r1 = "m_eq1_r"
+let match_read_2 = "m_read2"
+let match_back_eq = "m_back_eq"
+let match_back_ne = "m_back_ne"
+let match_skip_transi = "m_skip"
+let match_back_found = "m_back_found"
+let create_match_carry1_name c = "m_carry1_r_" ^ Core.String.of_char c
+let create_match_search1_name c = "m_s1_r_" ^ Core.String.of_char c
+let create_match_cmp1_name c = "m_cmp1_" ^ Core.String.of_char c
+let create_match_carry2_name c = "m_carry2_r_" ^ Core.String.of_char c
+let create_match_cmp2_name c = "m_cmp2_" ^ Core.String.of_char c
+
+let apply = "apply"
+let apply_skip_1 = "ap_skip_1"
+let apply_read_state = "ap_read_state"
+let apply_back = "ap_back"
+let apply_back_1 = "ap_b1"
+let apply_back_2 = "ap_b2"
+let apply_back_3 = "ap_b3"
+let apply_read_write = "ap_read_write"
+let apply_replace_head_right = "ap_rp_hr"
+let apply_restore = "ap_restore"
+let apply_rewind = "ap_rewind"
+let apply_swap_0 = "ap_swap_0"
+let apply_swap_1 = "ap_swap_1"
+let create_apply_carry_state_name c = "ap_carry_state_" ^ Core.String.of_char c
+let create_apply_search_state_name c = "ap_s_state_" ^ Core.String.of_char c
+let create_apply_put_state_name c = "ap_put_state_" ^ Core.String.of_char c
+let create_apply_read_write_name c = apply_read_write ^ "_" ^ Core.String.of_char c
+let create_apply_carry_c_dir_name dir c = create_apply_read_write_name c ^ Core.String.of_char dir
+let create_apply_replace_head_left_name c = "ap_rp_hl_" ^ Core.String.of_char c
+let create_apply_swap_t_name c = "ap_swap_t_" ^ Core.String.of_char c
+
+let check_hash = "ch_hash"
+let check_value = "ch_value"
+let check_state = "ch_state"
+let check_rewind = "ch_rewind"
+let create_check_value_name c = check_state ^ "_" ^ Core.String.of_char c
+let create_check_1_c_name c = check_state ^ "1_" ^ Core.String.of_char c
+let create_check_2_c_name c = check_state ^ "2_" ^ Core.String.of_char c
+let create_check_final_c_name c = check_state ^ "_final_" ^ Core.String.of_char c
+
+let extend_tape_right = "xt_hash"
+let extend_skip_value = "xt_skip_value"
+let extend_skip_state = "xt_skip_state"
+let extend_skip_rule_sep = "xt_skip_sep"
+let extend_read_blank = "xt_read_blank"
+let extend_rewind = "xt_rewind"
+let create_extend_carry_blank_name c = "xt_carry_" ^ Core.String.of_char c
+let extend_tape_left = "xt_left"
+let extend_left_state = "xt_left_state"
+let extend_left_sep = "xt_left_sep"
+let extend_left_read_blank = "xt_left_read_blank"
+let create_extend_left_carry_blank_name c = "xt_left_carry_blank_" ^ Core.String.of_char c
+let create_extend_left_loop_name c = "xt_left_loop_" ^ Core.String.of_char c

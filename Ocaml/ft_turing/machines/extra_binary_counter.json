@@ -1,0 +1,20 @@
+{
+	"name" : "binary_counter",
+	"alphabet": [ "1", "0", "." ],
+	"blank" : ".",
+	"states" : [ "GO_RIGHT", "INC", "END" ],
+	"initial" : "GO_RIGHT",
+	"finals" : [ "END" ],
+	"transitions" : {
+		"GO_RIGHT": [
+			{ "read" : "0", "to_state": "GO_RIGHT", "write": "0", "action": "RIGHT" },
+			{ "read" : "1", "to_state": "GO_RIGHT", "write": "1", "action": "RIGHT" },
+			{ "read" : ".", "to_state": "INC", "write": ".", "action": "LEFT" }
+		],
+		"INC": [
+			{ "read" : "1", "to_state": "INC", "write": "0", "action": "LEFT" },
+			{ "read" : "0", "to_state": "GO_RIGHT", "write": "1", "action": "RIGHT" },
+			{ "read" : ".", "to_state": "END", "write": ".", "action": "RIGHT" }
+		]
+	}
+}

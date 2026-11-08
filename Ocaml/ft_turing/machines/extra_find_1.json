@@ -1,0 +1,15 @@
+{
+	"name" : "find_1",
+	"alphabet": [ "1", "0", "." ],
+	"blank" : ".",
+	"states" : [ "SCAN", "END" ],
+	"initial" : "SCAN",
+	"finals" : [ "END" ],
+	"transitions" : {
+		"SCAN": [
+			{ "read" : "0", "to_state": "SCAN", "write": "0", "action": "RIGHT" },
+			{ "read" : "1", "to_state": "END", "write": ".", "action": "RIGHT" },
+			{ "read" : ".", "to_state": "END", "write": ".", "action": "LEFT" }
+		]
+	}
+}

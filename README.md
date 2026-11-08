@@ -17,11 +17,11 @@ Mininum 10'000 exp - 2 projects - NOPE
 </br>
 
 ### Branch: Functional programming
-Mininum 10'000 exp - 2 projects - NOPE
+Mininum 10'000 exp - 2 projects - DONE
 |Name                              |Language|Concept                                  |Exp  |Status|
 |:---------------------------------|:------:|:----------------------------------------|----:|:----:|
 |[Piscine OCaml](./Ocaml/piscine)  |Ocaml   |Basic of Ocaml and functional programming|9'450|DONE  |
-|ft_turing                         |Ocaml   |                                         |9'450|NOPE  |
+|[ft_turing](./Ocaml/ft_turing/)   |Ocaml   |Universal Turing Machine, with time complexity analyser using linear regression |9'450|DONE  |
 </br>
 
 ### Suite (choice):

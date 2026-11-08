@@ -1,0 +1,52 @@
+{
+	"name" : "write_hello",
+	"alphabet": [ "h", "e", "l", "o", "." ],
+	"blank" : ".",
+	"states" : [ "FIRST", "SECOND", "THIRD", "FOURTH", "FIFTH", "SIXTH", "END" ],
+	"initial" : "FIRST",
+	"finals" : [ "END" ],
+	"transitions" : {
+		"FIRST": [
+			{ "read" : "h", "to_state": "SECOND", "write": "h", "action": "RIGHT" },
+			{ "read" : "e", "to_state": "SECOND", "write": "h", "action": "RIGHT" },
+			{ "read" : "l", "to_state": "SECOND", "write": "h", "action": "RIGHT" },
+			{ "read" : "o", "to_state": "SECOND", "write": "h", "action": "RIGHT" },
+			{ "read" : ".", "to_state": "SECOND", "write": "h", "action": "RIGHT" }
+		],
+		"SECOND": [
+			{ "read" : "h", "to_state": "THIRD", "write": "e", "action": "RIGHT" },
+			{ "read" : "e", "to_state": "THIRD", "write": "e", "action": "RIGHT" },
+			{ "read" : "l", "to_state": "THIRD", "write": "e", "action": "RIGHT" },
+			{ "read" : "o", "to_state": "THIRD", "write": "e", "action": "RIGHT" },
+			{ "read" : ".", "to_state": "THIRD", "write": "e", "action": "RIGHT" }
+		],
+		"THIRD": [
+			{ "read" : "h", "to_state": "FOURTH", "write": "l", "action": "RIGHT" },
+			{ "read" : "e", "to_state": "FOURTH", "write": "l", "action": "RIGHT" },
+			{ "read" : "l", "to_state": "FOURTH", "write": "l", "action": "RIGHT" },
+			{ "read" : "o", "to_state": "FOURTH", "write": "l", "action": "RIGHT" },
+			{ "read" : ".", "to_state": "FOURTH", "write": "l", "action": "RIGHT" }
+		],
+		"FOURTH": [
+			{ "read" : "h", "to_state": "FIFTH", "write": "l", "action": "RIGHT" },
+			{ "read" : "e", "to_state": "FIFTH", "write": "l", "action": "RIGHT" },
+			{ "read" : "l", "to_state": "FIFTH", "write": "l", "action": "RIGHT" },
+			{ "read" : "o", "to_state": "FIFTH", "write": "l", "action": "RIGHT" },
+			{ "read" : ".", "to_state": "FIFTH", "write": "l", "action": "RIGHT" }
+		],
+		"FIFTH": [
+			{ "read" : "h", "to_state": "SIXTH", "write": "o", "action": "RIGHT" },
+			{ "read" : "e", "to_state": "SIXTH", "write": "o", "action": "RIGHT" },
+			{ "read" : "l", "to_state": "SIXTH", "write": "o", "action": "RIGHT" },
+			{ "read" : "o", "to_state": "SIXTH", "write": "o", "action": "RIGHT" },
+			{ "read" : ".", "to_state": "SIXTH", "write": "o", "action": "RIGHT" }
+		],
+		"SIXTH": [
+			{ "read" : "h", "to_state": "END", "write": ".", "action": "RIGHT" },
+			{ "read" : "e", "to_state": "END", "write": ".", "action": "RIGHT" },
+			{ "read" : "l", "to_state": "END", "write": ".", "action": "RIGHT" },
+			{ "read" : "o", "to_state": "END", "write": ".", "action": "RIGHT" },
+			{ "read" : ".", "to_state": "END", "write": ".", "action": "RIGHT" }
+		]
+	}
+}
