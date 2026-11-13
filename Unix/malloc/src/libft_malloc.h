@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 22:25:45 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/13 22:28:45 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/14 00:00:35 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@
 
 #define FREE 1
 #define USED 2
+
+#define TINY 1
+#define SMALL 2
 
 #define MIN_ALLOC 100
 #define TINY_MAX 128
@@ -42,7 +45,7 @@ typedef struct s_malloc {
 	long			page_size;
 	struct s_zone	*tiny;
 	struct s_zone	*small;
-	struct s_zone	*big;
+	struct s_zone	*large;
 } t_malloc;
 
 void	*malloc(size_t size);
