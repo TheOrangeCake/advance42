@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 22:25:45 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/15 19:32:53 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/15 22:38:07 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,12 @@ typedef struct s_malloc {
 	struct s_block	*large;
 } t_malloc;
 
+extern t_malloc g_malloc;
+
 void	*malloc(size_t size);
+
+t_zone	*new_zone(size_t size, int type);
+int		init_not_large(int type);
 
 bool	is_space_left(size_t total_allocated, size_t len);
 size_t	round_up_page(size_t size, size_t p_size);
