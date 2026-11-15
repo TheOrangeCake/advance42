@@ -20,6 +20,8 @@ all: $(LIB_NAME)
 .c.o:
 	@gcc $(FLAGS) -c $< -o $(<:.c=.o)
 
+$(OBJECTS): $(SRC_DIR)/libft_malloc.h
+
 $(LIB_NAME): $(OBJECTS)
 	@echo "Building .so lib..."
 	@gcc -shared -o $(LIB_NAME) $(OBJECTS)
