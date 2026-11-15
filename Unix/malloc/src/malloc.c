@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 20:19:56 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/15 22:37:46 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/15 23:20:58 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,8 @@ static void *handle_large(size_t size) {
 
     g_malloc.total_allocated += size;
 
-    block->length = size - sizeof(t_block);
+    block->length = size;
     block->free = USED;
-    block->zone = LARGE;
     block->prev = NULL;
     block->next = g_malloc.large;
 
@@ -107,8 +106,3 @@ void *malloc(size_t size) {
     }
     return handle_large(size);
 }
-
-// int main(void) {
-//     malloc(1);
-//     return 0;
-// }

@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 22:25:45 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/15 22:38:07 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/15 23:20:34 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@
 typedef struct s_block {
 	size_t			length;
 	int				free;
-	int				zone;
 	struct s_block	*prev;
 	struct s_block	*next;
 } t_block;
@@ -58,8 +57,10 @@ extern t_malloc g_malloc;
 
 void	*malloc(size_t size);
 
-t_zone	*new_zone(size_t size, int type);
+t_zone	*new_zone(size_t size);
 int		init_not_large(int type);
+
+t_block	*find_block(t_block *head, void *ptr);
 
 bool	is_space_left(size_t total_allocated, size_t len);
 size_t	round_up_page(size_t size, size_t p_size);

@@ -6,18 +6,39 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 20:20:11 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/10/27 22:27:48 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/15 23:21:16 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft_malloc.h"
 
-void free(void *ptr) {
-    (void*) (ptr = NULL);
-    return;
+static void free_large(t_block *block) {
+    if (block->prev) {
+        block->prev->next = block->next;
+    } else {
+        g_malloc.large = block->next;
+    }
+    if (block->next) {
+        block->next->prev = block->prev;
+    }
+
+    g_malloc.total_allocated -= block->length;
+    
+    munmap((void*)block, block->length);
 }
 
-// int main(void) {
-//     free(NULL);
-//     return 0;
-// }
+void free(void *ptr) {
+    t_block *block;
+    
+    if (!ptr) {
+        return;
+    }
+
+    block = find_block(g_malloc.large, ptr);
+    if (block) {
+        free_large(block);
+        return;
+    }
+
+    return;
+}
