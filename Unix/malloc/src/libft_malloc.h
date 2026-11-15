@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 22:25:45 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/15 23:20:34 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/15 23:42:02 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ typedef struct s_malloc {
 extern t_malloc g_malloc;
 
 void	*malloc(size_t size);
+void	free(void *ptr);
 
 t_zone	*new_zone(size_t size);
 int		init_not_large(int type);

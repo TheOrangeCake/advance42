@@ -33,6 +33,10 @@ $(LIB_NAME): $(OBJECTS)
 	@ln -s $(LIB_NAME) $(SYMLINK)
 	@echo "-> Symlink $(SYMLINK) created !"
 
+test: $(LIB_NAME)
+	@gcc -Wno-free-nonheap-object -Wno-alloc-size-larger-than test/main.c -I src -L. -lft_malloc -Wl,-rpath,"$(CURDIR)" -o test_malloc
+	@./test_malloc
+
 clean:
 	@echo "Removing .o files..."
 	@rm -f $(OBJECTS)
@@ -42,7 +46,10 @@ fclean:	clean
 	@echo "Removing lib files..."
 	@rm -f $(LIB_NAME) $(SYMLINK)
 	@echo "-> Lib files $(LIB_NAME) and $(SYMLINK) removed !"
+	@echo "Removing test binary..."
+	@rm test_malloc
+	@echo "-> Test binary removed !"
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all test clean fclean re
