@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 22:25:45 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/15 10:19:48 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/15 19:32:53 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <sys/resource.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #define FREE 1
 #define USED 2
