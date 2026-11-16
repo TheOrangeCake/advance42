@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 20:19:56 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/15 23:20:58 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/16 20:47:27 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,13 +61,10 @@ static void *handle_large(size_t size) {
         return NULL;
     }
 
-    block = mmap(
-        NULL,
-        size,
+    block = mmap(NULL, size,
         PROT_READ | PROT_WRITE,
         MAP_PRIVATE | MAP_ANONYMOUS,
-        -1,
-        0
+        -1, 0
     );
     if (block == MAP_FAILED) {
         return NULL;
