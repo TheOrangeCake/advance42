@@ -6,13 +6,13 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/15 22:34:03 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/15 23:20:07 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/16 23:28:05 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft_malloc.h"
 
-t_zone *new_zone(size_t size) {
+t_zone *create_new_zone(size_t size) {
     t_zone  *zone;
     t_block *block;
 
@@ -47,24 +47,17 @@ t_zone *new_zone(size_t size) {
     return zone;
 }
 
-int init_not_large(int type) {
-    size_t  limit;
+int add_zone(t_zone **head, size_t limit) {
+    t_zone  *zone;
     size_t  size;
-    t_zone  **head;
-
-    if (type == TINY) {
-        limit = L_TINY;
-        head = &g_malloc.tiny;
-    } else {
-        limit = L_SMALL;
-        head = &g_malloc.small;
-    }
 
     size = MIN_ALLOC * (limit + sizeof(t_block)) + sizeof(t_zone);
-    size = round_up_page(size, g_malloc.page_size);
-    *head = new_zone(size);
-    if (*head == NULL) {
+    size = round_up(size, g_malloc.page_size);
+    zone = create_new_zone(size);
+    if (!zone) {
         return -1;
     }
+    zone->next = *head;
+    *head = zone;
     return 0;
 }

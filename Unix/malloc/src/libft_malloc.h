@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 22:25:45 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/15 23:42:02 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/16 23:13:37 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,26 +31,31 @@
 #define L_TINY 128
 #define L_SMALL 1024
 
-typedef struct s_block {
-	size_t			length;
-	int				free;
-	struct s_block	*prev;
-	struct s_block	*next;
-} t_block;
+#define ALIGNMENT 16
 
-typedef struct s_zone {
-	size_t			length;
-	size_t			used;
-	t_block			*blocks;
-	struct s_zone	*next;
-} t_zone;
+typedef struct s_block	t_block;
+typedef struct s_zone	t_zone;
+
+struct s_block {
+	size_t	length;
+	int		free;
+	t_block	*prev;
+	t_block	*next;
+};
+
+struct s_zone {
+	size_t	length;
+	size_t	used;
+	t_block	*blocks;
+	t_zone	*next;
+};
 
 typedef struct s_malloc {
-	long			page_size;
-	size_t			total_allocated;
-	struct s_zone	*tiny;
-	struct s_zone	*small;
-	struct s_block	*large;
+	long	page_size;
+	size_t	total_allocated;
+	t_zone	*tiny;
+	t_zone	*small;
+	t_block	*large;
 } t_malloc;
 
 extern t_malloc g_malloc;
@@ -58,12 +63,13 @@ extern t_malloc g_malloc;
 void	*malloc(size_t size);
 void	free(void *ptr);
 
-t_zone	*new_zone(size_t size);
-int		init_not_large(int type);
+t_zone	*create_new_zone(size_t size);
+int		add_zone(t_zone **head, size_t limit);
 
 t_block	*find_block(t_block *head, void *ptr);
+t_block	*split_block(t_block *block, size_t size);
 
 bool	is_space_left(size_t total_allocated, size_t len);
-size_t	round_up_page(size_t size, size_t p_size);
+size_t	round_up(size_t size, size_t multiple);
 
 #endif

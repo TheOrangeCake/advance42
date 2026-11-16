@@ -47,7 +47,7 @@ fclean:	clean
 	@rm -f $(LIB_NAME) $(SYMLINK)
 	@echo "-> Lib files $(LIB_NAME) and $(SYMLINK) removed !"
 	@echo "Removing test binary..."
-	@rm test_malloc
+	@rm -f test_malloc
 	@echo "-> Test binary removed !"
 
 re: fclean all

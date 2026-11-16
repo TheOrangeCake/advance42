@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 20:19:56 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/16 20:47:27 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/16 23:34:45 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,33 +29,51 @@ static int init() {
     return 0;
 }
 
+// Check if any block free and fit. If free block is bigger than
+// size then split block to fit better.
+// If no free space or no zone, then create new zone. 
 static void *handle_not_large(size_t size, int type) {
-    size += 0;
-    type += 0;
+    t_zone  **head;
+    size_t  limit;
 
-    if (type == TINY && !g_malloc.tiny) {
-        if (init_not_large(TINY) < 0) {
-            return NULL;
-        }
-    }
-    if (type == SMALL && !g_malloc.small) {
-        if (init_not_large(SMALL) < 0) {
-            return NULL;
-        }
+    if (type == TINY) {
+        limit = L_TINY;
+        head = &g_malloc.tiny;
+    } else {
+        limit = L_SMALL;
+        head = &g_malloc.small;
     }
 
-    // TODO
+    size = round_up(size, ALIGNMENT);
 
-    return NULL;
+    for (t_zone *zone = *head; zone; zone = zone->next) {
+        for (t_block *b = zone->blocks; b; b = b->next) {
+            if (b->free == FREE && b->length - sizeof(t_block) >= size) {
+                if (b->length - sizeof(t_block) - size >= sizeof(t_block) + ALIGNMENT) {
+                    b = split_block(b, size);
+                }
+                b->free = USED;
+                zone->used += b->length;
+                return b + 1;
+            }
+        }
+    }
+    
+    // No fit or no zone -> create a new zone and retry
+    if (add_zone(head, limit) < 0) {
+        return NULL;
+    }
+
+    return handle_not_large(size, type);
 }
 
 // Allocate a block then insert it to the front of the linked list.
 // Return the pointer to the free space.
 static void *handle_large(size_t size) {
-    t_block     *block;
+    t_block *block;
     
     size += sizeof(t_block);
-    size = round_up_page(size, g_malloc.page_size);
+    size = round_up(size, g_malloc.page_size);
     
     if (is_space_left(g_malloc.total_allocated, size) == false || size == 0) {
         return NULL;
@@ -85,9 +103,6 @@ static void *handle_large(size_t size) {
     return block + 1;
 }
 
-// allocate size memory and return the pointer to
-// the located memory. The memory is not initialized.
-// If size == 0, still return a pointer that can be freed by free()
 void *malloc(size_t size) {
     if (g_malloc.page_size == 0) {
         if (init() < 0) {

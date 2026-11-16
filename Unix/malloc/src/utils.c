@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 22:32:56 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/15 19:21:40 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/16 23:16:07 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,6 @@ bool is_space_left(size_t total_allocated, size_t len) {
 	return true;
 }
 
-size_t round_up_page(size_t size, size_t p_size) {
-	return ((size + p_size - 1) / p_size) * p_size;
+size_t round_up(size_t size, size_t multiple) {
+	return ((size + multiple - 1) / multiple) * multiple;
 }
