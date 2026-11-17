@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 22:25:45 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/16 23:13:37 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/17 23:13:47 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,11 @@ void	free(void *ptr);
 
 t_zone	*create_new_zone(size_t size);
 int		add_zone(t_zone **head, size_t limit);
+void	free_zone(t_zone **head, t_zone *zone);
 
 t_block	*find_block(t_block *head, void *ptr);
 t_block	*split_block(t_block *block, size_t size);
+void	merge_blocks(t_block *block);
 
 bool	is_space_left(size_t total_allocated, size_t len);
 size_t	round_up(size_t size, size_t multiple);

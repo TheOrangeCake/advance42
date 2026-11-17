@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/15 22:34:03 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/16 23:28:05 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/17 23:29:15 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,4 +60,27 @@ int add_zone(t_zone **head, size_t limit) {
     zone->next = *head;
     *head = zone;
     return 0;
+}
+
+void free_zone(t_zone **head, t_zone *zone) {
+    t_zone  *prev;
+
+	// If only 1 zone -> Keep
+    if (*head == zone && !zone->next) {
+        return;
+    }
+
+	// If multiple zone and first zone is empty
+    if (*head == zone) {
+        *head = zone->next;
+    } else {
+        prev = *head;
+        while (prev->next != zone) {
+            prev = prev->next;
+        }
+        prev->next = zone->next;
+    }
+
+    g_malloc.total_allocated -= zone->length;
+    munmap((void *)zone, zone->length);
 }
