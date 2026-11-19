@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 20:20:11 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/17 23:36:16 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/19 22:38:08 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,27 +40,10 @@ static void free_not_large(t_zone **head, t_zone *zone, t_block *block) {
     }
 }
 
-static bool free_in_zones(t_zone **head, void *ptr) {
-    t_block *block;
-
-    for (t_zone *zone = *head; zone; zone = zone->next) {
-        // Check if ptr is inside the zone, if not then continue
-        if ((char *)ptr <= (char *)zone
-            || (char *)ptr >= (char *)zone + zone->length) {
-            continue;
-        }
-        block = find_block(zone->blocks, ptr);
-        if (block) {
-            free_not_large(head, zone, block);
-        }
-        return true;
-    }
-    return false;
-}
-
 void free(void *ptr) {
     t_block *block;
-    
+    t_zone  *zone;
+
     if (!ptr) {
         return;
     }
@@ -71,9 +54,14 @@ void free(void *ptr) {
         return;
     }
 
-    if (free_in_zones(&g_malloc.tiny, ptr)) {
+    block = find_in_zone(g_malloc.tiny, ptr, &zone);
+    if (block) {
+        free_not_large(&g_malloc.tiny, zone, block);
         return;
     }
 
-    free_in_zones(&g_malloc.small, ptr);
+    block = find_in_zone(g_malloc.small, ptr, &zone);
+    if (block) {
+        free_not_large(&g_malloc.small, zone, block);
+    }
 }

@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 22:25:45 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/19 21:57:23 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/19 22:58:28 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,14 +63,19 @@ extern t_malloc g_malloc;
 
 void	*malloc(size_t size);
 void	free(void *ptr);
+void	*realloc(void *ptr, size_t size);
 
 t_zone	*create_new_zone(size_t size);
 int		add_zone(t_zone **head, size_t limit);
 void	free_zone(t_zone **head, t_zone *zone);
 
 t_block	*find_block(t_block *head, void *ptr);
+t_block	*find_in_zone(t_zone *head, void *ptr, t_zone **zone_out);
+t_block	*find_location(void *ptr);
 t_block	*split_block(t_block *block, size_t size);
 void	merge_blocks(t_block *block);
+
+void	show_alloc_mem();
 
 bool	is_space_left(size_t total_allocated, size_t len);
 size_t	round_up(size_t size, size_t multiple);

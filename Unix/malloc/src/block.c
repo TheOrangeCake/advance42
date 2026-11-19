@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/15 22:33:59 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/17 23:29:27 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/19 23:04:09 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,32 @@ t_block *find_block(t_block *head, void *ptr) {
         head = head->next;
     }
     return NULL;
+}
+
+t_block *find_in_zone(t_zone *head, void *ptr, t_zone **zone_out) {
+    for (t_zone *zone = head; zone; zone = zone->next) {
+        if ((char *)ptr <= (char *)zone
+            || (char *)ptr >= (char *)zone + zone->length) {
+            continue;
+        }
+        *zone_out = zone;
+        return find_block(zone->blocks, ptr);
+    }
+    return NULL;
+}
+
+t_block *find_location(void *ptr) {
+    t_block *block;
+    t_zone  *zone;
+
+    block = find_block(g_malloc.large, ptr);
+    if (!block) {
+        block = find_in_zone(g_malloc.tiny, ptr, &zone);
+    }
+    if (!block) {
+        block = find_in_zone(g_malloc.small, ptr, &zone);
+    }
+    return block;
 }
 
 t_block *split_block(t_block *block, size_t size) {
