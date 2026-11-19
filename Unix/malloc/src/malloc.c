@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 20:19:56 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/16 23:34:45 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/19 22:01:28 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ static int init() {
     g_malloc.page_size = sysconf(_SC_PAGE_SIZE);
     if (g_malloc.page_size <= 0) {
         g_malloc.page_size = 0;
+        errno = ENOMEM;
         return -1;
     }
     g_malloc.total_allocated = 0;
@@ -76,6 +77,7 @@ static void *handle_large(size_t size) {
     size = round_up(size, g_malloc.page_size);
     
     if (is_space_left(g_malloc.total_allocated, size) == false || size == 0) {
+        errno = ENOMEM;
         return NULL;
     }
 
@@ -85,6 +87,7 @@ static void *handle_large(size_t size) {
         -1, 0
     );
     if (block == MAP_FAILED) {
+        errno = ENOMEM;
         return NULL;
     }
 
@@ -109,7 +112,11 @@ void *malloc(size_t size) {
             return NULL;
         }
     }
-    if (size == 0 || size > SIZE_MAX - sizeof(t_block) - g_malloc.page_size) {
+    if (size == 0) {
+        return NULL;
+    }
+    if (size > SIZE_MAX - sizeof(t_block) - g_malloc.page_size) {
+        errno = ENOMEM;
         return NULL;
     } else if (size <= L_TINY) {
         return handle_not_large(size, TINY);

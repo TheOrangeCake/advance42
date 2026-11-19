@@ -17,6 +17,7 @@ t_zone *create_new_zone(size_t size) {
     t_block *block;
 
     if (is_space_left(g_malloc.total_allocated, size) == false || size == 0) {
+        errno = ENOMEM;
         return NULL;
     }
 
@@ -29,6 +30,7 @@ t_zone *create_new_zone(size_t size) {
         0
     );
     if (zone == MAP_FAILED) {
+        errno = ENOMEM;
         return NULL;
     }
 
