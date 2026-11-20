@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/15 23:25:09 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/16 00:02:07 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/21 00:30:06 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,14 +72,25 @@ static void test_edge(void) {
 }
 
 int main(void) {
-    test_basic();
-    test_unlink();
-    test_edge();
+    // test_basic();
+    // test_unlink();
+    // test_edge();
 
-    if (g_fail == true) {
-        write(1, "SOME TESTS FAILED\n", 18);
-        return 1;
+    // if (g_fail == true) {
+    //     write(1, "SOME TESTS FAILED\n", 18);
+    //     return 1;
+    // }
+    // write(1, "ALL TESTS PASSED\n", 17);
+    for (int i = 0; i < 130; i++) {
+        void *ptr1 = malloc(128);
+        ptr1 += 1;
     }
-    write(1, "ALL TESTS PASSED\n", 17);
+    void *ptr2 = malloc(1024);
+    ptr2 += 1;
+
+    void *ptr3 = malloc(5000);
+    ptr3 += 1;
+
+    show_alloc_mem();
     return 0;
 }

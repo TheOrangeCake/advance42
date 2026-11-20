@@ -13,6 +13,7 @@ SRC =	$(SRC_DIR)/free.c		\
 		$(SRC_DIR)/realloc.c	\
 		$(SRC_DIR)/zone.c		\
 		$(SRC_DIR)/block.c		\
+		$(SRC_DIR)/print.c		\
 		$(SRC_DIR)/utils.c		\
 
 OBJECTS = $(SRC:.c=.o)

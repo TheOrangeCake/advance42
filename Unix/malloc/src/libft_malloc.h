@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 22:25:45 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/20 22:44:17 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/20 23:48:17 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <errno.h>
+#include <stdio.h>
 
 #define FREE 1
 #define USED 2
@@ -81,5 +82,7 @@ bool	is_space_left(size_t total_allocated, size_t len);
 size_t	round_up(size_t size, size_t multiple);
 size_t	min(size_t a, size_t b);
 void	*ft_memcpy(void *dest, const void *src, size_t n);
+void	print_ptr(void *ptr);
+void	print_size(size_t n);
 
 #endif
