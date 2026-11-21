@@ -38,6 +38,7 @@ t_zone *create_new_zone(size_t size) {
 
     block = (t_block *)(zone + 1);
     block->length = size - sizeof(t_zone);
+    block->requested = 0;
     block->free = FREE;
     block->prev = NULL;
     block->next = NULL;

@@ -6,23 +6,22 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/19 22:06:35 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/21 00:26:15 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/21 15:40:25 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft_malloc.h"
 
 static size_t print_block(t_block *block) {
-	size_t	len;
-
-	len = block->length - sizeof(t_block);
 	print_ptr(block + 1);
 	write(1, " - ", 3);
-	print_ptr((char *)block + block->length);
-	write(1, " : ", 3);
-	print_size(len);
+	print_ptr((char *)(block + 1) + block->requested);
+	write(1, " | Requested: ", 14);
+	print_size(block->requested);
+	write(1, " bytes | Usable: ", 17);
+	print_size(block->length - sizeof(t_block));
 	write(1, " bytes\n", 7);
-	return len;
+	return block->requested;
 }
 
 static size_t print_blocks(t_block *block) {

@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 22:25:45 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/21 14:08:53 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/21 14:48:50 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,11 @@ typedef struct s_zone	t_zone;
 
 struct s_block {
 	size_t	length;
+	size_t	requested;
 	int		free;
 	t_block	*prev;
 	t_block	*next;
+	void	*padding;
 };
 
 struct s_zone {

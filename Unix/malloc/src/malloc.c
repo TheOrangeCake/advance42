@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 20:19:56 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/21 14:38:14 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/21 14:39:16 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static void *handle_large(size_t size) {
     
     size += sizeof(t_block);
     size = round_up(size, g_malloc.page_size);
-    
+
     if (is_space_left(g_malloc.total_allocated, size) == false || size == 0) {
         errno = ENOMEM;
         return NULL;
@@ -101,6 +101,8 @@ static void *handle_large(size_t size) {
 }
 
 void *malloc(size_t size) {
+    void    *ptr;
+
     if (g_malloc.page_size == 0) {
         if (init() < 0) {
             return NULL;
@@ -113,9 +115,14 @@ void *malloc(size_t size) {
         errno = ENOMEM;
         return NULL;
     } else if (size <= L_TINY) {
-        return handle_not_large(size, TINY);
+        ptr = handle_not_large(size, TINY);
     } else if (size <= L_SMALL) {
-        return handle_not_large(size, SMALL); 
+        ptr = handle_not_large(size, SMALL);
+    } else {
+        ptr = handle_large(size);
     }
-    return handle_large(size);
+    if (ptr) {
+        ((t_block *)ptr - 1)->requested = size;
+    }
+    return ptr;
 }

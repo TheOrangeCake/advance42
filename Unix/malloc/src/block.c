@@ -53,6 +53,7 @@ t_block *split_block(t_block *block, size_t size) {
 
 	new_block = (t_block*)((char *)block + sizeof(t_block) + size);
 	new_block->length = block->length - sizeof(t_block) - size;
+	new_block->requested = 0;
 	new_block->free = FREE;
 	new_block->prev = block;
 	new_block->next = block->next;
