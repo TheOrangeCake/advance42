@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 20:20:05 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/20 22:43:57 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/21 16:35:11 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void *realloc(void *ptr, size_t size) {
         return malloc(size);
     }
     if (size == 0) {
-        errno = EINVAL;
+        free(ptr);
         return NULL;
     }
 
@@ -30,6 +30,12 @@ void *realloc(void *ptr, size_t size) {
         return NULL;
     }
     old_len = block->length - sizeof(t_block);
+
+    // Enough room in the current block -> resize in place
+    if (size <= old_len) {
+        block->requested = size;
+        return ptr;
+    }
 
     new_ptr = malloc(size);
     if (!new_ptr) {

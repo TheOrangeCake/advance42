@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 22:32:56 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/20 23:47:56 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/21 16:04:20 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,16 +54,6 @@ void *ft_memcpy(void *dest, const void *src, size_t n) {
         n--;
     }
     return dest;
-}
-
-size_t ft_strlen(const char *s) {
-	size_t	i;
-
-	i = 0;
-	while (s[i]) {
-		i++;
-	}
-	return i;
 }
 
 void print_ptr(void *ptr) {

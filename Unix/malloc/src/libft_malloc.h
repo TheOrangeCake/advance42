@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 22:25:45 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/21 14:48:50 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/21 16:15:57 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <errno.h>
-#include <stdio.h>
 
 #define FREE 1
 #define USED 2
@@ -67,6 +66,7 @@ extern t_malloc g_malloc;
 void	*malloc(size_t size);
 void	free(void *ptr);
 void	*realloc(void *ptr, size_t size);
+void	*calloc(size_t n, size_t size);
 
 t_zone	*create_new_zone(size_t size);
 int		add_zone(t_zone **head, size_t limit);

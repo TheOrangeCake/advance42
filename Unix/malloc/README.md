@@ -43,3 +43,4 @@ Calling `free()` simply unlink a block and called `munmap()` on that block.
 - [Function sysconf()](https://man7.org/linux/man-pages/man3/sysconf.3.html)
 - [Computer page related to sysconf()](https://en.wikipedia.org/wiki/Page_(computer_memory))
 - [Function getrlimit()](https://man7.org/linux/man-pages/man2/getrlimit.2.html)
+- [Suite malloc()](https://man7.org/linux/man-pages/man3/malloc.3.html)

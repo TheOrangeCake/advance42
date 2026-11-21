@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 20:19:56 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/21 14:39:16 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/21 16:33:15 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ void *malloc(size_t size) {
         }
     }
     if (size == 0) {
-        return NULL;
+        size = 1;
     }
     if (size > SIZE_MAX - sizeof(t_block) - g_malloc.page_size) {
         errno = ENOMEM;
