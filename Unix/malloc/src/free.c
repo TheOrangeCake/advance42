@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 20:20:11 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/19 22:38:08 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/21 17:24:39 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static void free_not_large(t_zone **head, t_zone *zone, t_block *block) {
     }
 }
 
-void free(void *ptr) {
+void internal_free(void *ptr) {
     t_block *block;
     t_zone  *zone;
 
@@ -64,4 +64,10 @@ void free(void *ptr) {
     if (block) {
         free_not_large(&g_malloc.small, zone, block);
     }
+}
+
+void free(void *ptr) {
+    pthread_mutex_lock(&g_mutex);
+    internal_free(ptr);
+    pthread_mutex_unlock(&g_mutex);
 }

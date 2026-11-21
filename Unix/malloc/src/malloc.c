@@ -6,13 +6,14 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 20:19:56 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/21 16:33:15 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/21 17:28:54 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft_malloc.h"
 
-t_malloc    g_malloc;
+t_malloc        g_malloc;
+pthread_mutex_t g_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 static int init() {
     g_malloc.page_size = sysconf(_SC_PAGE_SIZE);
@@ -68,7 +69,7 @@ static void *handle_not_large(size_t size, int type) {
     return handle_not_large(size, type);
 }
 
-// Allocate a block then insert it to the front of the linked list.
+// Allocate a block then insert it in the linked list.
 // Return the pointer to the free space.
 static void *handle_large(size_t size) {
     t_block *block;
@@ -100,7 +101,7 @@ static void *handle_large(size_t size) {
     return block + 1;
 }
 
-void *malloc(size_t size) {
+void *internal_malloc(size_t size) {
     void    *ptr;
 
     if (g_malloc.page_size == 0) {
@@ -124,5 +125,14 @@ void *malloc(size_t size) {
     if (ptr) {
         ((t_block *)ptr - 1)->requested = size;
     }
+    return ptr;
+}
+
+void *malloc(size_t size) {
+    void    *ptr;
+
+    pthread_mutex_lock(&g_mutex);
+    ptr = internal_malloc(size);
+    pthread_mutex_unlock(&g_mutex);
     return ptr;
 }

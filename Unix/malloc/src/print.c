@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/19 22:06:35 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/21 15:40:25 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/21 17:31:21 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ static size_t print_large(t_block *block) {
 void show_alloc_mem() {
 	size_t	total;
 
+	pthread_mutex_lock(&g_mutex);
 	total = 0;
 	total += print_zones(g_malloc.tiny, TINY);
 	total += print_zones(g_malloc.small, SMALL);
@@ -96,4 +97,5 @@ void show_alloc_mem() {
 	write(1, "Total : ", 8);
 	print_size(total);
 	write(1, " bytes\n", 7);
+	pthread_mutex_unlock(&g_mutex);
 }

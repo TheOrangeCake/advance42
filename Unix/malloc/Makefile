@@ -5,7 +5,7 @@ endif
 LIB_NAME = libft_malloc_$(HOSTTYPE).so
 SYMLINK = libft_malloc.so
 
-FLAGS = -Wall -Wextra -Werror -fPIC
+FLAGS = -Wall -Wextra -Werror -fPIC -pthread
 
 SRC_DIR = src
 SRC =	$(SRC_DIR)/free.c		\
@@ -28,7 +28,7 @@ $(OBJECTS): $(SRC_DIR)/libft_malloc.h
 
 $(LIB_NAME): $(OBJECTS)
 	@echo "Building .so lib..."
-	@gcc -shared -o $(LIB_NAME) $(OBJECTS)
+	@gcc -shared $(FLAGS) -o $(LIB_NAME) $(OBJECTS)
 	@echo "-> Built $(LIB_NAME) !"
 	@echo "Creating symlink..."
 	@rm -f $(SYMLINK)

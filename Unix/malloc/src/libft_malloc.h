@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 22:25:45 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/21 16:15:57 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/21 17:27:13 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <errno.h>
+#include <pthread.h>
 
 #define FREE 1
 #define USED 2
@@ -61,12 +62,16 @@ typedef struct s_malloc {
 	t_block	*large;
 } t_malloc;
 
-extern t_malloc g_malloc;
+extern t_malloc			g_malloc;
+extern pthread_mutex_t	g_mutex;
 
 void	*malloc(size_t size);
 void	free(void *ptr);
 void	*realloc(void *ptr, size_t size);
 void	*calloc(size_t n, size_t size);
+
+void	*internal_malloc(size_t size);
+void	internal_free(void *ptr);
 
 t_zone	*create_new_zone(size_t size);
 int		add_zone(t_zone **head, size_t limit);
