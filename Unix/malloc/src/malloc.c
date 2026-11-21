@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 20:19:56 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/19 22:01:28 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/21 14:38:14 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,13 +95,7 @@ static void *handle_large(size_t size) {
 
     block->length = size;
     block->free = USED;
-    block->prev = NULL;
-    block->next = g_malloc.large;
-
-    if (g_malloc.large) {
-        g_malloc.large->prev = block;        
-    }
-    g_malloc.large = block;
+    insert_block(block);
 
     return block + 1;
 }

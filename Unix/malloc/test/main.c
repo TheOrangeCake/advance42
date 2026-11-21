@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/15 23:25:09 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/21 00:30:06 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/21 08:33:46 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,15 +81,37 @@ int main(void) {
     //     return 1;
     // }
     // write(1, "ALL TESTS PASSED\n", 17);
-    for (int i = 0; i < 130; i++) {
-        void *ptr1 = malloc(128);
-        ptr1 += 1;
-    }
-    void *ptr2 = malloc(1024);
-    ptr2 += 1;
+    void    *ptr1[110];
+    void    *ptr2[50];
+    void    *ptr3[10];
+    void    *ptr4[10];
 
-    void *ptr3 = malloc(5000);
-    ptr3 += 1;
+    // for (int i = 0; i < 110; i++) {
+    //     ptr1[i] = malloc(128 - i);
+    // }
+    // for (int i = 0; i < 55; i += 2) {
+    //     free(ptr1[i]);
+    // }
+    
+    // for (int i = 0; i < 50; i++) {
+    //     ptr2[i] = malloc(1024 - i * 3);
+    // }
+    // for (int i = 0; i < 25; i += 2) {
+    //     free(ptr2[i]);
+    // }
+
+    for (int i = 0; i < 10; i++) {
+        ptr3[i] = malloc(5000 - i * 499);
+    }
+    for (int i = 0; i < 5; i += 2) {
+        free(ptr3[i]);
+    }
+    for (int i = 0; i < 10; i++) {
+        ptr4[i] = malloc(5000 - i * 499);
+    }
+    for (int i = 0; i < 5; i += 2) {
+        free(ptr4[i]);
+    }
 
     show_alloc_mem();
     return 0;

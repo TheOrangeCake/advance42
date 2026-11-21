@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/27 22:25:45 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/20 23:48:17 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/21 14:08:53 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ t_block	*find_in_zone(t_zone *head, void *ptr, t_zone **zone_out);
 t_block	*find_location(void *ptr);
 t_block	*split_block(t_block *block, size_t size);
 void	merge_blocks(t_block *block);
+void	insert_block(t_block *block);
 
 void	show_alloc_mem();
 

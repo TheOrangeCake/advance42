@@ -6,7 +6,7 @@
 /*   By: hoannguy <hoannguy@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/15 22:33:59 by hoannguy          #+#    #+#             */
-/*   Updated: 2026/11/19 23:04:09 by hoannguy         ###   ########.fr       */
+/*   Updated: 2026/11/21 14:37:30 by hoannguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ t_block *find_block(t_block *head, void *ptr) {
 
 t_block *find_in_zone(t_zone *head, void *ptr, t_zone **zone_out) {
     for (t_zone *zone = head; zone; zone = zone->next) {
-        if ((char *)ptr <= (char *)zone
-            || (char *)ptr >= (char *)zone + zone->length) {
+        if ((uintptr_t)ptr <= (uintptr_t)zone
+            || (uintptr_t)ptr >= (uintptr_t)zone + zone->length) {
             continue;
         }
         *zone_out = zone;
@@ -95,4 +95,35 @@ void merge_blocks(t_block *block) {
 		}
 	}
 
+}
+
+void insert_block(t_block *block) {
+	if (!g_malloc.large) {
+		block->prev = NULL;
+		block->next = NULL;
+		g_malloc.large = block;
+		return;
+	}
+
+	for (t_block *curr = g_malloc.large; curr; curr = curr->next) {
+		if ((uintptr_t)block < (uintptr_t)curr) {
+			block->prev = curr->prev;
+			block->next = curr;
+			if (curr->prev) {
+				curr->prev->next = block;
+			} else {
+				g_malloc.large = block;
+			}
+			curr->prev = block;
+			return;
+		}
+		
+		// insert at tail
+		if (!curr->next) {
+			block->prev = curr;
+			block->next = NULL;
+			curr->next = block;
+			return;
+		}
+	}
 }
