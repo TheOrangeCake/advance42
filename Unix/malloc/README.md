@@ -37,6 +37,35 @@ This is actually not implemented as a zone because each `malloc()` call of large
 Calling `free()` simply unlink a block and called `munmap()` on that block.
 
 
+## Tests
+There are 3 tests:
+
+### Mandatory
+This will test `malloc()`, `calloc()`, `realloc()` and `free()` without concurrency. It will :
+1. Call `malloc()``to allocate 5 blocks in TINY, SMALL and LARGE zone.
+2. Call `free()` to free the block index 1, let call it **[1]**, and **[3]** blocks of each zone.
+3. Call `realloc()` to resize some blocks.
+4. Call `calloc()` to allocate a new block, then check if it is filled with `0`.
+5. Free all blocks.
+
+The state of the memory will be printed after every step.
+
+### Defragmentation
+This will show that blocks are merged or splited to optimize space utilisation. It will:
+1. Allocate 5 blocks in TINY.
+2. Free the **[1]** and **[3]** blocks. Print the block visualization to show that there are 2 "holes".
+3. Free the **[2]** block. Print the visualization to show that the "holes" from [1] and [3] blocks are merged with the "hole" from second block.
+4. Free the **[5]** block and see that it will merge with the unused block.
+5. Allocate a new block with a small size. Print the visualization to see that the block that used to hold the [1], [2] and [3] is now splited to hold the newly allocated block.
+6. Free all and now its one big unfragmented block.
+
+### Thread
+This will show our memory suite is thread safe. It will:
+1. Create 4 threads, each with 10 pointers.
+2. Performs 20000 actions on those threads. If pointers are free then either `malloc()` or `calloc()`. If pointers are used then either `realloc()` or `free()`. When allocate a new block, fill it with unique characters. For every action, check if a block is filled with the same character, if there is any different then some threads stepped on each others.
+
+We can commented out the mutex in `malloc()` implementation to compare. It would normally segfault.
+
 ## Ressources
 - [Dynamic linking](https://www.cs-fundamentals.com/c-programming/static-and-dynamic-linking-in-c#create-and%20use-shared-libraries)
 - [Functions mmap() and munmap()](https://man7.org/linux/man-pages/man2/mmap.2.html)
