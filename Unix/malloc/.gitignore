@@ -2,4 +2,6 @@ a.out
 *.o
 *.so
 
-test_malloc
+test_mandatory
+test_thread
+test_defrag

@@ -35,9 +35,17 @@ $(LIB_NAME): $(OBJECTS)
 	@ln -s $(LIB_NAME) $(SYMLINK)
 	@echo "-> Symlink $(SYMLINK) created !"
 
-test: $(LIB_NAME)
-	@gcc -Wno-free-nonheap-object -Wno-alloc-size-larger-than test/main.c -I src -L. -lft_malloc -Wl,-rpath,"$(CURDIR)" -o test_malloc
-	@./test_malloc
+TEST_DIR = test
+TEST_FLAGS = -pthread -I $(SRC_DIR) -L. -lft_malloc -Wl,-rpath,"$(CURDIR)"
+TESTS = mandatory thread defrag
+
+test_%: $(TEST_DIR)/%.c $(LIB_NAME)
+	@gcc $< $(TEST_FLAGS) -o $@
+
+$(TESTS): %: test_%
+	@./test_$@
+
+test: $(TESTS)
 
 clean:
 	@echo "Removing .o files..."
@@ -48,10 +56,10 @@ fclean:	clean
 	@echo "Removing lib files..."
 	@rm -f $(LIB_NAME) $(SYMLINK)
 	@echo "-> Lib files $(LIB_NAME) and $(SYMLINK) removed !"
-	@echo "Removing test binary..."
-	@rm -f test_malloc
-	@echo "-> Test binary removed !"
+	@echo "Removing test binaries..."
+	@rm -f $(addprefix test_, $(TESTS))
+	@echo "-> Test binaries removed !"
 
 re: fclean all
 
-.PHONY: all test clean fclean re
+.PHONY: all test $(TESTS) clean fclean re
