@@ -27,7 +27,7 @@ Mininum 10'000 exp - 2 projects - DONE
 ### Suite (choice):
 |Name                                           |Language|Concept                                  |Exp   |Status|
 |:----------------------------------------------|:------:|:----------------------------------------|-----:|:----:|
-|Inception-of-Things                            |        |Vagrant, Kubernetes                      |25'450|DONE  |
+|Inception-of-Things                            |YAML    |Vagrant, Kubernetes                      |25'450|DONE  |
 </br>
 
 </br>
@@ -58,7 +58,7 @@ Mininum 50'000 exp - 3 projects - NOPE
 |taskmaster                                     |        |                                         |9'450 |NOPE  |
 |Inception of context                           |        |                                         |19'800|NOPE  |
 |Inception of wisdom                            |        |                                         |21'600|NOPE  |
-|Inception-of-Things                            |        |Vagrant, Kubernetes                      |25'450|DONE  |
+|Inception-of-Things                            |YAML    |Vagrant, Kubernetes                      |25'450|DONE  |
 </br>
 
 ### Branch: UNIX
@@ -71,9 +71,9 @@ Mininum 30'000 exp - 3 projects - NOPE
 </br>
 
 ### Suite (choice):
-|Name                                           |Language|Concept                                  |Exp   |Status|
-|:----------------------------------------------|:------:|:----------------------------------------|-----:|:----:|
-|Inception-of-Things                            |        |                                         |25'450|NOPE  |
+|Name                                           |Language|Concept            |Exp   |Status|
+|:----------------------------------------------|:------:|:------------------|-----:|:----:|
+|Inception-of-Things                            |YAML    |Vagrant, Kubernetes|25'450|DONE  |
 </br>
 
 </br>
