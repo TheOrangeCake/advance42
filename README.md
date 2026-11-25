@@ -10,24 +10,24 @@ Mininum 10'000 exp - 2 projects - DONE
 
 ### Branch: Imperative programming
 Mininum 10'000 exp - 2 projects - NOPE
-|Name                   |Language|Concept                                                                                       |Exp   |Status|
-|:----------------------|:------:|:---------------------------------------------------------------------------------------------|-----:|:----:|
-|[malloc](./Unix/malloc)|C       |malloc, reaclloc, free and calloc. Memory management, thread safely and memory defragmentation|9'450 |DONE  |
-|rainfall               |        |                                                                                              |25'200|NOPE  |
+|Name                   |Language|Concept                                                                                        |Exp  |Status|
+|:----------------------|:------:|:----------------------------------------------------------------------------------------------|----:|:----:|
+|[malloc](./Unix/malloc)|C       |malloc, reaclloc, free and calloc. Memory management, thread safely and memory de-fragmentation|9'450|DONE  |
+|taskmaster             |        |                                                                                               |9'450|NOPE  |
 </br>
 
 ### Branch: Functional programming
 Mininum 10'000 exp - 2 projects - DONE
-|Name                              |Language|Concept                                  |Exp  |Status|
-|:---------------------------------|:------:|:----------------------------------------|----:|:----:|
-|[Piscine OCaml](./Ocaml/piscine)  |Ocaml   |Basic of Ocaml and functional programming|9'450|DONE  |
+|Name                              |Language|Concept                                                                         |Exp  |Status|
+|:---------------------------------|:------:|:-------------------------------------------------------------------------------|----:|:----:|
+|[Piscine OCaml](./Ocaml/piscine)  |Ocaml   |Basic of Ocaml and functional programming                                       |9'450|DONE  |
 |[ft_turing](./Ocaml/ft_turing/)   |Ocaml   |Universal Turing Machine, with time complexity analyser using linear regression |9'450|DONE  |
 </br>
 
 ### Suite (choice):
 |Name                                           |Language|Concept                                  |Exp   |Status|
 |:----------------------------------------------|:------:|:----------------------------------------|-----:|:----:|
-|Inception-of-Things                            |        |                                         |25'450|NOPE  |
+|Inception-of-Things                            |        |Vagrant, Kubernetes                      |25'450|DONE  |
 </br>
 
 </br>
@@ -46,18 +46,19 @@ Minimum 50'000 exp - 3 projects - NOPE
 |-> [Stockholm](./CyberSec/piscine/day_5_stockholm)  |C         |File encryption, decryption, ransom ware                          |      |DONE  |
 |-> [Inquisitor](./CyberSec/piscine/day_7_inquisitor)|C++       |FTP protocol, ARP poisoning                                       |      |DONE  |
 |-> [Vaccine](./CyberSec/piscine/day_8_vaccine)      |JavaScript|SQL injection, POSTGRESQL, MYSQL                                  |      |DONE  |
-|snow-crash                                          |          |                                                                  |9'450 |NOPE  |
-|rainfall                                            |          |                                                                  |25'200|NOPE  |
-|ft_malcolm                                          |          |                                                                  |6'000 |NOPE  |
+|darkly                                              |          |                                                                  |6'300 |NOPE  |
+|tinky-winkey                                        |          |                                                                  |16'800|NOPE  |
+|TBD                                                 |          |                                                                  |      |      |
 </br>
 
 ### Branch: System administration
 Mininum 50'000 exp - 3 projects - NOPE
 |Name                                           |Language|Concept                                  |Exp   |Status|
 |:----------------------------------------------|:------:|:----------------------------------------|-----:|:----:|
+|taskmaster                                     |        |                                         |9'450 |NOPE  |
 |Inception of context                           |        |                                         |19'800|NOPE  |
 |Inception of wisdom                            |        |                                         |21'600|NOPE  |
-|Inception-of-Things                            |        |                                         |25'450|NOPE  |
+|Inception-of-Things                            |        |Vagrant, Kubernetes                      |25'450|DONE  |
 </br>
 
 ### Branch: UNIX
