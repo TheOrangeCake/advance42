@@ -63,11 +63,11 @@ Mininum 50'000 exp - 3 projects - NOPE
 
 ### Branch: UNIX
 Mininum 30'000 exp - 3 projects - NOPE
-|Name                                           |Language|Concept                                  |Exp  |Status|
-|:----------------------------------------------|:------:|:----------------------------------------|----:|:----:|
-|taskmaster                                     |        |                                         |9'450|NOPE  |
-|matt-daemon                                    |        |                                         |9'450|NOPE  |
-|malloc                                         |        |                                         |9'450|NOPE  |
+|Name                   |Language|Concept                                                                                        |Exp  |Status|
+|:----------------------|:------:|:----------------------------------------------------------------------------------------------|----:|:----:|
+|taskmaster             |        |                                                                                               |9'450|NOPE  |
+|matt-daemon            |        |                                                                                               |9'450|NOPE  |
+|[malloc](./Unix/malloc)|C       |malloc, reaclloc, free and calloc. Memory management, thread safely and memory de-fragmentation|9'450|DONE  |
 </br>
 
 ### Suite (choice):
