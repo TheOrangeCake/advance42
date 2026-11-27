@@ -1,11 +1,11 @@
 # RNCP 6: Développement applicatif
 ### Branch: OOP
 Mininum 10'000 exp - 2 projects - DONE
-|Name                                    |Language|Concept                                                                         |Exp   |Status|
-|:---------------------------------------|:------:|:-------------------------------------------------------------------------------|-----:|:----:|
-|[avaj-launcher](./Java/avaj-launcher)   |Java    |UML diagram, GoF pattern                                                        |4'200 |DONE  |
-|[swingy](./Java/swingy)                 |Java    |MVC architecture, Event driven programming, SWING Framework, GoF pattern        |9'450 |DONE  |
-|[fix-me](./Java/fix-me)                 |Java    |Multi module Maven build, FIX message, TCP server/client, threading, GoF pattern|15'750|DONE  |
+|Name                                 |Language|Concept                                                                         |Exp   |Status|
+|:------------------------------------|:------:|:-------------------------------------------------------------------------------|-----:|:----:|
+|[avaj-launcher](./Java/avaj-launcher)|Java    |UML diagram, GoF pattern                                                        |4'200 |DONE  |
+|[swingy](./Java/swingy)              |Java    |MVC architecture, Event driven programming, SWING Framework, GoF pattern        |9'450 |DONE  |
+|[fix-me](./Java/fix-me)              |Java    |Multi module Maven build, FIX message, TCP server/client, threading, GoF pattern|15'750|DONE  |
 </br>
 
 ### Branch: Imperative programming
@@ -18,16 +18,16 @@ Mininum 10'000 exp - 2 projects - NOPE
 
 ### Branch: Functional programming
 Mininum 10'000 exp - 2 projects - DONE
-|Name                              |Language|Concept                                                                         |Exp  |Status|
-|:---------------------------------|:------:|:-------------------------------------------------------------------------------|----:|:----:|
-|[Piscine OCaml](./Ocaml/piscine)  |Ocaml   |Basic of Ocaml and functional programming                                       |9'450|DONE  |
-|[ft_turing](./Ocaml/ft_turing/)   |Ocaml   |Universal Turing Machine, with time complexity analyser using linear regression |9'450|DONE  |
+|Name                            |Language|Concept                                                                         |Exp  |Status|
+|:-------------------------------|:------:|:-------------------------------------------------------------------------------|----:|:----:|
+|[Piscine OCaml](./Ocaml/piscine)|Ocaml   |Basic of Ocaml and functional programming                                       |9'450|DONE  |
+|[ft_turing](./Ocaml/ft_turing/) |Ocaml   |Universal Turing Machine, with time complexity analyser using linear regression |9'450|DONE  |
 </br>
 
 ### Suite (choice):
-|Name                                           |Language|Concept                                  |Exp   |Status|
-|:----------------------------------------------|:------:|:----------------------------------------|-----:|:----:|
-|Inception-of-Things                            |YAML    |Vagrant, Kubernetes                      |25'450|DONE  |
+|Name                                               |Language|Concept                                  |Exp   |Status|
+|:--------------------------------------------------|:------:|:----------------------------------------|-----:|:----:|
+|[Inception-of-Things](./DevOps/inception_of_thing/)|YAML    |Vagrant, Kubernetes                      |25'450|DONE  |
 </br>
 
 </br>
@@ -53,12 +53,12 @@ Minimum 50'000 exp - 3 projects - NOPE
 
 ### Branch: System administration
 Mininum 50'000 exp - 3 projects - NOPE
-|Name                                           |Language|Concept                                  |Exp   |Status|
-|:----------------------------------------------|:------:|:----------------------------------------|-----:|:----:|
-|taskmaster                                     |        |                                         |9'450 |NOPE  |
-|Inception of context                           |        |                                         |19'800|NOPE  |
-|Inception of wisdom                            |        |                                         |21'600|NOPE  |
-|Inception-of-Things                            |YAML    |Vagrant, Kubernetes                      |25'450|DONE  |
+|Name                                               |Language|Concept                                  |Exp   |Status|
+|:--------------------------------------------------|:------:|:----------------------------------------|-----:|:----:|
+|taskmaster                                         |        |                                         |9'450 |NOPE  |
+|Inception of context                               |        |                                         |19'800|NOPE  |
+|Inception of wisdom                                |        |                                         |21'600|NOPE  |
+|[Inception-of-Things](./DevOps/inception_of_thing/)|YAML    |Vagrant, Kubernetes                      |25'450|DONE  |
 </br>
 
 ### Branch: UNIX
@@ -71,9 +71,9 @@ Mininum 30'000 exp - 3 projects - NOPE
 </br>
 
 ### Suite (choice):
-|Name                                           |Language|Concept            |Exp   |Status|
-|:----------------------------------------------|:------:|:------------------|-----:|:----:|
-|Inception-of-Things                            |YAML    |Vagrant, Kubernetes|25'450|DONE  |
+|Name                                               |Language|Concept            |Exp   |Status|
+|:--------------------------------------------------|:------:|:------------------|-----:|:----:|
+|[Inception-of-Things](./DevOps/inception_of_thing/)|YAML    |Vagrant, Kubernetes|25'450|DONE  |
 </br>
 
 </br>
