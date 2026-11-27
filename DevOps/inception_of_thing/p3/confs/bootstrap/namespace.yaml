@@ -1,0 +1,6 @@
+# each child's namespace config decide which namespace they go to
+# creates the argocd namespace from where each Application objects are created (each with their own namespaces)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argocd

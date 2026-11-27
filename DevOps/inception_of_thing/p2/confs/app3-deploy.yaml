@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-three
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iot-app3 # Must match template metadata, this basically select what pod to manage 
+  template:
+    metadata:
+      labels:
+        app: iot-app3
+    spec:
+      containers:
+        - name: app3
+          image: paulbouwer/hello-kubernetes:1.11.0
+          env:
+            - name: MESSAGE
+              value: "Hello from app3."
+          ports:
+            - containerPort: 8080

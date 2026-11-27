@@ -1,0 +1,26 @@
+# root application: creates the app for argocd: the pods, the manifest, the states, etc
+# this application's "role" is to create new apps and resolve their states
+# the argocd/apps holds the config for the apps, in our case in another repo
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root
+  namespace: argocd # apps must live in argocd's namespace
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io   # finalizer for all argocd ressources, deletes child objects --> see docs
+spec:
+# in the future, better to add project: apps section to separate permissions of argocd and deployed apps
+  project: default
+  source:
+    repoURL: https://github.com/TheOrangeCake/Inception_of_Things.git # bootstrap repo
+    targetRevision: main
+    path: p3/confs/argocd
+    directory:
+      recurse: true # so it picks up both the AppProjects "guardrail" (projects/apps.yaml) and all the future apps in apps dir
+  destination:
+    server: https://kubernetes.default.svc # "this cluster"
+    namespace: argocd # children are Application objects, so they go here
+  syncPolicy:
+    automated:
+      prune: true # remove child apps deleted from Git
+      selfHeal: true # revert manual changes

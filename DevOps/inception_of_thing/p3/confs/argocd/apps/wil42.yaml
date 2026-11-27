@@ -1,0 +1,20 @@
+# platform-repo/argocd/apps/myapp.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wil42-app
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: apps # refers to projects/apps.yaml and defines its guardrails
+  source:
+    repoURL: https://github.com/Maxkirit/mturgeon_argocd_lab.git  # repo 2
+    targetRevision: main
+    path: wil42_app # adapt to structure in other repo
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dev
+  syncPolicy:
+    automated: { prune: true, selfHeal: true }
+    syncOptions: [CreateNamespace=true]

@@ -1,0 +1,23 @@
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: argo-lab
+servers: 1
+agents: 2
+# host:port -> k3d loadbalancer -> port on every node
+ports:
+  - port: 8080:80 # Traefik ingress (http://wil42.localhost:8080)
+    nodeFilters: [loadbalancer]
+  - port: 9090:30090 # Argo CD UI (https://localhost:9090)
+    nodeFilters: [loadbalancer]
+  - port: 8888:30888 # wil42 app (http://localhost:8888)
+    nodeFilters: [loadbalancer]
+options:
+  kubeconfig:
+    updateDefaultKubeconfig: false     # don't touch ~/.kube/config, we write to our own .kubeconfig
+  # this one forces app depployment on worker nodes (k3s can deploy to server nodes by default)
+  # it just feels "cleaner" and more "production ready" (purely vibe based)
+  k3s:
+    extraArgs:
+      - arg: --node-taint=CriticalAddonsOnly=true:NoExecute
+        nodeFilters: [server:*]

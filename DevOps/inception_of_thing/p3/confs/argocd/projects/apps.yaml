@@ -1,0 +1,37 @@
+# "optional" file which guards apps from accessing unwanted resources, creating admin roles, writing in kube settings, etc
+# can also hold RBAC roles, deploy windows, etc
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: apps
+  namespace: argocd                      # AppProjects live in argocd's namespace
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1" # makes sure this apps projects exists before the app syncs
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: Application workloads deployed from the app config repo
+
+  # allowed repos this cluster can pull from
+  sourceRepos:
+    - https://github.com/Maxkirit/mturgeon_argocd_lab.git
+
+  # Where Applications in this project may deploy to
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: dev
+    # add more namespaces here to server https://kubernetes.default.svc or another server if managing multiple
+
+  # cluster resources the project may create (empty = none)
+  clusterResourceWhitelist:
+    - group: ''
+      kind: Namespace # needed for CreateNamespace=true
+
+  # Namespaced resource kinds allowed (omit or use '*' to allow all)
+  namespaceResourceWhitelist:
+    - group: ''
+      kind: '*'
+    - group: apps
+      kind: '*'
+    - group: networking.k8s.io
+      kind: Ingress

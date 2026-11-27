@@ -1,0 +1,5 @@
+/p*/token
+/p*/vm
+/p*/.vagrant
+/p*/.env
+/p*/.kubeconfig

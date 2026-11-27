@@ -1,0 +1,131 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/debian-13"
+  config.vm.box_version = "202510.26.0"
+  config.vm.define "mturgeonS", primary: true do |server| # default machine, refers to this one when a specific machine is needed and none are given
+    server.vm.hostname = "mturgeonS"
+    server.vm.network "private_network", ip: "192.168.56.110" # reach the VM directly at this IP from the host, no port forwarding needed
+    server.vm.provider "virtualbox" do |v|
+      v.gui = false # true to have the window pop up when starting
+      v.check_guest_additions = true
+      v.name = "mturgeonS" # gui name
+      v.memory = "1024"
+      v.cpus = "1"
+      v.customize ["modifyvm", :id, "--cpuexecutioncap", "75", "--name", "mturgeonS"] # customiztion interface, here max 75% of CPU usage at most
+    end
+    server.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      # apt-get install -y apache2
+      apt-get install -y git
+      apt-get install -y net-tools #ifconfig
+      # eth1 redirects to private network, might be enp0s8. eth0 by default so couldn't reach other
+      # --write-kubeconfig-mode=644: k3s.yaml is root-only by default, and k3s's kubectl reads it even for non-root users, so make it readable for the vagrant user
+      curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--node-ip=192.168.56.110 --flannel-iface=eth1 --write-kubeconfig-mode=644" sh - # k3s install, writes kubeconfig to /etc/rancher/k3s/k3s.yaml
+      # Make sure kubectl is set up for the vagrant user
+      until [ -f /var/lib/rancher/k3s/server/node-token ]; do sleep 1; done # wait for token to appear and k3s.yaml to be written
+      mkdir -p /home/vagrant/.kube
+      cp /etc/rancher/k3s/k3s.yaml /home/vagrant/.kube/config
+      chown -R vagrant:vagrant /home/vagrant/.kube/config
+
+      # Get the token for the worker nodes
+      NODE_TOKEN=$(cat /var/lib/rancher/k3s/server/node-token)
+
+      # Store the token for the workers to use
+      echo "$NODE_TOKEN" > /vagrant/token
+    SHELL
+  end
+  config.vm.define "mturgeonSW" do |worker|
+    worker.vm.hostname = "mturgeonSW"
+    worker.vm.network "private_network", ip: "192.168.56.111"
+    # server.vm.network "forwarded_port", guest: 81, host: 8081, host_ip: "127.0.0.1"
+    worker.vm.provider "virtualbox" do |v|
+      v.gui = false # true to have the window pop up when starting
+      v.check_guest_additions = true
+      v.name = "mturgeonSW"
+      v.memory = "1024"
+      v.cpus = "1"
+      v.customize ["modifyvm", :id, "--cpuexecutioncap", "75", "--name", "mturgeonSW"]
+    end
+    worker.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      # apt-get install -y apache2
+      apt-get install -y git
+      apt-get install -y net-tools
+      # The value to use for K3S_TOKEN is stored at /var/lib/rancher/k3s/server/node-token on your server node.
+      # We moved it to /vagrant/token (shared folder)
+      curl -sfL https://get.k3s.io | K3S_URL=https://192.168.56.110:6443 K3S_TOKEN=$(cat /vagrant/token) \
+      INSTALL_K3S_EXEC="--node-ip=192.168.56.111 --flannel-iface=eth1" sh -
+    SHELL
+  end
+end
+
+
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://vagrantcloud.com/search.
+    # config.vm.box = "bento/debian-12"
+    # config.vm.box_version = "202510.26.0"
+
+  # Disable automatic box update checking. This is not recommended.
+  # config.vm.box_check_update = false
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine. In the example below,
+  # accessing "localhost:8080" will access port 80 on the guest machine.
+  # NOTE: This will enable public access to the opened port
+    # config.vm.network "forwarded_port", guest: 80, host: 8080
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine and only allow access
+  # via 127.0.0.1 to disable public access
+  # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+
+  # k3s needs port 6443 accessible on all machines. nodes need to be able to reach each other over UDP port 8472 with FlannelVXLAN or 51820 for FlannelWireGuard.  more info: https://docs.k3s.io/installation/requirements
+  # 
+
+  # Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  # config.vm.network "private_network", ip: " 192.168.56.110"
+
+  # Create a public network, which generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+  # config.vm.network "public_network"
+
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+#   config.vm.synced_folder "../data", "/vagrant_data" # put some of the data on these folders we want to "give" to the VM here ?
+
+  # Disable the default share of the current code directory. Doing this
+  # provides improved isolation between the vagrant box and your host
+  # by making sure your Vagrantfile isn't accessible to the vagrant box.
+  # If you use this you may want to enable additional shared subfolders as
+  # shown above.
+  # config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+
+
+  #
+  # View the documentation for the provider you are using for more
+  # information on available options.
+
+  # Enable provisioning with a shell script. Additional provisioners such as
+  # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
+  # documentation for more information about their specific syntax and use.
+#   config.vm.provision "shell", inline: <<-SHELL
+#     apt-get update
+#     apt-get install -y apache2
+#     apt-get install -y git
+#     curl -sfL https://get.k3s.io | sh - # k3s install, writes kubeconfig to /etc/rancher/k3s/k3s.yaml
+#     # for the server worker install: curl -sfL https://get.k3s.io | K3S_URL=https://myserver:6443 K3S_TOKEN=mynodetoken sh - # The value to use for K3S_TOKEN is stored at /var/lib/rancher/k3s/server/node-token on your server node.
+#   SHELL
+# end

@@ -1,0 +1,23 @@
+# "manifest" for installing argocd in the namespace "argocd"
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: argocd
+resources:
+  - namespace.yaml
+  - https://raw.githubusercontent.com/argoproj/argo-cd/v3.6.2/manifests/install.yaml
+
+# expose the Argo CD UI on a fixed NodePort, mapped to localhost:9090 in cluster/k3d_config.yaml
+# ports are matched by "port" + "protocol", so only the https entry is changed
+patches:
+  - patch: |-
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: argocd-server
+      spec:
+        type: NodePort
+        ports:
+          - name: https
+            port: 443
+            protocol: TCP
+            nodePort: 30090
